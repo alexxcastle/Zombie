@@ -22,7 +22,7 @@ static class ElderboomCleanup
         next = EditorApplication.timeSinceStartup + 2;
         if (!File.Exists(Flag) || EditorApplication.isPlayingOrWillChangePlaymode || BuildPipeline.isBuildingPlayer) return;
         string mode = File.ReadAllText(Flag).Trim(); File.Delete(Flag);
-        try { File.WriteAllText(Result, mode.StartsWith("deps") ? Deps() : mode.StartsWith("missing") ? Missing() : mode.StartsWith("textures") ? Textures() : "FAIL unknown mode " + mode); }
+        try { File.WriteAllText(Result, mode.StartsWith("deps") ? Deps() : mode.StartsWith("missing") ? Missing() : mode.StartsWith("textures") ? Textures() : mode.StartsWith("settings") ? Settings(mode.Contains("apply")) : mode.StartsWith("perf") ? StartPerf(mode) : "FAIL unknown mode " + mode); }
         catch (System.Exception e) { File.WriteAllText(Result, "FAIL " + e); }
     }
 
@@ -151,5 +151,82 @@ static class ElderboomCleanup
         sb.AppendLine("total texture memory referenced by these models (shared counted per model) " + (total / 1048576) + " MB");
         sb.AppendLine("DONE");
         return sb.ToString();
+    }
+    // ---- Rendering settings: GPU skinning and the GPU Resident Drawer (dry run lists what exists) ----
+    static string Settings(bool apply)
+    {
+        var sb = new StringBuilder();
+        var ps = typeof(PlayerSettings);
+        foreach (var name in new[] { "gpuSkinning", "meshDeformation" })
+        {
+            var prop = ps.GetProperty(name, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+            if (prop == null) continue;
+            sb.AppendLine("PlayerSettings." + name + " = " + prop.GetValue(null));
+            if (apply && prop.CanWrite)
+            {
+                if (prop.PropertyType == typeof(bool)) prop.SetValue(null, true);
+                else if (prop.PropertyType.IsEnum) { var v = System.Enum.GetNames(prop.PropertyType).FirstOrDefault(n => n == "GPU"); if (v != null) prop.SetValue(null, System.Enum.Parse(prop.PropertyType, v)); }
+                sb.AppendLine("  -> " + prop.GetValue(null));
+            }
+        }
+        var assets = new HashSet<UnityEngine.Rendering.RenderPipelineAsset>();
+        if (UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline != null) assets.Add(UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline);
+        for (int i = 0; i < QualitySettings.names.Length; i++) { var a = QualitySettings.GetRenderPipelineAssetAt(i); if (a != null) assets.Add(a); }
+        foreach (var a in assets)
+        {
+            var so = new SerializedObject(a);
+            var it = so.GetIterator(); bool enter = true;
+            while (it.Next(enter))
+            {
+                enter = true;
+                if (it.propertyPath.IndexOf("ResidentDrawer", System.StringComparison.OrdinalIgnoreCase) < 0) continue;
+                sb.AppendLine(a.name + ": " + it.propertyPath + " (" + it.propertyType + ") = " + (it.propertyType == SerializedPropertyType.Enum ? it.enumNames[it.enumValueIndex] : it.propertyType == SerializedPropertyType.Boolean ? it.boolValue.ToString() : ""));
+                if (apply && it.propertyType == SerializedPropertyType.Enum && it.name == "mode")
+                {
+                    // Left off: no draw-call change measured in this project, and the build strips the BRG variants it needs.
+                    int idx = System.Array.FindIndex(it.enumNames, n => n.Contains("Disabled"));
+                    if (idx >= 0) { it.enumValueIndex = idx; sb.AppendLine("  -> " + it.enumNames[idx]); }
+                }
+            }
+            if (apply) { so.ApplyModifiedProperties(); EditorUtility.SetDirty(a); }
+        }
+        var egs = System.Type.GetType("UnityEditor.Rendering.EditorGraphicsSettings, UnityEditor");
+        var strip = egs?.GetProperty("batchRendererGroupShaderStrippingMode");
+        if (strip != null)
+        {
+            sb.AppendLine("BRG stripping = " + strip.GetValue(null));
+            sb.AppendLine("  values: " + string.Join(",", System.Enum.GetNames(strip.PropertyType)));
+        }
+        if (apply) AssetDatabase.SaveAssets();
+        sb.AppendLine("DONE");
+        return sb.ToString();
+    }
+
+    // ---- Frame rate in the game scene (Play Mode, 30 s after start): frames per real second and draw stats ----
+    const string PerfPending = "claude_cleanup_perf";
+    static double perfStart; static int perfFrames;
+    [InitializeOnLoadMethod] static void InitPerf() { EditorApplication.update += PerfPoll; }
+    static string StartPerf(string mode)
+    {
+        if (UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().isDirty) return "FAIL unsaved scene";
+        UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/Elderboom_Unity_Port.unity");
+        SessionState.SetBool(PerfPending, true); perfStart = 0;
+        EditorApplication.isPlaying = true;
+        return "perf started\n";
+    }
+    static void PerfPoll()
+    {
+        if (!SessionState.GetBool(PerfPending, false) || !EditorApplication.isPlaying) return;
+        double now = EditorApplication.timeSinceStartup;
+        if (perfStart <= 0) { perfStart = now; return; }
+        if (now - perfStart < 12) { perfFrames = Time.frameCount; return; }
+        if (now - perfStart < 42) return;
+        double fps = (Time.frameCount - perfFrames) / 30.0;
+        var game = ElderboomGame.Active;
+        string line = "fps " + fps.ToString("F1") + " | drawcalls " + UnityStats.drawCalls + " setpass " + UnityStats.setPassCalls + " tris " + (UnityStats.triangles / 1000) + "k | zombies " + (game != null ? game.Zombies.Count : -1)
+            + " | memory " + (UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / 1048576) + " MB, gfx " + (UnityEngine.Profiling.Profiler.GetAllocatedMemoryForGraphicsDriver() / 1048576) + " MB";
+        File.AppendAllText(Result, line + "\nDONE\n");
+        SessionState.SetBool(PerfPending, false);
+        EditorApplication.isPlaying = false;
     }
 }
