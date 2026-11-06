@@ -267,6 +267,37 @@ static class ElderboomClaudeBuild
 
     const string WinPath = "Builds/Windows/ElderboomUnityPort.exe";
 
+    const int MinFreeGB = 8; // the integrity check after the build catches a disk that filled up anyway
+    static long FreeBytes()
+    {
+        try { return new DriveInfo(Path.GetPathRoot(Path.GetFullPath("."))).AvailableFreeSpace; } catch { return long.MaxValue; }
+    }
+    static long DirBytes(string dir) => Directory.GetFiles(dir, "*", SearchOption.AllDirectories).Sum(f => new FileInfo(f).Length);
+
+    // After a build: no empty data files and no data file whose start is all zeros (what a full disk leaves behind).
+    static string Integrity(string dir)
+    {
+        if (!Directory.Exists(dir)) return "MISSING " + dir;
+        int files = 0, bad = 0; long bytes = 0; var badNames = new StringBuilder();
+        var buf = new byte[4096];
+        foreach (var f in Directory.GetFiles(dir, "*", SearchOption.AllDirectories))
+        {
+            files++; long len = new FileInfo(f).Length; bytes += len;
+            string n = Path.GetFileName(f);
+            bool data = n.EndsWith(".assets") || n.EndsWith(".resS") || n.EndsWith(".resource") || n.StartsWith("level") || n == "globalgamemanagers" || n.EndsWith(".dll") || n.EndsWith(".exe");
+            if (!data) continue;
+            bool ok = len > 0;
+            if (ok && !n.EndsWith(".resS")) // raw texture data may legitimately start with zeros
+                using (var fs = File.OpenRead(f))
+                {
+                    int r = fs.Read(buf, 0, buf.Length); ok = false;
+                    for (int i = 0; i < r; i++) if (buf[i] != 0) { ok = true; break; }
+                }
+            if (!ok) { bad++; if (bad < 6) badNames.Append(n).Append(' '); }
+        }
+        return (bad == 0 ? "OK " : "CORRUPT " + bad + " (" + badNames.ToString().Trim() + ") ") + files + " files " + (bytes / 1048576) + " MB";
+    }
+
     static void Build(bool windows)
     {
         var check = new StringBuilder();
@@ -286,6 +317,16 @@ static class ElderboomClaudeBuild
         check.Append("set=").Append(Resources.Load<GameObject>("Elderboom/Menu/OperatorSet") != null ? "ok" : "MISSING");
 
         string path = windows ? WinPath : AppPath;
+        string outDir = windows ? "Builds/Windows" : AppPath;
+        // A build that runs out of disk is silently corrupt (crash at start): refuse below the margin.
+        long free = FreeBytes(), old = Directory.Exists(outDir) ? DirBytes(outDir) : 0;
+        if (free + old < MinFreeGB * (1L << 30))
+        {
+            File.WriteAllText(windows ? "Logs/claude_build_result_windows.json" : "Logs/claude_build_result.json",
+                "{\"target\":\"" + (windows ? "windows" : "mac") + "\",\"status\":\"NoSpace\",\"freeGB\":" + (free >> 30) + ",\"needGB\":" + MinFreeGB + "}");
+            Debug.LogError("[ElderboomClaudeBuild] not enough disk: " + (free >> 30) + " GB free (+" + (old >> 30) + " GB old build), need " + MinFreeGB);
+            return;
+        }
         if (!windows && Directory.Exists(AppPath)) Directory.Delete(AppPath, true);
         if (windows && Directory.Exists("Builds/Windows")) Directory.Delete("Builds/Windows", true);
         Directory.CreateDirectory(windows ? "Builds/Windows" : "Builds");
@@ -304,7 +345,7 @@ static class ElderboomClaudeBuild
         Directory.CreateDirectory("Logs");
         File.WriteAllText(windows ? "Logs/claude_build_result_windows.json" : "Logs/claude_build_result.json",
             "{\"target\":\"" + (windows ? "windows" : "mac") + "\",\"status\":\"" + s.result + "\",\"errors\":" + s.totalErrors + ",\"seconds\":" + s.totalTime.TotalSeconds.ToString("F1") +
-            ",\"characters\":\"" + check + "\",\"errorText\":\"" + errors + "\"}");
+            ",\"characters\":\"" + check + "\",\"integrity\":\"" + (s.result == BuildResult.Succeeded ? Integrity(outDir) : "-") + "\",\"freeGBAfter\":" + (FreeBytes() >> 30) + ",\"errorText\":\"" + errors + "\"}");
         Debug.Log("[ElderboomClaudeBuild] " + s.result + " errors=" + s.totalErrors + " " + check);
     }
 }
