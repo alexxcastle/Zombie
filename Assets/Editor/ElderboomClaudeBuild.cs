@@ -267,6 +267,10 @@ static class ElderboomClaudeBuild
 
     const string WinPath = "Builds/Windows/ElderboomUnityPort.exe";
 
+    // Terminal (editor closed): -executeMethod ElderboomClaudeBuild.BuildWindowsBatch / BuildMacBatch
+    public static void BuildWindowsBatch() { Build(true); EditorApplication.Exit(File.ReadAllText("Logs/claude_build_result_windows.json").Contains("\"Succeeded\"") ? 0 : 1); }
+    public static void BuildMacBatch() { Build(false); EditorApplication.Exit(File.ReadAllText("Logs/claude_build_result.json").Contains("\"Succeeded\"") ? 0 : 1); }
+
     const int MinFreeGB = 8; // the integrity check after the build catches a disk that filled up anyway
     static long FreeBytes()
     {
