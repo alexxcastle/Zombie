@@ -21,6 +21,8 @@ using UnityEngine.AI;
 //   Client: runs no waves and no zombie AI; it shows zombie proxies from the host's snapshots (20 Hz),
 //           sends its own position and its hits on zombies; the host sends back melee damage and kill rewards.
 // Every player is shown to the others as a full-body avatar (ElderboomLanAvatar).
+// LAN games also run on Unity Transport (plain UDP, same reliable pipeline as Relay): joins, hits, kills and
+// rewards are resent until acknowledged; only the discovery broadcast uses raw UDP sockets.
 // ONLINE: the same messages travel through Unity Relay (Unity Transport) instead of the LAN socket: the host gets a
 // short join code, friends type it and connect from any network (no VPN, no open ports, no Unity account for them).
 public sealed class ElderboomLan : MonoBehaviour
@@ -30,7 +32,7 @@ public sealed class ElderboomLan : MonoBehaviour
     public const int GamePort = 47777, DiscoveryPort = 47778;
     const float SendInterval = .05f, AnnounceInterval = 1f, PeerTimeout = 10f, GameListTimeout = 4f;
     // Bump Version whenever messages change: players on different builds get a clear "update" message.
-    const byte Magic = 0xEB, Version = 4;
+    const byte Magic = 0xEB, Version = 5;
     enum Msg : byte { Announce = 1, Join = 2, Accept = 3, State = 4, World = 5, Hit = 6, Damage = 7, Kill = 8, Leave = 9, Effect = 10, Ignore = 11, Collect = 12, PowerUp = 13, Grant = 14, GateOpen = 15, Reject = 16, HorsePart = 17, Altar = 18 }
     static readonly string[] Variants = { "walker", "runner", "brute" };
 
@@ -64,7 +66,7 @@ public sealed class ElderboomLan : MonoBehaviour
     {
         public IPEndPoint ep; public NetworkConnection conn; public bool relay;
         public string Key => relay ? "relay:" + conn : ep.ToString();
-        public string Label => relay ? "the host" : ep.Address.ToString();
+        public string Label => ep != null ? ep.Address.ToString() : "the host";
         public static Remote Udp(IPEndPoint ep) => new Remote { ep = ep };
     }
 
@@ -73,8 +75,8 @@ public sealed class ElderboomLan : MonoBehaviour
     NetworkPipeline fastPipe, reliablePipe;
     readonly List<NetworkConnection> connections = new List<NetworkConnection>();
     readonly Dictionary<NetworkConnection, Remote> relayRemotes = new Dictionary<NetworkConnection, Remote>();
-    bool relayActive, relayConnected;
-    public bool Online => relayActive;
+    bool relayActive, relayConnected, lanDriver; // relayActive: a Transport driver is running (Relay or LAN)
+    public bool Online => relayActive && !lanDriver;
     public string JoinCode { get; private set; } = "";
     public bool HostReady { get; private set; }
     string joinOperator, hostDifficulty = "NORMAL";
@@ -132,9 +134,10 @@ public sealed class ElderboomLan : MonoBehaviour
         lan.mode = Mode.Host; lan.hostDifficulty = difficulty; lan.LocalId = 0;
         try
         {
-            lan.socket = new UdpClient(AddressFamily.InterNetwork);
-            lan.socket.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            lan.socket.Client.Bind(new IPEndPoint(IPAddress.Any, GamePort));
+            // Game traffic: Unity Transport on GamePort. Announcements: a separate broadcast socket.
+            if (!lan.CreateLanDriver(NetworkEndpoint.AnyIpv4.WithPort(GamePort)) || lan.driver.Listen() != 0)
+                throw new Exception("port " + GamePort + " is busy");
+            lan.socket = new UdpClient(0, AddressFamily.InterNetwork);
             lan.socket.EnableBroadcast = true;
             NoConnReset(lan.socket);
             lan.Status = "HOSTING ON " + LocalAddress;
@@ -154,12 +157,14 @@ public sealed class ElderboomLan : MonoBehaviour
     {
         var lan = Ensure();
         lan.CloseGameSocket(); lan.CloseRelay();
-        lan.mode = Mode.Client; lan.host = Remote.Udp(host); lan.joinOperator = op;
-        lan.Accepted = false; lan.Failed = false; lan.joinAt = 0f; lan.joinUntil = Time.unscaledTime + 4f;
+        lan.mode = Mode.Client; lan.host = null; lan.joinOperator = op;
+        lan.Accepted = false; lan.Failed = false; lan.joinAt = 0f; lan.joinUntil = Time.unscaledTime + 6f;
         try
         {
-            lan.socket = new UdpClient(0, AddressFamily.InterNetwork);
-            NoConnReset(lan.socket);
+            if (!lan.CreateLanDriver(NetworkEndpoint.AnyIpv4)) throw new Exception("network unavailable");
+            var conn = lan.driver.Connect(NetworkEndpoint.Parse(host.Address.ToString(), (ushort)GamePort));
+            lan.host = new Remote { conn = conn, relay = true, ep = new IPEndPoint(host.Address, GamePort) };
+            lan.connections.Add(conn); lan.relayRemotes[conn] = lan.host;
             lan.Status = "CONNECTING TO " + host.Address + "...";
         }
         catch (Exception e) { lan.Status = "COULD NOT CONNECT: " + e.Message; lan.Failed = true; lan.mode = Mode.Offline; }
@@ -483,12 +488,24 @@ public sealed class ElderboomLan : MonoBehaviour
         CloseRelay();
         var settings = new NetworkSettings(Allocator.Temp);
         settings.WithRelayParameters(ref data);
+        return StartDriver(settings, NetworkEndpoint.AnyIpv4, false);
+    }
+
+    // LAN: the same driver and pipelines over plain UDP (no Relay).
+    bool CreateLanDriver(NetworkEndpoint bind)
+    {
+        CloseRelay();
+        return StartDriver(new NetworkSettings(Allocator.Temp), bind, true);
+    }
+
+    bool StartDriver(NetworkSettings settings, NetworkEndpoint bind, bool lan)
+    {
         driver = NetworkDriver.Create(settings);
         // Snapshots: unreliable (a newer one follows); events (join, hits, damage, kills): reliable and ordered.
         fastPipe = driver.CreatePipeline(typeof(FragmentationPipelineStage));
         reliablePipe = driver.CreatePipeline(typeof(FragmentationPipelineStage), typeof(ReliableSequencedPipelineStage));
-        relayActive = true;
-        if (driver.Bind(NetworkEndpoint.AnyIpv4) != 0) { Fail("COULD NOT REACH THE ONLINE SERVICE"); return false; }
+        relayActive = true; lanDriver = lan;
+        if (driver.Bind(bind) != 0) { if (!lan) Fail("COULD NOT REACH THE ONLINE SERVICE"); return false; }
         return true;
     }
 
@@ -552,7 +569,7 @@ public sealed class ElderboomLan : MonoBehaviour
         }
         driver = default;
         connections.Clear(); relayRemotes.Clear();
-        relayActive = relayConnected = false; HostReady = false;
+        relayActive = relayConnected = lanDriver = false; HostReady = false;
     }
 
     // Host: join code (online) or address (LAN) and player count in the top-right corner while playing.
@@ -564,7 +581,7 @@ public sealed class ElderboomLan : MonoBehaviour
         var game = ElderboomGame.Active;
         if (game == null || game.Player == null || !game.IsPlaying) return;
         cachedAddress ??= LocalAddress;
-        string text = relayActive ? (HostReady ? "ONLINE CODE  " + JoinCode : Failed ? Status : "CREATING ONLINE GAME...") : "LAN  " + cachedAddress;
+        string text = Online ? (HostReady ? "ONLINE CODE  " + JoinCode : Failed ? Status : "CREATING ONLINE GAME...") : "LAN  " + cachedAddress;
         text += "   ·   " + Players + (Players == 1 ? " PLAYER" : " PLAYERS");
         if (cornerStyle == null) cornerStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperRight, fontStyle = FontStyle.Bold, fontSize = 16 };
         var rect = new Rect(Screen.width - 620f, 14f, 600f, 28f);
@@ -620,7 +637,7 @@ public sealed class ElderboomLan : MonoBehaviour
 
     void SendLeave()
     {
-        if (socket == null) return;
+        if (socket == null && !relayActive) return;
         try
         {
             Begin(Msg.Leave);
@@ -720,7 +737,7 @@ public sealed class ElderboomLan : MonoBehaviour
             var lost = new List<string>();
             foreach (var kv in peers) if (now - kv.Value.seen > PeerTimeout) lost.Add(kv.Key);
             foreach (var key in lost) RemovePeer(key, "LEFT");
-            if (inGame && game.IsPlaying && game.Session != placedSession) { placedSession = game.Session; game.ShowNotice(relayActive ? "ONLINE GAME  //  CODE " + JoinCode : "LAN HOST  //  JOIN ON " + LocalAddress, 8f); }
+            if (inGame && game.IsPlaying && game.Session != placedSession) { placedSession = game.Session; game.ShowNotice(Online ? "ONLINE GAME  //  CODE " + JoinCode : "LAN HOST  //  JOIN ON " + LocalAddress, 8f); }
             if (inGame)
             {
                 foreach (var peer in peers.Values)
@@ -782,9 +799,8 @@ public sealed class ElderboomLan : MonoBehaviour
                 var from = remote.ep;
                 string name = r.ReadString(); int players = r.ReadByte(); string difficulty = r.ReadString();
                 var found = Games.Find(g => g.endPoint.Address.Equals(from.Address));
-                if (found == null) { found = new Found { endPoint = new IPEndPoint(from.Address, from.Port) }; Games.Add(found); }
+                if (found == null) { found = new Found { endPoint = new IPEndPoint(from.Address, GamePort) }; Games.Add(found); }
                 found.name = name; found.players = players; found.difficulty = difficulty; found.seen = now;
-                found.endPoint = new IPEndPoint(from.Address, from.Port);
                 return;
             }
             case Msg.Join:
