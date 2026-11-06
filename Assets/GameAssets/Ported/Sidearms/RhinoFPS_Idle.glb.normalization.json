@@ -1,0 +1,15 @@
+{
+  "source": "/Users/alessandrocastellani/zombie-test/assets/imported/weapons/chiappa_rhino_60ds/RhinoFPS_Idle.glb",
+  "destination": "/Users/alessandrocastellani/zombie-test/UnityHDRPSlice/Assets/GameAssets/Ported/Sidearms/RhinoFPS_Idle.glb",
+  "maximum": 2048,
+  "resized": 6,
+  "sourceBytes": 73315980,
+  "resultBytes": 28149488,
+  "sourceSha256": "f3284bfc96952583b9730eab40015714bda130b04b73b044ffa5a6834931be98",
+  "resultSha256": "e5b421b9344d4ca81a475192cfec5466f6fd9de0f278b71dee62693287430eef",
+  "nodes": 41,
+  "animations": [
+    "RHINO60DS_IDLE",
+    "Rhino 60DSAction"
+  ]
+}

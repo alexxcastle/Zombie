@@ -1,0 +1,29 @@
+{
+  "asset": "smokehouse",
+  "provider": "Hyper3D Rodin",
+  "job_uuid": "dc250899-8a13-4d12-9fc5-61feab9723e3",
+  "consumed_credits": 1,
+  "original": [
+    {
+      "name": "base_high_pbr.glb",
+      "sha256": "9533a295e314e3f96bafe7b5b6300e4525b63fb524a402449d52b1177d974ad5"
+    }
+  ],
+  "game_model_sha256": "55eb6ed66e9e8cb7087c8027ca99052db4d19933de709668df14b337ace39028",
+  "game_mesh": {
+    "asset": "smokehouse",
+    "source_triangles": 2000000,
+    "dimensions_m": [
+      4.8444695472717285,
+      6.649933815002441,
+      5.522213459014893
+    ],
+    "lod_triangles": {
+      "LOD0": 60000,
+      "LOD1": 27264,
+      "LOD2": 22436
+    },
+    "uv_layers": 1,
+    "notes": "Original high-detail source preserved; game mesh has 2K shared PBR and three LODs. Parapet has exact open ironwork."
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "asset": "granary",
+  "provider": "Hyper3D Rodin",
+  "job_uuid": "d2e44bbb-bb45-4073-9259-833e1768f5aa",
+  "consumed_credits": 1,
+  "original": [
+    {
+      "name": "base_high_pbr.glb",
+      "sha256": "389951a8383a7d8ade50c0fc6207db5b650de7db040b66503d08a9ddfba32732"
+    }
+  ],
+  "game_model_sha256": "f080f887b90ac666021a9f5e6fe63df336e56cfb016e87370b83877b531426aa",
+  "game_mesh": {
+    "asset": "granary",
+    "source_triangles": 2000000,
+    "dimensions_m": [
+      5.718268394470215,
+      8.140107154846191,
+      6.032041072845459
+    ],
+    "lod_triangles": {
+      "LOD0": 59999,
+      "LOD1": 14000,
+      "LOD2": 11063
+    },
+    "uv_layers": 1,
+    "notes": "Original high-detail source preserved; game mesh has 2K shared PBR and three LODs. Parapet has exact open ironwork."
+  }
+}

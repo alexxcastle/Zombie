@@ -1,0 +1,33 @@
+{
+  "asset": "fern_02",
+  "source": "https://polyhaven.com/a/fern_02",
+  "license": "CC0-1.0",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "path": "fern_02_2k.gltf",
+      "sha256": "50540d37531f93fd693d5340d5b3095c9d6d2834fa05c74bea797d54f290cb6a",
+      "bytes": 6899
+    },
+    {
+      "path": "textures/fern_02_diff_2k.jpg",
+      "sha256": "9ee18172170728050871772e2cd6d8d37b52f9138e61b49b04486623f9caf84b",
+      "bytes": 993703
+    },
+    {
+      "path": "textures/fern_02_arm_2k.jpg",
+      "sha256": "1eaf9bd29e2d83a77ca5d89bdddebcd9216b8b4ba244644580fe5b89bbe713f1",
+      "bytes": 850856
+    },
+    {
+      "path": "fern_02.bin",
+      "sha256": "fe1abb762bcbbc7ad9e86925c8080437a62add257d9280e9142fdc85c226e64c",
+      "bytes": 176176
+    },
+    {
+      "path": "textures/fern_02_nor_gl_2k.jpg",
+      "sha256": "dfe1ac4a428d21f7c134411500177d66b8dd800c8fec6f0040c50f44414a777b",
+      "bytes": 1365615
+    }
+  ]
+}

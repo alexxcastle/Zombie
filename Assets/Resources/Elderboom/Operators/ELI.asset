@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4c1a36af341437e8e5267aa7d76480, type: 3}
+  m_Name: ELI
+  m_EditorClassIdentifier: Assembly-CSharp::ElderboomOperatorDefinition
+  id: ELI
+  displayName: ELI
+  menuOrder: 1
+  menuDescription: 'SIG 550
+
+    Ignore / Pulse / Freeze'
+  cardTitle: "ELI \xB7 ACOUSTIC OPERATOR"
+  cardTag: URBAN SURVIVOR / SIG 550
+  cardBody: Uses the acoustic signal to divert or immobilize nearby zombies.
+  portrait: {fileID: 2800000, guid: fd43c86c89c3647dab43cf2a8352b037, type: 3}
+  primaryWeapon: sig550
+  secondaryWeapon: rhino
+  extraWeapon: 
+  weaponSlots: 2
+  weaponLabel: SIG 550
+  capacity: 30
+  reserve: 120
+  damage: 5
+  fireInterval: 0.086
+  tacticalArms: 0
+  rightHandBone: DEF_hand.R
+  weaponMuzzle: MainWeapon_Muzzle
+  stowedWeaponNodes:
+  - output_unwrapped.001
+  - Caricatore
+  abilities:
+  - {fileID: 11400000, guid: cb9bbb6e5a82747e9b1a0d6320d91c65, type: 2}
+  - {fileID: 11400000, guid: 59950687bbf4a4367a384f06867ed9eb, type: 2}
+  - {fileID: 11400000, guid: a291a5aa487e94cd38be53edbf3e7073, type: 2}
+  sharedCooldown: 1
+  abilityAnimationSeconds: 3.1

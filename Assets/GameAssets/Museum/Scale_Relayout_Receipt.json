@@ -1,0 +1,115 @@
+{
+  "status": "scaled_and_relaid_out",
+  "backup": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Layout_Revision/Before_Scale_Museum_First_Map_v01.blend",
+  "source": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Museum_First_Map_v01.blend",
+  "scale": {
+    "Grand Atrium": 1.5,
+    "Classical Sculpture": 2.5,
+    "Royal Carriages": 2.5,
+    "Science and Discovery": 2.5,
+    "Fine Art": 2.5,
+    "Arms and Armour": 2.5
+  },
+  "portals": [
+    {
+      "name": "Atrium North",
+      "x": 0.0,
+      "y": 18.45,
+      "width": 7.2,
+      "height": 5.25,
+      "depth": 6.0
+    },
+    {
+      "name": "Atrium South",
+      "x": 0.0,
+      "y": -24.0,
+      "width": 7.2,
+      "height": 5.25,
+      "depth": 4.5
+    },
+    {
+      "name": "Sculpture Front",
+      "x": -45.0,
+      "y": 60.0,
+      "width": 8.0,
+      "height": 8.75,
+      "depth": 20.0
+    },
+    {
+      "name": "Sculpture Rear",
+      "x": -45.0,
+      "y": 142.0,
+      "width": 8.0,
+      "height": 8.75,
+      "depth": 25.0
+    },
+    {
+      "name": "Carriages Front",
+      "x": 0.0,
+      "y": 60.0,
+      "width": 9.0,
+      "height": 8.75,
+      "depth": 10.0
+    },
+    {
+      "name": "Carriages Rear",
+      "x": 8.25,
+      "y": 130.0,
+      "width": 8.0,
+      "height": 8.75,
+      "depth": 12.5
+    },
+    {
+      "name": "Science Front",
+      "x": 45.0,
+      "y": 60.0,
+      "width": 8.0,
+      "height": 8.75,
+      "depth": 10.0
+    },
+    {
+      "name": "Science Rear",
+      "x": 45.0,
+      "y": 132.5,
+      "width": 8.0,
+      "height": 8.75,
+      "depth": 12.5
+    },
+    {
+      "name": "Art Front",
+      "x": -45.0,
+      "y": -60.0,
+      "width": 5.5,
+      "height": 8.75,
+      "depth": 7.5
+    },
+    {
+      "name": "Art Rear",
+      "x": -45.0,
+      "y": -130.0,
+      "width": 5.5,
+      "height": 8.75,
+      "depth": 10.0
+    },
+    {
+      "name": "Armour Front",
+      "x": 45.0,
+      "y": -60.0,
+      "width": 7.5,
+      "height": 8.75,
+      "depth": 10.0
+    },
+    {
+      "name": "Armour Rear",
+      "x": 41.25,
+      "y": -137.5,
+      "width": 6.5,
+      "height": 8.75,
+      "depth": 12.5
+    }
+  ],
+  "notes": [
+    "All imported source props inherit their room root scale.",
+    "Generated corridors, portal frames, lighting and gameplay markers were rebuilt after scaling."
+  ]
+}

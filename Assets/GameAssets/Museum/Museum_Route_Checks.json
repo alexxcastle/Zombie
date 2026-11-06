@@ -1,0 +1,203 @@
+{
+  "method": "Sampled floor and forward-clearance tests on each primary gallery axis.",
+  "height_m": 1.9,
+  "routes": [
+    {
+      "name": "Atrium north to north concourse",
+      "passed": true,
+      "length_m": 44.55,
+      "blocked": [],
+      "floor_missing": []
+    },
+    {
+      "name": "Atrium south to entrance",
+      "passed": true,
+      "length_m": 58.0,
+      "blocked": [],
+      "floor_missing": []
+    },
+    {
+      "name": "Classical Sculpture",
+      "passed": false,
+      "length_m": 78.0,
+      "blocked": [
+        {
+          "sample": 5,
+          "z": 0.6,
+          "hit": "Polished marble 3 architecture"
+        },
+        {
+          "sample": 9,
+          "z": 0.6,
+          "hit": "Polished marble 3 architecture"
+        },
+        {
+          "sample": 13,
+          "z": 0.6,
+          "hit": "Polished marble 3 architecture"
+        },
+        {
+          "sample": 17,
+          "z": 0.6,
+          "hit": "Polished marble 3 architecture"
+        },
+        {
+          "sample": 21,
+          "z": 0.6,
+          "hit": "Ochre plaster architecture"
+        },
+        {
+          "sample": 21,
+          "z": 1.45,
+          "hit": "Ochre plaster architecture"
+        },
+        {
+          "sample": 25,
+          "z": 0.6,
+          "hit": "Ivory carving architecture"
+        },
+        {
+          "sample": 25,
+          "z": 1.45,
+          "hit": "Ivory carving architecture"
+        },
+        {
+          "sample": 26,
+          "z": 0.6,
+          "hit": "Ivory carving architecture"
+        },
+        {
+          "sample": 26,
+          "z": 1.45,
+          "hit": "Limestone architecture"
+        },
+        {
+          "sample": 27,
+          "z": 0.6,
+          "hit": "Ochre plaster architecture"
+        },
+        {
+          "sample": 27,
+          "z": 1.45,
+          "hit": "Ochre plaster architecture"
+        }
+      ],
+      "floor_missing": [],
+      "lane_x": -42
+    },
+    {
+      "name": "Royal Carriages",
+      "passed": true,
+      "length_m": 70.46,
+      "blocked": [],
+      "floor_missing": []
+    },
+    {
+      "name": "Science and Discovery",
+      "passed": true,
+      "length_m": 72.0,
+      "blocked": [],
+      "floor_missing": []
+    },
+    {
+      "name": "Fine Art",
+      "passed": false,
+      "length_m": 66.0,
+      "blocked": [
+        {
+          "sample": 0,
+          "z": 1.45,
+          "hit": "Dark Marble Plinth"
+        },
+        {
+          "sample": 2,
+          "z": 0.6,
+          "hit": "South Concourse Expanded wall.003"
+        },
+        {
+          "sample": 2,
+          "z": 1.45,
+          "hit": "Dark Marble Plinth"
+        },
+        {
+          "sample": 3,
+          "z": 1.45,
+          "hit": "Dark Marble Plinth"
+        },
+        {
+          "sample": 4,
+          "z": 1.45,
+          "hit": "Dark Marble Plinth"
+        },
+        {
+          "sample": 9,
+          "z": 0.6,
+          "hit": "Aged Limestone"
+        },
+        {
+          "sample": 10,
+          "z": 0.6,
+          "hit": "Aged Limestone"
+        },
+        {
+          "sample": 14,
+          "z": 0.6,
+          "hit": "Aged Limestone"
+        },
+        {
+          "sample": 19,
+          "z": 0.6,
+          "hit": "Aged Limestone"
+        },
+        {
+          "sample": 19,
+          "z": 1.45,
+          "hit": "Venetian Red Plaster"
+        },
+        {
+          "sample": 20,
+          "z": 0.6,
+          "hit": "Venetian Red Plaster"
+        },
+        {
+          "sample": 20,
+          "z": 1.45,
+          "hit": "Venetian Red Plaster"
+        },
+        {
+          "sample": 23,
+          "z": 0.6,
+          "hit": "Aged Limestone"
+        },
+        {
+          "sample": 24,
+          "z": 0.6,
+          "hit": "Aged Limestone"
+        },
+        {
+          "sample": 28,
+          "z": 0.6,
+          "hit": "Aged Limestone"
+        },
+        {
+          "sample": 29,
+          "z": 0.6,
+          "hit": "Aged Limestone"
+        }
+      ],
+      "floor_missing": [],
+      "lane_x": -40
+    },
+    {
+      "name": "Arms and Armour",
+      "passed": true,
+      "length_m": 77.1,
+      "blocked": [],
+      "floor_missing": []
+    }
+  ],
+  "scale_revision": {
+    "atrium": 1.5,
+    "other_wings_and_props": 2.5
+  }
+}

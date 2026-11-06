@@ -1,0 +1,33 @@
+{
+  "asset": "wicker_basket_01",
+  "source": "https://polyhaven.com/a/wicker_basket_01",
+  "license": "CC0-1.0",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "path": "wicker_basket_01_2k.gltf",
+      "sha256": "bd02a364acb48039355642f69349f63d0fe9c635a33b4a57c44e6e24d672cb35",
+      "bytes": 2792
+    },
+    {
+      "path": "textures/wicker_basket_01_arm_2k.jpg",
+      "sha256": "b1932ee1cd909fde89d4cd73b69b33d9c62b9bebf10063a37133461164f9e672",
+      "bytes": 2893672
+    },
+    {
+      "path": "wicker_basket_01.bin",
+      "sha256": "8e96025ffcdc64a7e75d1aa980f2491b1219912a4554272cd1e192a966c399f8",
+      "bytes": 624920
+    },
+    {
+      "path": "textures/wicker_basket_01_nor_gl_2k.jpg",
+      "sha256": "74eb1bd455ff66f6dd00abe26fa5ad9669a5b67217f394be981d9b04d3e9e774",
+      "bytes": 2229761
+    },
+    {
+      "path": "textures/wicker_basket_01_diff_2k.jpg",
+      "sha256": "ffc48a6f829f36d6baf7461cbe8d0b71971893315840d93c0e50f3c8b95a9dce",
+      "bytes": 2606521
+    }
+  ]
+}

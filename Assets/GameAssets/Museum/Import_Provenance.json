@@ -1,0 +1,503 @@
+{
+  "source_blend": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Museum_First_Map_v01.blend",
+  "source_sha256": "3ce343705d9e9d8e623a1c6c5d2b7e0a3b0b2abd26b267103c2282632c585e6d",
+  "glb_sha256": "08daf12e9b26df0b6f073016c340fb4c79d73aff1b3a11d6ee002bafca6e8b15",
+  "export_receipt": {
+    "status": "exported",
+    "source": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Museum_First_Map_v01.blend",
+    "bakes": [
+      {
+        "material": "Aged Limestone",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Aged_Limestone_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Black marble",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Black_marble_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Black marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Black_marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Brown marble",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Brown_marble_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Brown marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Brown_marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Brown marble inlay",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Brown_marble_inlay_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Brown marble inlay",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Brown_marble_inlay_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Column Marble",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Column_Marble_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Column Marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Column_Marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Cream Marble",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Cream_Marble_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Cream Marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Cream_Marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Dark Marble Plinth",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Dark_Marble_Plinth_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Honey Marble",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Honey_Marble_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Honey Marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Honey_Marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Honey marble",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Honey_marble_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Honey marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Honey_marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Ivory marble",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Ivory_marble_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Ivory marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Ivory_marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "MAP | aged brass",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/MAP_aged_brass_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "MAP | dark green marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/MAP_dark_green_marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "MAP | honed cream marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/MAP_honed_cream_marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "MAP | muted ochre inset",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/MAP_muted_ochre_inset_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "MAP | warm carved limestone",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/MAP_warm_carved_limestone_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "MAP | warm ivory plaster",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/MAP_warm_ivory_plaster_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 0",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_0_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 1",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_1_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 2",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_2_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 3",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_3_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 4",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_4_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 5",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_5_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 6",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_6_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 7",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_7_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 8",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_8_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Oak Parquet 9",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Oak_Parquet_9_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Pale marble",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Pale_marble_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Pale marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Pale_marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Pale marble.001",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Pale_marble_001_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Pale marble.001",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Pale_marble_001_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Polished marble 0",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Polished_marble_0_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Polished marble 1",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Polished_marble_1_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Polished marble 2",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Polished_marble_2_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Polished marble 3",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Polished_marble_3_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Russet marble",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Russet_marble_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Russet marble",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Russet_marble_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Venetian Red Plaster",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Venetian_Red_Plaster_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Warm carved limestone",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Warm_carved_limestone_Normal.png",
+        "cached": true
+      },
+      {
+        "material": "Warm limestone",
+        "channel": "BaseColor",
+        "resolution": 1024,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Warm_limestone_BaseColor.png",
+        "cached": true
+      },
+      {
+        "material": "Warm limestone",
+        "channel": "Normal",
+        "resolution": 512,
+        "file": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Textures/Warm_limestone_Normal.png",
+        "cached": true
+      }
+    ],
+    "zones": [
+      {
+        "name": "Grand_Atrium",
+        "render_object": "RENDER_Grand_Atrium",
+        "source_objects": 1863,
+        "faces": 72728
+      },
+      {
+        "name": "Classical_Sculpture",
+        "render_object": "RENDER_Classical_Sculpture",
+        "source_objects": 1082,
+        "faces": 262983
+      },
+      {
+        "name": "Royal_Carriages",
+        "render_object": "RENDER_Royal_Carriages",
+        "source_objects": 1719,
+        "faces": 274588
+      },
+      {
+        "name": "Science_and_Discovery",
+        "render_object": "RENDER_Science_and_Discovery",
+        "source_objects": 23,
+        "faces": 272406
+      },
+      {
+        "name": "Fine_Art",
+        "render_object": "RENDER_Fine_Art",
+        "source_objects": 209,
+        "faces": 336428
+      },
+      {
+        "name": "Arms_and_Armour",
+        "render_object": "RENDER_Arms_and_Armour",
+        "source_objects": 559,
+        "faces": 186940
+      },
+      {
+        "name": "North_Concourse",
+        "render_object": "RENDER_North_Concourse",
+        "source_objects": 89,
+        "faces": 534
+      },
+      {
+        "name": "South_Concourse",
+        "render_object": "RENDER_South_Concourse",
+        "source_objects": 85,
+        "faces": 510
+      },
+      {
+        "name": "West_Ambulatory",
+        "render_object": "RENDER_West_Ambulatory",
+        "source_objects": 67,
+        "faces": 402
+      },
+      {
+        "name": "East_Ambulatory",
+        "render_object": "RENDER_East_Ambulatory",
+        "source_objects": 67,
+        "faces": 402
+      },
+      {
+        "name": "Atrium_North_Vestibule",
+        "render_object": "RENDER_Atrium_North_Vestibule",
+        "source_objects": 27,
+        "faces": 162
+      },
+      {
+        "name": "Atrium_South_Vestibule",
+        "render_object": "RENDER_Atrium_South_Vestibule",
+        "source_objects": 27,
+        "faces": 162
+      },
+      {
+        "name": "North_Return_Gallery",
+        "render_object": "RENDER_North_Return_Gallery",
+        "source_objects": 89,
+        "faces": 534
+      },
+      {
+        "name": "Sculpture_Rear_Link",
+        "render_object": "RENDER_Sculpture_Rear_Link",
+        "source_objects": 17,
+        "faces": 102
+      },
+      {
+        "name": "Carriage_Rear_Link",
+        "render_object": "RENDER_Carriage_Rear_Link",
+        "source_objects": 19,
+        "faces": 114
+      },
+      {
+        "name": "Science_Rear_Link",
+        "render_object": "RENDER_Science_Rear_Link",
+        "source_objects": 19,
+        "faces": 114
+      },
+      {
+        "name": "South_Return_Gallery",
+        "render_object": "RENDER_South_Return_Gallery",
+        "source_objects": 86,
+        "faces": 516
+      },
+      {
+        "name": "Art_Rear_Link",
+        "render_object": "RENDER_Art_Rear_Link",
+        "source_objects": 19,
+        "faces": 114
+      },
+      {
+        "name": "Armour_Rear_Link",
+        "render_object": "RENDER_Armour_Rear_Link",
+        "source_objects": 17,
+        "faces": 102
+      },
+      {
+        "name": "Entrance_and_Reception",
+        "render_object": "RENDER_Entrance_and_Reception",
+        "source_objects": 33,
+        "faces": 198
+      },
+      {
+        "name": "CURATED_Atrium_Furnishings",
+        "render_object": "RENDER_CURATED_Atrium_Furnishings",
+        "source_objects": 50,
+        "faces": 780
+      },
+      {
+        "name": "CURATED_Atrium_Roof_Supports",
+        "render_object": "RENDER_CURATED_Atrium_Roof_Supports",
+        "source_objects": 9,
+        "faces": 560
+      },
+      {
+        "name": "Reception_Fittings_and_Portal_Frames",
+        "render_object": "RENDER_Reception_Fittings_and_Portal_Frames",
+        "source_objects": 99,
+        "faces": 19383
+      },
+      {
+        "name": "Link_Ceilings",
+        "render_object": "RENDER_Link_Ceilings",
+        "source_objects": 14,
+        "faces": 84
+      }
+    ],
+    "output": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/Museum_First_Map/Unity_Import/Package/Museum_Map.glb",
+    "seconds": 109.793781042099,
+    "objects": 48,
+    "file_bytes": 164446608
+  },
+  "notes": [
+    "User-provided museum rooms, assembled in Blender; source files preserved.",
+    "Procedural base-colour and bump surfaces baked to PBR maps in a temporary export scene.",
+    "Render meshes merged per zone; separate static collision meshes and simple exhibit blockers."
+  ],
+  "layout_revision": "Props restored from original archives after fixing reparenting evaluation; curated spacing and rebuilt closed dome with roof connections."
+}

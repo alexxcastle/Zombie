@@ -1,0 +1,33 @@
+{
+  "asset": "wooden_axe",
+  "source": "https://polyhaven.com/a/wooden_axe",
+  "license": "CC0-1.0",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "path": "wooden_axe_2k.gltf",
+      "sha256": "965c47d2313c99121ad4fd645e930ac8da52b1153cf774fc427c5c5feeeb037b",
+      "bytes": 2744
+    },
+    {
+      "path": "wooden_axe.bin",
+      "sha256": "f94ea2e160f43b6a50e7d0ca270faf55a3fa5cd6b6e424f6e56b8623da26f658",
+      "bytes": 91288
+    },
+    {
+      "path": "textures/wooden_axe_arm_2k.jpg",
+      "sha256": "683e922555210003a15f24f219dba661493774fee36c45a9064b863896a8a3e9",
+      "bytes": 2458568
+    },
+    {
+      "path": "textures/wooden_axe_nor_gl_2k.jpg",
+      "sha256": "7981b48258da09d137b7d6d650c0b755d2aa5a725f180b0872b0d6522e041055",
+      "bytes": 2120062
+    },
+    {
+      "path": "textures/wooden_axe_diff_2k.jpg",
+      "sha256": "03139954865d4e6e6fbec029c914f8c059942fd48b289e633c784624df3e147f",
+      "bytes": 2591662
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "source": "Hyper3D Rodin; commissioned for this project, assembled locally in Blender",
+  "source_workspace": "/Users/alessandrocastellani/zombie-test/assets/generated/altar_upgrader/deliverables",
+  "sha256": "fd5306f52b42939eb6cba7aa34a5e74a315b6b3579003bc78bd216257c981c9c",
+  "checks": {
+    "nine_independent_motion_controls": true,
+    "every_control_animated": true,
+    "weapon_attachment_socket": true,
+    "synchronized_upgrade_cycle": true,
+    "separate_lids": true,
+    "four_separate_upper_fingers": true,
+    "four_fixed_clamp_feet": true,
+    "textured_pbr": true,
+    "no_altar_proxy_exported": true,
+    "all_geometry_has_uv": true
+  },
+  "user_instruction": "Insert this generated device into the game and make it functional",
+  "note": "Original provider receipts retained in source workspace jobs; credentials not copied."
+}

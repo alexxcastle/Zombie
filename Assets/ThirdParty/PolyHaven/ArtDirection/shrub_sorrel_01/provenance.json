@@ -1,0 +1,33 @@
+{
+  "asset": "shrub_sorrel_01",
+  "source": "https://polyhaven.com/a/shrub_sorrel_01",
+  "license": "CC0-1.0",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "path": "shrub_sorrel_01_2k.gltf",
+      "sha256": "803e54269cd9cd787eef44a797b399e6d7c433e897013602dd3569bf45ceb164",
+      "bytes": 17428
+    },
+    {
+      "path": "textures/shrub_sorrel_01_diff_2k.jpg",
+      "sha256": "956ea2f96f3d8a1156233b773293fdef8d255ff0e076e69ddb05ff66695e7d4c",
+      "bytes": 1208902
+    },
+    {
+      "path": "shrub_sorrel_01.bin",
+      "sha256": "725f46bf6d330486bf22d4b897fa1d8ef01cdc77a72f1400a3939f86740b4e5d",
+      "bytes": 110936
+    },
+    {
+      "path": "textures/shrub_sorrel_01_arm_2k.jpg",
+      "sha256": "376e8d768a156b6f498df7d639df83056607b5c4c0334b2079a6a8838d52dd2f",
+      "bytes": 613088
+    },
+    {
+      "path": "textures/shrub_sorrel_01_nor_gl_2k.jpg",
+      "sha256": "de0374dcb0c346d1fc9ac4a9babb60b9aa70fc8f55db991f89683dbc949e98a1",
+      "bytes": 1751781
+    }
+  ]
+}

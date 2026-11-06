@@ -1,0 +1,29 @@
+{
+  "asset": "cooper_workshop",
+  "provider": "Hyper3D Rodin",
+  "job_uuid": "4f6549f7-1102-469f-9a92-8bf6305d1e06",
+  "consumed_credits": 1,
+  "original": [
+    {
+      "name": "base_high_pbr.glb",
+      "sha256": "4bcc631dca8515eeeffe489bdbee92114cdbe5442da69d6c5f0f11c1137ac5ac"
+    }
+  ],
+  "game_model_sha256": "a4e00879a4cefc23938716ed9f7f10e16f5da3907243ec73c9d61b362f6032ca",
+  "game_mesh": {
+    "asset": "cooper_workshop",
+    "source_triangles": 2000000,
+    "dimensions_m": [
+      9.877636909484863,
+      4.935063362121582,
+      5.23684549331665
+    ],
+    "lod_triangles": {
+      "LOD0": 64999,
+      "LOD1": 14000,
+      "LOD2": 12409
+    },
+    "uv_layers": 1,
+    "notes": "Original high-detail source preserved; game mesh has 2K shared PBR and three LODs. Parapet has exact open ironwork."
+  }
+}

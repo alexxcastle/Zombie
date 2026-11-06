@@ -1,0 +1,57 @@
+# Unity generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+*.csproj
+*.sln
+*.pidb
+*.userprefs
+.vs/
+.idea/
+.DS_Store
+
+# Local working files
+Exports/
+claude_xfer/
+perf_log.txt
+lan_log.txt
+
+# Heavy art is NOT in git (GitHub limits): it is backed up separately (see Docs/BACKUP.md).
+# Their .meta files ARE tracked, so every reference survives when the art is restored.
+*.glb
+*.gltf
+*.fbx
+*.FBX
+*.obj
+*.blend
+*.blend1
+*.png
+*.PNG
+*.jpg
+*.jpeg
+*.JPG
+*.tga
+*.tif
+*.tiff
+*.exr
+*.hdr
+*.psd
+*.wav
+*.mp3
+*.ogg
+*.mp4
+*.mov
+*.unitypackage
+# large generated binary assets (meshes, terrain data, baked materials with embedded textures)
+Assets/GameAssets/Elderboom/ArtDirectionGenerated/RuntimeMaterials/
+Assets/GameAssets/Elderboom/ArtDirectionGenerated/RuntimeMeshes/
+Assets/GameAssets/Ported/ElderboomVillage/MeshLods/
+Assets/TerrainDemoScene_HDRP/Terrain/Data/
+Assets/GameAssets/AltarUpgrader/Runtime/PBR_*.asset
+*.bin
+**/LightingData.asset

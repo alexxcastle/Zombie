@@ -1,0 +1,29 @@
+{
+  "asset": "apothecary",
+  "provider": "Hyper3D Rodin",
+  "job_uuid": "465a9b7f-a936-428a-85d7-8bccd0cbee36",
+  "consumed_credits": 1,
+  "original": [
+    {
+      "name": "base_high_pbr.glb",
+      "sha256": "2ea93f5a8ff494129a518433f6dfd16ff6ab5295de66c6eb6819e6b10eeb7dcf"
+    }
+  ],
+  "game_model_sha256": "674790aa34de26c2bc8a456160e9605e460da770487170a2c330ae4c5716745f",
+  "game_mesh": {
+    "asset": "apothecary",
+    "source_triangles": 2000000,
+    "dimensions_m": [
+      7.5906219482421875,
+      6.625905513763428,
+      7.717410564422607
+    ],
+    "lod_triangles": {
+      "LOD0": 70000,
+      "LOD1": 14000,
+      "LOD2": 12171
+    },
+    "uv_layers": 1,
+    "notes": "Original high-detail source preserved; game mesh has 2K shared PBR and three LODs. Parapet has exact open ironwork."
+  }
+}

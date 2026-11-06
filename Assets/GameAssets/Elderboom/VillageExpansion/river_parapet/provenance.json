@@ -1,0 +1,29 @@
+{
+  "asset": "river_parapet",
+  "provider": "Hyper3D Rodin",
+  "job_uuid": "37683245-5860-4dd3-a62e-7071d3a86202",
+  "consumed_credits": 1,
+  "original": [
+    {
+      "name": "base_high_pbr.glb",
+      "sha256": "1968c42eeec20a5575eb6d58f17db0f761e97caf5b9f1c9cdba45e067ec9e874"
+    }
+  ],
+  "game_model_sha256": "6af66ef21a61dae756439cd230ae9602070ff184e92864439bbe48392954dc81",
+  "game_mesh": {
+    "asset": "river_parapet",
+    "source_triangles": 2000000,
+    "dimensions_m": [
+      2.4020001888275146,
+      0.4805031716823578,
+      1.4502711296081543
+    ],
+    "lod_triangles": {
+      "LOD0": 7264,
+      "LOD1": 2472,
+      "LOD2": 1227
+    },
+    "uv_layers": 1,
+    "notes": "Original high-detail source preserved; game mesh has 2K shared PBR and three LODs. Parapet has exact open ironwork."
+  }
+}

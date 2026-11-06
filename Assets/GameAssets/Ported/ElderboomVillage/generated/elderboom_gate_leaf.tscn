@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/imported/elderboom_village/generated/elderboom_gate_leaf.glb" id="1_leaf"]
+
+[node name="ElderboomGateLeaf" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_leaf")]
+position = Vector3(-0.7518, 1.3003, 0.0)
+scale = Vector3(2.1849, 1.3668, 2.0928)

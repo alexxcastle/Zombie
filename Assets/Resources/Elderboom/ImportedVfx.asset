@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c4e9a1b2d3f4e5a8b6c0d1e2f3a4b5c, type: 3}
+  m_Name: ImportedVfx
+  m_EditorClassIdentifier: Assembly-CSharp::ElderboomImportedVfx
+  shockwave: {fileID: 5488793821149183516, guid: dbf3f6d46cd12584e9b77d878e982179, type: 3}
+  fireball: {fileID: 765511271821131592, guid: 3e0a192079d838344972feec1d3ce762, type: 3}
+  bloodHit: {fileID: 8086314461076744572, guid: d8a3bd14b7eb0b04894e617225311e7a, type: 3}
+  bloodDeath: {fileID: 8086314461076744572, guid: ec6e63fe070be2d4c844fc52497cb6bc, type: 3}
+  keepAway: {fileID: 7050293897086688161, guid: 3555e6ed211aa2249a0451ac5d871bba, type: 3}
+  bloodSpray: {fileID: 2800000, guid: 50f92059060fd1d43bbb4c3917d30fc3, type: 3}
+  plasmaFlipbook: {fileID: 2800000, guid: c5d26ae0049bbf044b1d64ad7aad9f51, type: 3}

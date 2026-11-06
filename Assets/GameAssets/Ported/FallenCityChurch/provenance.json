@@ -1,0 +1,11 @@
+{
+  "source": "/Users/alessandrocastellani/zombie-test/assets/imported/old-church-modeling-interior-scene/church.glb",
+  "original_archive": "/Users/alessandrocastellani/Documents/Assets zombie game/maps and buildings/old-church-modeling-interior-scene.zip",
+  "source_usage": "Fallen City Godot map; maps/FALLEN_CITY.md",
+  "authorization": "User explicitly requested reusing this existing project asset in Unity on 2026-11-04",
+  "sha256": "70f7ac84b52259baebb1f42ec9d160ab72515efc87bfaa4d0cde9b5bc074a66d",
+  "size": 82707212,
+  "dependencies": "28 images embedded in GLB; no external URIs",
+  "license": "User-supplied existing asset; no license document bundled in original archive. No new license or distribution rights asserted.",
+  "integration": "Unity glTFast 6.20.0; source preserved byte-for-byte"
+}

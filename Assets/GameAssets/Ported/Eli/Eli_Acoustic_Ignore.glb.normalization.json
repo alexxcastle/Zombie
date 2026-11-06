@@ -1,0 +1,29 @@
+{
+  "source": "/Users/alessandrocastellani/zombie-test/assets/imported/characters/eli_acoustic/Eli_Acoustic_Ignore.glb",
+  "destination": "/Users/alessandrocastellani/zombie-test/UnityHDRPSlice/Assets/GameAssets/Ported/Eli/Eli_Acoustic_Ignore.glb",
+  "maximum": 2048,
+  "resized": 11,
+  "sourceBytes": 148362864,
+  "resultBytes": 55893376,
+  "sourceSha256": "c38800c00b951f40246aa52dc0aa847b97c407e2bef30ee78ce7092f38facc22",
+  "resultSha256": "30174250b3e1d63325ba65bd5c2913cbe78340b4abb735d23312b36acc9a3bf1",
+  "nodes": 62,
+  "animations": [
+    "CameraAction",
+    "Caricatore",
+    "Dispositivo_AcusticoAction",
+    "Eli_Acoustic_Ignore_Sig550",
+    "FPS_Idle_Breathing",
+    "FPS_Reload_Tactical",
+    "FPS_Rig_Validation_Grip_and_IK",
+    "HandGrip_Pistol",
+    "HandGrip_Rifle",
+    "Idle",
+    "ReloadAssault",
+    "ReloadRunning",
+    "RifleAim",
+    "FPS_Arm.LAction",
+    "FPS_Arm.RAction",
+    "output_unwrapped.001Action"
+  ]
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "asset": "StoneAmphitheatre",
+    "source_faces": 1000000,
+    "collision_faces": 13060
+  },
+  {
+    "asset": "TimberInn",
+    "source_faces": 500000,
+    "collision_faces": 12000
+  }
+]

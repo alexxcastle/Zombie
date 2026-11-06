@@ -1,0 +1,185 @@
+/* ==========================================================================
+   Elderboom menu design system (UI Toolkit).
+   Tokens, typography and components shared by the main menu, the pause menu,
+   the in-scene menu and the game-over screen. Built in code by ElderboomUi.
+   ========================================================================== */
+
+:root {
+    --eb-accent: rgb(215, 25, 47);
+    --eb-accent-soft: rgba(215, 25, 47, 0.22);
+    --eb-text: rgb(238, 231, 225);
+    --eb-muted: rgb(150, 141, 137);
+    --eb-faint: rgb(96, 89, 86);
+    --eb-line: rgba(255, 255, 255, 0.09);
+    --eb-panel: rgba(9, 7, 7, 0.90);
+    --eb-hover: rgba(255, 255, 255, 0.045);
+}
+
+.eb-root {
+    position: absolute; left: 0; top: 0; right: 0; bottom: 0;
+    -unity-font: resource("Elderboom/UI/BarlowSemiCondensed-Regular");
+    color: var(--eb-text);
+}
+.eb-fill { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+.eb-center { position: absolute; left: 0; top: 0; right: 0; bottom: 0; align-items: center; justify-content: center; }
+.eb-row { flex-direction: row; }
+.eb-grow { flex-grow: 1; }
+
+/* ---- Typography ---- */
+.eb-root .eb-label { margin: 0; padding: 0; white-space: normal; -unity-text-align: middle-left; }
+.eb-root .eb-bold { -unity-font: resource("Elderboom/UI/BarlowSemiCondensed-SemiBold"); -unity-font-style: normal; }
+.eb-root .eb-h1 { font-size: 64px; letter-spacing: 6px; -unity-font: resource("Elderboom/UI/BarlowSemiCondensed-SemiBold"); }
+.eb-root .eb-h2 { font-size: 36px; letter-spacing: 4px; -unity-font: resource("Elderboom/UI/BarlowSemiCondensed-SemiBold"); }
+.eb-root .eb-h3 { font-size: 15px; letter-spacing: 3px; color: var(--eb-muted); -unity-font: resource("Elderboom/UI/BarlowSemiCondensed-SemiBold"); }
+.eb-root .eb-body { font-size: 17px; color: var(--eb-text); }
+.eb-root .eb-caption { font-size: 13px; letter-spacing: 2px; color: var(--eb-muted); }
+.eb-root .eb-muted { color: var(--eb-muted); }
+.eb-root .eb-alert { color: var(--eb-accent); }
+.eb-root .eb-accent { color: var(--eb-accent); }
+
+.eb-rule { height: 1px; background-color: var(--eb-line); margin: 14px 0; }
+.eb-accent-bar { width: 44px; height: 3px; background-color: var(--eb-accent); margin: 10px 0 14px 0; }
+
+/* ---- Big menu items (main menu / side lists) ---- */
+.eb-menu-item {
+    flex-direction: row; align-items: center;
+    height: 62px; padding: 0 22px 0 18px; margin: 0 0 4px 0;
+    border-left-width: 3px; border-left-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0);
+    transition-property: border-color, background-color;
+    transition-duration: 0.14s;
+}
+.eb-menu-item .eb-menu-index { font-size: 14px; letter-spacing: 2px; color: var(--eb-faint); width: 40px; transition-property: color; transition-duration: 0.14s; }
+.eb-menu-item .eb-menu-label {
+    font-size: 34px; letter-spacing: 5px; color: rgb(205, 198, 192);
+    -unity-font: resource("Elderboom/UI/BarlowSemiCondensed-SemiBold");
+    transition-property: translate, color; transition-duration: 0.16s; transition-timing-function: ease-out-cubic;
+}
+.eb-menu-item .eb-menu-tag {
+    font-size: 11px; letter-spacing: 2px; color: var(--eb-muted);
+    border-width: 1px; border-color: var(--eb-line); padding: 2px 6px; margin-left: 14px;
+}
+.eb-menu-item:hover, .eb-menu-item:focus, .eb-menu-item--selected { border-left-color: var(--eb-accent); background-color: var(--eb-hover); }
+.eb-menu-item:hover .eb-menu-label, .eb-menu-item:focus .eb-menu-label, .eb-menu-item--selected .eb-menu-label { translate: 10px 0; color: rgb(255, 255, 255); }
+.eb-menu-item:hover .eb-menu-index, .eb-menu-item:focus .eb-menu-index, .eb-menu-item--selected .eb-menu-index { color: var(--eb-accent); }
+.eb-menu-item--small { height: 54px; }
+.eb-menu-item--small .eb-menu-label { font-size: 24px; letter-spacing: 3px; }
+.eb-menu-item--disabled .eb-menu-label { color: var(--eb-faint); }
+
+/* ---- Buttons ---- */
+.eb-root .eb-button {
+    margin: 0; padding: 0 26px; height: 46px;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-width: 1px; border-radius: 0; border-color: rgba(255, 255, 255, 0.16);
+    color: var(--eb-text); font-size: 16px; letter-spacing: 3px;
+    -unity-font: resource("Elderboom/UI/BarlowSemiCondensed-SemiBold");
+    -unity-text-align: middle-center;
+    transition-property: background-color, border-color, color; transition-duration: 0.12s;
+}
+.eb-root .eb-button:hover, .eb-root .eb-button:focus, .eb-root .eb-button--selected { background-color: var(--eb-accent-soft); border-color: var(--eb-accent); color: rgb(255, 255, 255); }
+.eb-root .eb-button:active { background-color: rgba(215, 25, 47, 0.45); }
+.eb-root .eb-button--primary { background-color: var(--eb-accent); border-color: var(--eb-accent); color: rgb(255, 255, 255); }
+.eb-root .eb-button--primary:hover, .eb-root .eb-button--primary:focus { background-color: rgb(236, 46, 66); border-color: rgb(236, 46, 66); }
+.eb-root .eb-button--left { -unity-text-align: middle-left; }
+
+/* ---- Tabs ---- */
+.eb-tabs { flex-direction: row; border-bottom-width: 1px; border-bottom-color: var(--eb-line); }
+.eb-root .eb-tab {
+    margin: 0 28px 0 0; padding: 0 0 12px 0; height: auto;
+    background-color: rgba(0, 0, 0, 0); border-width: 0; border-bottom-width: 2px; border-bottom-color: rgba(0, 0, 0, 0); border-radius: 0;
+    color: var(--eb-muted); font-size: 17px; letter-spacing: 3px;
+    -unity-font: resource("Elderboom/UI/BarlowSemiCondensed-SemiBold");
+    transition-property: color, border-color; transition-duration: 0.12s;
+}
+.eb-root .eb-tab:hover, .eb-root .eb-tab:focus { color: var(--eb-text); background-color: rgba(0, 0, 0, 0); }
+.eb-root .eb-tab--selected { color: rgb(255, 255, 255); border-bottom-color: var(--eb-accent); }
+
+/* ---- Setting rows ---- */
+.eb-setting {
+    flex-direction: row; align-items: center; justify-content: space-between;
+    min-height: 54px; padding: 0 14px; border-bottom-width: 1px; border-bottom-color: var(--eb-line);
+    transition-property: background-color; transition-duration: 0.1s;
+}
+.eb-setting:hover { background-color: var(--eb-hover); }
+.eb-setting .eb-setting-label { font-size: 18px; letter-spacing: 1px; }
+.eb-setting .eb-setting-control { width: 380px; flex-direction: row; align-items: center; justify-content: flex-end; }
+
+/* Slider with value readout and a fill bar drawn under the dragger. */
+.eb-root .eb-slider { flex-grow: 1; margin: 0; padding: 0; height: 24px; }
+.eb-root .eb-slider .unity-base-slider__input { overflow: visible; }
+.eb-root .eb-slider .unity-base-slider__tracker { background-color: rgba(255, 255, 255, 0.14); border-width: 0; height: 2px; margin-top: -1px; }
+.eb-root .eb-slider .unity-base-slider__dragger { background-color: rgb(255, 255, 255); border-width: 0; border-radius: 0; width: 6px; height: 18px; margin-top: -9px; }
+.eb-root .eb-slider:hover .unity-base-slider__dragger { background-color: var(--eb-accent); }
+.eb-root .eb-slider .unity-base-slider__dragger-border { display: none; }
+.eb-slider-fill { position: absolute; left: 0; top: 11px; height: 2px; background-color: var(--eb-accent); }
+.eb-root .eb-value { width: 64px; font-size: 16px; color: var(--eb-text); -unity-text-align: middle-right; margin-left: 16px; }
+
+/* On/off switch */
+.eb-switch { width: 48px; height: 24px; border-width: 1px; border-color: rgba(255, 255, 255, 0.25); background-color: rgba(255, 255, 255, 0.04); transition-property: background-color, border-color; transition-duration: 0.12s; }
+.eb-switch-knob { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background-color: var(--eb-muted); transition-property: left, background-color; transition-duration: 0.14s; transition-timing-function: ease-out-cubic; }
+.eb-switch--on { background-color: var(--eb-accent-soft); border-color: var(--eb-accent); }
+.eb-switch--on .eb-switch-knob { left: 27px; background-color: rgb(255, 255, 255); }
+.eb-root .eb-switch-text { font-size: 14px; letter-spacing: 2px; color: var(--eb-muted); margin-right: 14px; }
+
+/* ◀ value ▶ selector */
+.eb-root .eb-arrow { width: 34px; height: 34px; padding: 0; margin: 0; background-color: rgba(0, 0, 0, 0); border-width: 0; color: var(--eb-muted); font-size: 18px; -unity-text-align: middle-center; transition-property: color; transition-duration: 0.1s; }
+.eb-root .eb-arrow:hover, .eb-root .eb-arrow:focus { color: var(--eb-accent); background-color: rgba(0, 0, 0, 0); }
+.eb-root .eb-selector-value { width: 220px; font-size: 17px; -unity-text-align: middle-center; letter-spacing: 1px; }
+
+/* Key hints */
+.eb-root .eb-keycap { border-width: 1px; border-color: rgba(255, 255, 255, 0.3); padding: 1px 7px; margin-right: 8px; font-size: 12px; letter-spacing: 1px; color: var(--eb-text); }
+.eb-hint { flex-direction: row; align-items: center; margin-left: 26px; }
+.eb-root .eb-hint-text { font-size: 13px; letter-spacing: 2px; color: var(--eb-muted); }
+
+/* Panels and cards */
+.eb-panel { background-color: var(--eb-panel); border-width: 1px; border-color: var(--eb-line); padding: 26px 32px; }
+.eb-card {
+    background-color: rgba(12, 9, 9, 0.80); border-width: 1px; border-color: rgba(255, 255, 255, 0.07); border-top-width: 3px; border-top-color: rgba(255, 255, 255, 0.10);
+    padding: 22px 24px;
+    transition-property: background-color, border-color, translate; transition-duration: 0.14s; transition-timing-function: ease-out-cubic;
+}
+.eb-card:hover, .eb-card:focus { background-color: rgba(22, 16, 16, 0.88); border-top-color: rgba(215, 25, 47, 0.6); translate: 0 -4px; }
+.eb-card--selected { background-color: rgba(40, 7, 10, 0.88); border-color: rgba(215, 25, 47, 0.45); border-top-color: var(--eb-accent); }
+
+.eb-meter { flex-direction: row; margin-top: 4px; }
+.eb-meter-pip { width: 34px; height: 4px; margin-right: 4px; background-color: rgba(255, 255, 255, 0.12); }
+.eb-meter-pip--on { background-color: var(--eb-accent); }
+
+/* Steps indicator (01 OPERATOR — 02 DIFFICULTY — 03 DEPLOY) */
+.eb-root .eb-step { font-size: 13px; letter-spacing: 2px; color: var(--eb-faint); margin-right: 22px; }
+.eb-root .eb-step--active { color: var(--eb-text); }
+.eb-root .eb-step--done { color: var(--eb-muted); }
+
+/* Stats (game over) */
+.eb-stat { margin: 0; align-items: center; }
+.eb-root .eb-stat-value { font-size: 52px; letter-spacing: 2px; -unity-font: resource("Elderboom/UI/BarlowSemiCondensed-SemiBold"); -unity-text-align: middle-center; }
+.eb-root .eb-stat-label { font-size: 13px; letter-spacing: 3px; color: var(--eb-muted); -unity-text-align: middle-center; }
+
+/* Entrance animation: elements start hidden and slide in when .eb-in is added. */
+.eb-enter { opacity: 0; translate: -24px 0; transition-property: opacity, translate; transition-duration: 0.38s; transition-timing-function: ease-out-cubic; }
+.eb-enter--up { translate: 0 18px; }
+.eb-enter.eb-in { opacity: 1; translate: 0 0; }
+.eb-fade { opacity: 0; transition-property: opacity; transition-duration: 0.25s; }
+.eb-fade.eb-in { opacity: 1; }
+
+.eb-root .eb-scroll .unity-scroller--vertical { width: 6px; }
+.eb-root .eb-scroll .unity-scroller--vertical .unity-base-slider__tracker { background-color: rgba(255, 255, 255, 0.05); border-width: 0; }
+.eb-root .eb-scroll .unity-scroller--vertical .unity-base-slider__dragger { background-color: rgba(255, 255, 255, 0.25); border-width: 0; }
+.eb-root .eb-scroll .unity-scroller__low-button, .eb-root .eb-scroll .unity-scroller__high-button { display: none; }
+
+/* ---- Liquid-blood active state (ElderboomBloodHighlight, ported from Godot) ----
+   The liquid layer draws the background in every state, so the flat hover and
+   selected fills are turned off on elements that have it. Borders still animate. */
+.eb-root .eb-has-blood,
+.eb-root .eb-has-blood:hover,
+.eb-root .eb-has-blood:focus,
+.eb-root .eb-has-blood:active,
+.eb-root .eb-has-blood.eb-button--selected,
+.eb-root .eb-has-blood.eb-menu-item--selected { background-color: rgba(0, 0, 0, 0); }
+.eb-root .eb-button { justify-content: center; overflow: hidden; }
+.eb-root .eb-button-text { margin: 0; padding: 0; color: rgb(255, 255, 255); }
+.eb-root .eb-tab .eb-button-text { color: var(--eb-muted); transition-property: color; transition-duration: 0.12s; }
+.eb-root .eb-tab:hover .eb-button-text, .eb-root .eb-tab:focus .eb-button-text { color: var(--eb-text); }
+.eb-root .eb-tab--selected .eb-button-text { color: rgb(255, 255, 255); }
+.eb-root .eb-tab { padding: 8px 14px 12px 14px; margin-right: 10px; }
+.eb-menu-item { overflow: hidden; }

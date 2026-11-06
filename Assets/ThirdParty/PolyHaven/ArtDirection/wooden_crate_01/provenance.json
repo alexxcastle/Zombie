@@ -1,0 +1,33 @@
+{
+  "asset": "wooden_crate_01",
+  "source": "https://polyhaven.com/a/wooden_crate_01",
+  "license": "CC0-1.0",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "path": "wooden_crate_01_2k.gltf",
+      "sha256": "747c26810ddcca99454ccd27fa0079b3718edda34c75d2a792b2c9bd28772a20",
+      "bytes": 5612
+    },
+    {
+      "path": "wooden_crate_01.bin",
+      "sha256": "85f381f8035f7a6f2f3b848640894c6d3333b261946dd8a338c0fe19e0bea21e",
+      "bytes": 189408
+    },
+    {
+      "path": "textures/wooden_crate_01_arm_2k.jpg",
+      "sha256": "00568882a62e4870a3ca9bbaad72606381bf3da857f0cb7a71b004edde39653c",
+      "bytes": 2808807
+    },
+    {
+      "path": "textures/wooden_crate_01_nor_gl_2k.jpg",
+      "sha256": "d163fac0801aa15a6153a8b19de898442b849f82bd720ce1418e300fee9f2c75",
+      "bytes": 2553649
+    },
+    {
+      "path": "textures/wooden_crate_01_diff_2k.jpg",
+      "sha256": "0ba1a7745837c7b5495b6a90051ddb92b25224476526ebd19418286afc3d429b",
+      "bytes": 2728494
+    }
+  ]
+}

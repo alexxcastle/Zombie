@@ -1,0 +1,33 @@
+{
+  "asset": "yellow_onion",
+  "source": "https://polyhaven.com/a/yellow_onion",
+  "license": "CC0-1.0",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "path": "yellow_onion_2k.gltf",
+      "sha256": "e4b38c5beaf35b2bd5405678a040d561356f1e7124604cdbced7a7fc896f0cd6",
+      "bytes": 2785
+    },
+    {
+      "path": "textures/yellow_onion_arm_2k.jpg",
+      "sha256": "84d033d655954184b2b1e421fa5af468d52ee65a7176a2913688ad2174625114",
+      "bytes": 1554468
+    },
+    {
+      "path": "textures/yellow_onion_nor_gl_2k.jpg",
+      "sha256": "e1045c20a3b8d0dfb3baf4fe5ba48f158cb18c5ec9f862d9cca3b6c0b9229bf9",
+      "bytes": 2848498
+    },
+    {
+      "path": "textures/yellow_onion_diff_2k.jpg",
+      "sha256": "f6791b19a24f2a0b5853f5c3f2fd63a4bad8abe5d745bda0ce769732a331a438",
+      "bytes": 1454716
+    },
+    {
+      "path": "yellow_onion.bin",
+      "sha256": "586c1e459e31e0647d090df4497e88c4e905e598607e9632590fb74cce7ef5f5",
+      "bytes": 139832
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ce822eb34d47e00419741b5d4ebbf1a9
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 288049
+  packageName: VFX Graph - Chi Spiral
+  packageVersion: 1.3
+  assetPath: Assets/TwoUncleVFX/Settings/URP14.0.9_Package/render-pipelines.universal 14.0.9.unitypackage
+  uploadId: 688888

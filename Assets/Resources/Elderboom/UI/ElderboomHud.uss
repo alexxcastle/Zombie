@@ -1,0 +1,15 @@
+/* In-game HUD (ElderboomHud). Positions are set in code in 1920-wide reference units. */
+.hud-root { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+.hud-abs { position: absolute; }
+.hud-text {
+    position: absolute;
+    margin: 0; padding: 0;
+    color: rgb(232, 224, 217);
+    text-shadow: 1.5px 1.5px 0 rgba(0, 0, 0, 0.85);
+    -unity-text-align: middle-left;
+    white-space: nowrap;
+}
+.hud-muted { color: rgb(171, 161, 158); }
+.hud-right { -unity-text-align: middle-right; }
+.hud-center { -unity-text-align: middle-center; }
+.hud-fill { background-color: white; position: absolute; }

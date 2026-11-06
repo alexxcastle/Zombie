@@ -1,0 +1,48 @@
+{
+  "asset": "modular_wooden_pier",
+  "source": "https://polyhaven.com/a/modular_wooden_pier",
+  "license": "CC0-1.0",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "path": "modular_wooden_pier_2k.gltf",
+      "sha256": "1bbfe5ce034790db55cdeef51f9ca015ea506913a4ca52dfc630a76bfcc6bc0a",
+      "bytes": 21127
+    },
+    {
+      "path": "modular_wooden_pier.bin",
+      "sha256": "6ec10b84aaaa02800b095850fc92cf850632e5becd76698dc6609f40f05e1b60",
+      "bytes": 2651092
+    },
+    {
+      "path": "textures/modular_wooden_pier_planks_arm_2k.jpg",
+      "sha256": "2b1141c77052449c1da01e60951211a79fb8c4553f7cc9349894e9d3c996cec0",
+      "bytes": 2718602
+    },
+    {
+      "path": "textures/modular_wooden_pier_planks_nor_gl_2k.jpg",
+      "sha256": "ac17e902940037d13508b0763cb5f07a267117ff6ae74197b9883d70665d914d",
+      "bytes": 4272628
+    },
+    {
+      "path": "textures/modular_wooden_pier_planks_diff_2k.jpg",
+      "sha256": "2c7249c008b19732634c86e9dfd4759fac04ff8c69e0d7c4c6518881398a83ff",
+      "bytes": 2886320
+    },
+    {
+      "path": "textures/modular_wooden_pier_poles_arm_2k.jpg",
+      "sha256": "4bf16be51286362ff725cd34b25f125d7c16ece3ac4aa29752f345226437c8fa",
+      "bytes": 3156282
+    },
+    {
+      "path": "textures/modular_wooden_pier_poles_nor_gl_2k.jpg",
+      "sha256": "ae83a82f0666a47dacdc6a1477a162367317ec448bfe9e5f1ddef0514c29846f",
+      "bytes": 4033427
+    },
+    {
+      "path": "textures/modular_wooden_pier_poles_diff_2k.jpg",
+      "sha256": "002fdfbba4149d918daa1f7109f2602d0c0737434c08f09beebc4347ebf97dd9",
+      "bytes": 3319026
+    }
+  ]
+}

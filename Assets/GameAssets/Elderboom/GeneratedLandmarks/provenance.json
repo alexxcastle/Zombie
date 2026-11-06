@@ -1,0 +1,14 @@
+[
+  {
+    "asset": "StoneAmphitheatre.glb",
+    "source": "/Users/alessandrocastellani/Downloads/shadowvale-anfiteatro-16440274/base_basic_pbr.glb",
+    "sha256": "46e17ac5e66c5538c7fe1d46807c7383cddb2084c49f95bafda92039485f6399",
+    "origin": "Previously generated asset supplied by the user; reused at user request."
+  },
+  {
+    "asset": "TimberInn.glb",
+    "source": "/Users/alessandrocastellani/Downloads/shadowvale-locanda-372f86bf.glb",
+    "sha256": "501e346567986af37fb455548d77d1326d8f418db8d333b34fdfe19499a64b53",
+    "origin": "Previously generated asset supplied by the user; reused at user request."
+  }
+]

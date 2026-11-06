@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "gridMeters": 1,
+  "functional": {
+    "designIntent": "Each purchasable access is a believable failed piece of rural infrastructure. It blocks a clear seam between districts without pretending that every map edge is a pile of rocks.",
+    "accesses": [
+      { "id": "farm_service_gate", "from": "Village Square", "to": "West Farm", "gridX": -39, "gridZ": -1, "alongX": 0, "alongZ": 1, "cost": 750, "clearWidth": 4.8, "closureDepth": 1.1, "role": "Farm service entrance; first expansion seam", "gameplayMotivation": "The broad agricultural track reads as a usable cart route and retains a horse-safe clearance once unlocked.", "interferenceRisk": "Fence leaves must not narrow the open route below 4.8 m." },
+      { "id": "sawmill_haul_gate", "from": "Village Square", "to": "North Timber Yard", "gridX": 7, "gridZ": 28, "alongX": 1, "alongZ": -1, "cost": 1000, "clearWidth": 5.2, "closureDepth": 1.2, "role": "Timber-haul choke point", "gameplayMotivation": "A collapsed log boom belongs at the yard road and establishes a visibly heavier upgrade than the farm gate.", "interferenceRisk": "Loose logs cannot project into the route after the blocker sinks." },
+      { "id": "churchyard_iron_gate", "from": "Village Square", "to": "East Cemetery", "gridX": 52, "gridZ": 0, "alongX": 0, "alongZ": 1, "cost": 1000, "clearWidth": 3.6, "closureDepth": 0.9, "role": "Formal churchyard entrance", "gameplayMotivation": "A narrower wrought-iron gate and stone piers make the cemetery boundary legible rather than an arbitrary wall opening.", "interferenceRisk": "The gate silhouette must not cover the church approach or grave sightlines." },
+      { "id": "bridge_barricade", "from": "Village Square", "to": "South Creek", "gridX": 7, "gridZ": -48, "alongX": 1, "alongZ": 0, "cost": 1250, "clearWidth": 3.7, "closureDepth": 1.3, "role": "Flood-damaged bridge crossing", "gameplayMotivation": "A timber emergency barricade naturally guards the only engineered creek crossing; the existing stone bridge is retained as the revealed crossing.", "interferenceRisk": "Keep bridge deck and its approaches free of blocking decoration." },
+      { "id": "woods_fall", "from": "North Timber Yard", "to": "Outer Woods", "gridX": 39, "gridZ": 51, "alongX": 0, "alongZ": 1, "cost": 1500, "clearWidth": 3.6, "closureDepth": 1.4, "role": "Storm-felled forest track", "gameplayMotivation": "A deliberate timber fall makes the deep-woods boundary read as weather damage, not a manufactured gate.", "interferenceRisk": "The fallen-tree cluster must remain inside its closure box and leave no invisible side wall." },
+      { "id": "mill_cart_shortcut", "from": "West Farm", "to": "North Timber Yard", "gridX": -50, "gridZ": 24, "alongX": -17, "alongZ": 7, "cost": 650, "clearWidth": 3.4, "closureDepth": 1.0, "role": "Farm-to-yard service shortcut", "gameplayMotivation": "A broken farm cart and movable fence are credible maintenance clutter between working districts.", "interferenceRisk": "Do not obscure the road split or produce a second visual landmark competing with the sawmill entrance." },
+      { "id": "caretaker_wicket", "from": "East Cemetery", "to": "Outer Woods", "gridX": 76, "gridZ": 24, "alongX": 25, "alongZ": -2, "cost": 850, "clearWidth": 3.0, "closureDepth": 0.9, "role": "Cemetery caretaker path", "gameplayMotivation": "A small iron wicket communicates a secondary pedestrian route out of the churchyard instead of a second generic full-size gate.", "interferenceRisk": "Keep silhouette lower than the churchyard entrance and do not block the cemetery perimeter path." }
+    ]
+  },
+  "aesthetic": {
+    "boundaries": [
+      {"id":"west_pasture", "asset":"Elderboom_ModularFence","height":1.85,"depth":0.32,"span":3.4,"points":[-39,-13,-39,-48]},
+      {"id":"west_paddock", "asset":"Elderboom_ModularFence","height":1.85,"depth":0.32,"span":3.4,"points":[-39,11,-39,19]},
+      {"id":"sawmill_enclosure", "asset":"Elderboom_ModularFence","height":2.05,"depth":0.34,"span":3.6,"points":[-39,19,-34,31,-22,35,-14,31,3,30,7,28,11,25,34,24]},
+      {"id":"churchyard_front","asset":"Elderboom_MossyStoneWall","height":1.9,"depth":0.70,"span":3.8,"points":[34,24,34,12,52,5,52,0,52,-25]},
+      {"id":"churchyard_return","asset":"Elderboom_MossyStoneWall","height":1.9,"depth":0.70,"span":3.8,"points":[52,-25,54,-27,56,-41,56,-48]},
+      {"id":"creek_meadow","asset":"Red_Bush","height":2.1,"depth":2.3,"span":3.2,"points":[56,-48,68,-61,78,-81]},
+      {"id":"mill_service_paddock","asset":"Elderboom_ModularFence","height":1.85,"depth":0.32,"span":3.4,"points":[-39,19,-50,24,-56,26,-70,30]},
+      {"id":"coppice_edge","asset":"Red_Bush","height":2.2,"depth":2.4,"span":3.1,"points":[34,24,39,39,39,51,39,69]},
+      {"id":"graveyard_rear_wall","asset":"Elderboom_MossyStoneWall","height":1.9,"depth":0.65,"span":3.8,"points":[34,24,61,25,76,24,86,23,114,21]},
+      {"id":"outer_hedgerow","asset":"Red_Bush","height":2.35,"depth":3.0,"span":4,"points":[-95,15,-104,-23,-90,-59,-58,-73,-34,-105,6,-117,48,-109,78,-81,98,-47,119,-15,114,21,125,55,102,92,62,100,39,69,20,92,-16,98,-46,85,-58,55,-70,30,-95,15]}
+    ],
+    "styleAnchor": "Storm-damaged rural European village: functional farm timber, mossed stone, blackened iron and restrained warm safety light.",
+    "accesses": [
+      { "id": "farm_service_gate", "recipe": "farm_service_gate", "catalogAssetIds": [ "Elderboom_ModularFence", "Elderboom_WoodenBollard" ], "treatment": "Two sagging fence leaves and working posts; no destination billboard." },
+      { "id": "sawmill_haul_gate", "recipe": "sawmill_haul_gate", "catalogAssetIds": [ "Elderboom_WornWoodenBeam", "Elderboom_ChoppedWoodPile" ], "treatment": "Low irregular log boom with a stacked cut-wood witness pile." },
+      { "id": "churchyard_iron_gate", "recipe": "churchyard_iron_gate", "catalogAssetIds": [ "Elderboom_IronGateLeaf", "Elderboom_MossyStoneWall" ], "treatment": "Existing iron leaf between stone piers; cold metal against church stone." },
+      { "id": "bridge_barricade", "recipe": "bridge_barricade", "catalogAssetIds": [ "Elderboom_WornWoodenBeam", "Elderboom_WoodenBollard" ], "treatment": "Temporary flood barricade at the permanent stone bridge, removed on purchase." },
+      { "id": "woods_fall", "recipe": "woods_fall", "catalogAssetIds": [ "Elderboom_WornWoodenBeam" ], "treatment": "Felled trunks and branch-like stacked timber; no man-made gate." },
+      { "id": "mill_cart_shortcut", "recipe": "mill_cart_shortcut", "catalogAssetIds": [ "Elderboom_ModularFence", "Elderboom_WoodenBollard", "Elderboom_WoodenWheel" ], "treatment": "Collapsed farm route marker built from fence and recovered wheel." },
+      { "id": "caretaker_wicket", "recipe": "caretaker_wicket", "catalogAssetIds": [ "Elderboom_IronGateLeaf", "Elderboom_MossyStoneWall" ], "treatment": "Small pedestrian iron wicket with restrained stone sidewalls." }
+    ]
+  }
+}

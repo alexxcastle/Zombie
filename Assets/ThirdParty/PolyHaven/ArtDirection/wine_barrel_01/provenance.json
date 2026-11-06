@@ -1,0 +1,33 @@
+{
+  "asset": "wine_barrel_01",
+  "source": "https://polyhaven.com/a/wine_barrel_01",
+  "license": "CC0-1.0",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "path": "wine_barrel_01_2k.gltf",
+      "sha256": "cfff0c36ffde5ba24adf1ea499a7219a9369b870b7214d0bd1b554d758c279c9",
+      "bytes": 6673
+    },
+    {
+      "path": "textures/wine_barrel_01_arm_2k.jpg",
+      "sha256": "a8902e757c8fe2a80a851bf419906da641fd3829f5f21e5c6cd13016ee13180b",
+      "bytes": 579968
+    },
+    {
+      "path": "wine_barrel_01.bin",
+      "sha256": "d827c31afed824b923ea9168462c93ab3ad3a88c4a68b155bd35efb1a02cbf00",
+      "bytes": 385912
+    },
+    {
+      "path": "textures/wine_barrel_01_nor_gl_2k.jpg",
+      "sha256": "a241d134de243f3f52e12e883eeeda881a4604d17486a94b7b994b33de08eacb",
+      "bytes": 531442
+    },
+    {
+      "path": "textures/wine_barrel_01_diff_2k.jpg",
+      "sha256": "6a76da96d9bbe957fcab8021fc2710bf153eb98d22ff1439fa5093c7c90a7fdb",
+      "bytes": 728748
+    }
+  ]
+}

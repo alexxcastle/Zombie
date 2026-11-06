@@ -1,0 +1,6 @@
+* text=auto
+*.cs diff=csharp text eol=lf
+*.unity text eol=lf merge=unityyamlmerge
+*.prefab text eol=lf merge=unityyamlmerge
+*.asset -text
+*.meta text eol=lf

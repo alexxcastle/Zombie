@@ -1,0 +1,16 @@
+{
+  "source": "/Users/alessandrocastellani/zombie-test/assets/imported/characters/soph/Soph_AKMN_Plasma.glb",
+  "destination": "/Users/alessandrocastellani/zombie-test/UnityHDRPSlice/Assets/GameAssets/Soph/Soph_AKMN_Plasma.glb",
+  "maximum": 2048,
+  "resized": 5,
+  "sourceBytes": 134802684,
+  "resultBytes": 99672340,
+  "sourceSha256": "2e3ec39f92320b2f7e915a94f8aab4318eeb9d569580d72b413d869899fa7013",
+  "resultSha256": "568c4c8656febbbfe4934de83de5244fbfeb667126de7860b3cae13d160c2a94",
+  "nodes": 134,
+  "animations": [
+    "Special_Plasma",
+    "Idle_Breathing",
+    "Reload_AK"
+  ]
+}

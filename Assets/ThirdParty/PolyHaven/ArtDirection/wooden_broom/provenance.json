@@ -1,0 +1,38 @@
+{
+  "asset": "wooden_broom",
+  "source": "https://polyhaven.com/a/wooden_broom",
+  "license": "CC0-1.0",
+  "license_source": "https://polyhaven.com/license",
+  "files": [
+    {
+      "path": "wooden_broom_2k.gltf",
+      "sha256": "870bf45e516ac2634f2bfa20abf3c15044b78fb47367f314fc16691f22dcaf61",
+      "bytes": 7588
+    },
+    {
+      "path": "textures/wooden_broom_bristles_diff_2k.jpg",
+      "sha256": "35e2d4b0b0b3b3af8993f14eebfc41e25cf6d66580614220935dd38a7c335b7a",
+      "bytes": 1254969
+    },
+    {
+      "path": "textures/wooden_broom_nor_gl_2k.jpg",
+      "sha256": "faa3948a9e13fd5301985879531a4f6f3df4f52d8eb40fee71092c86e87d8cf2",
+      "bytes": 3082895
+    },
+    {
+      "path": "textures/wooden_broom_diff_2k.jpg",
+      "sha256": "46baaa98b3eefb7e1321f3f0c38eb583dfe20fe62a9d7deee003e27523cf4c1e",
+      "bytes": 2819763
+    },
+    {
+      "path": "textures/wooden_broom_arm_2k.jpg",
+      "sha256": "f09755ab89a25b8942fd4ae9c733f97981eba0f355aa72814dc1e51d1f37af26",
+      "bytes": 3341068
+    },
+    {
+      "path": "wooden_broom.bin",
+      "sha256": "35007174a2e19607154914d21f21116aaac67adf152f3f1c4e91163f43d4443e",
+      "bytes": 508940
+    }
+  ]
+}

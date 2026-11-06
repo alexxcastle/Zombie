@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 184ed931be16a4a3e87dffeed0ae2539, type: 3}
+  m_Name: plasma_volley
+  m_EditorClassIdentifier: Assembly-CSharp::ElderboomPlasmaVolleyAbility
+  id: plasma_volley
+  displayName: Plasma volley
+  cooldown: 30
+  description: Draws the plasma pistol and fires three blazing bolts.
+  windup: 1.65556
+  shots: 3
+  shotInterval: 1
+  boltDamage: 50
+  shotTrauma: 0.14
+  shotSound: soph_abilities/plasma_shot

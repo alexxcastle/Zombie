@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4c1a36af341437e8e5267aa7d76480, type: 3}
+  m_Name: SOPH
+  m_EditorClassIdentifier: Assembly-CSharp::ElderboomOperatorDefinition
+  id: SOPH
+  displayName: SOPH
+  menuOrder: 2
+  menuDescription: 'AKMN ZENITCO
+
+    Plasma Volley / Blinding Flare'
+  cardTitle: "SOPH \xB7 PLASMA OPERATOR"
+  cardTag: PLASMA SPECIALIST / AKMN
+  cardBody: Carries an AKMN rifle and draws a plasma pistol to fire three blazing projectiles.
+  portrait: {fileID: 0}
+  primaryWeapon: akmn
+  secondaryWeapon: rhino
+  extraWeapon: hk53
+  weaponSlots: 3
+  weaponLabel: AKMN ZENITCO
+  capacity: 30
+  reserve: 120
+  damage: 6
+  fireInterval: 0.1
+  tacticalArms: 0
+  rightHandBone: DEF-hand.R
+  weaponMuzzle: Soph_Rifle_Muzzle
+  stowedWeaponNodes:
+  - AKMN_Rifle_ROOT
+  - AKMN_Magazine_CTRL
+  - AKMN_Magazine_Spare_CTRL
+  abilities:
+  - {fileID: 11400000, guid: d7517b1477f224ca189c36c12133c0c4, type: 2}
+  - {fileID: 11400000, guid: cbb4e081533aa4a3d8fdefce1b995886, type: 2}
+  sharedCooldown: 1
+  abilityAnimationSeconds: 6.87
