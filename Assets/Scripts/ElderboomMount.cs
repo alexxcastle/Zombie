@@ -291,6 +291,7 @@ public sealed class ElderboomMount : MonoBehaviour
 
     void LateUpdate()
     {
+        PromptTick();
         if (!mounted || !thirdPerson || rider == null) return;
 
         // Seat the body once its first pose exists: its hands on the grips the first-person arms hold
@@ -474,19 +475,17 @@ public sealed class ElderboomMount : MonoBehaviour
     }
 
     // ---- Prompt --------------------------------------------------------------------------
-    void OnGUI()
+    void PromptTick()
     {
         if (!Assembled || player == null || player.IsDead || player.SettingsOpen) return;
         if (ElderboomGame.Active != null && !ElderboomGame.Active.IsPlaying) return;
         if (mounted)
         {
-            GUI.Label(new Rect(24, Screen.height - 24, 760, 22),
-                "W/S ride   ·   A/D steer   ·   " + ElderboomInput.Label("sprint") + " gallop   ·   mouse look   ·   " + ElderboomInput.Label("toggle_view") + (thirdPerson ? " first person" : " third person") + "   ·   " + player.ActionLabel("interact") + " dismount",
-                new GUIStyle(GUI.skin.label) { fontSize = 12, normal = { textColor = new Color(.8f, .84f, .88f) } });
+            ElderboomPrompt.Hint("W/S ride   ·   A/D steer   ·   " + ElderboomInput.Label("sprint") + " gallop   ·   mouse look   ·   " + ElderboomInput.Label("toggle_view") + (thirdPerson ? " first person" : " third person") + "   ·   " + player.ActionLabel("interact") + " dismount");
         }
         else if (InRange())
         {
-            GUI.Label(new Rect(Screen.width / 2 - 190, Screen.height * .67f, 380, 34), player.ActionLabel("interact") + " · RIDE", GUI.skin.box);
+            ElderboomPrompt.Offer(player.transform.position, transform.position, player.ActionLabel("interact") + " · RIDE");
         }
     }
 }

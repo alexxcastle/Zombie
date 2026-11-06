@@ -107,6 +107,7 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
     }
     void LateUpdate()
     {
+        PromptTick();
         if (processLight != null) processLight.enabled = Busy && Progress > .43f && Progress < .76f;
     }
     void SetPose(float seconds)
@@ -149,7 +150,7 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
         NetworkOwner = owner; remoteSince = Time.time - seconds;
         if (owner < 0) SetPose(0);
     }
-    void OnGUI()
+    void PromptTick()
     {
         var game = ElderboomGame.Active; var player = game != null ? game.Player : null;
         if (player == null || !game.IsPlaying || player.SettingsOpen || player.IsDead || !Focused(player)) return;
@@ -157,6 +158,6 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
         string text = Busy ? "ALTAR // " + Mathf.RoundToInt(Progress * 100) + "%"
             : arsenal != null && arsenal.ActiveUpgraded ? "CRIMSON WEAPON // UPGRADED"
             : player.ActionLabel("interact") + " · UPGRADE WEAPON\n" + cost + " CREDITS";
-        GUI.Label(new Rect(Screen.width / 2 - 210, Screen.height * .67f, 420, 60), text, GUI.skin.box);
+        ElderboomPrompt.Offer(player.transform.position, transform.position, text);
     }
 }

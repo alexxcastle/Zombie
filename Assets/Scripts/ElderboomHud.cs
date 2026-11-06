@@ -21,7 +21,7 @@ public sealed class ElderboomHud : MonoBehaviour
     Sprite healthIcon, abilityIcon, creditIcon;
 
     VisualElement root, vignette, map, crossDot, healthFill, abilityIconElement;
-    Label scoreTitle, score, kills, doublePoints, instaKill, waveLine, notice, banner, abilityName, abilityStatus, slots, special, credits, syringes, weaponName, ammo;
+    Label prompt, hint, scoreTitle, score, kills, doublePoints, instaKill, waveLine, notice, banner, abilityName, abilityStatus, slots, special, credits, syringes, weaponName, ammo;
     readonly List<VisualElement> dots = new List<VisualElement>();
     readonly List<Label> popups = new List<Label>();
     readonly List<VisualElement> wedges = new List<VisualElement>();
@@ -29,7 +29,7 @@ public sealed class ElderboomHud : MonoBehaviour
 
     // Last values written, so text is rebuilt only on change.
     int lastScore = -1, lastKills = -1, lastWave = -1, lastRemaining = -1, lastCredits = -1, lastSyringes = -1, lastAmmo = -1, lastReserve = -1, lastAbilitySeconds = -2, lastDouble = -1, lastInsta = -1, lastSlots = -1, lastSpecial = -1;
-    string lastNotice, lastAbility, lastWeapon;
+    string lastNotice, lastAbility, lastWeapon, lastPrompt, lastHint;
     bool lastReloading;
 
     void Start()
@@ -96,6 +96,11 @@ public sealed class ElderboomHud : MonoBehaviour
 
         waveLine = Text(root, 20, true, HudText, TextAnchor.MiddleCenter); Place(waveLine, left: 0, right: 0, top: 26, height: 30);
         notice = Text(root, 15, false, HudText, TextAnchor.UpperCenter); Place(notice, top: 60, width: 720, height: 52); notice.style.whiteSpace = WhiteSpace.Normal;
+        // Interaction prompt (stations, gates, altar, horse...) and controls hint, offered through ElderboomPrompt.
+        prompt = Text(root, 17, true, HudText, TextAnchor.MiddleCenter); Place(prompt, width: 520, height: 62); prompt.style.whiteSpace = WhiteSpace.Normal;
+        prompt.style.backgroundColor = new Color(0f, 0f, 0f, .55f); prompt.style.borderTopLeftRadius = prompt.style.borderTopRightRadius = prompt.style.borderBottomLeftRadius = prompt.style.borderBottomRightRadius = 4;
+        prompt.style.display = DisplayStyle.None;
+        hint = Text(root, 12, false, HudMuted); Place(hint, left: 24, bottom: 14, width: 900, height: 22); hint.style.display = DisplayStyle.None;
         banner = Text(root, 68, true, new Color(.92f, .06f, .04f), TextAnchor.MiddleCenter); Place(banner, left: 0, right: 0, height: 90);
         for (int i = 0; i < MaxPopups; i++) { var p = Text(root, 20, true, new Color(1f, .85f, .3f), TextAnchor.MiddleCenter); p.style.width = 120; p.style.height = 28; p.style.display = DisplayStyle.None; popups.Add(p); }
 
@@ -203,6 +208,11 @@ public sealed class ElderboomHud : MonoBehaviour
         if (game.Wave != lastWave || game.Remaining != lastRemaining) { lastWave = game.Wave; lastRemaining = game.Remaining; waveLine.text = "WAVE " + lastWave + "  ·  " + lastRemaining + " HOSTILES"; }
         if (game.Notice != lastNotice) { lastNotice = game.Notice; notice.text = lastNotice; }
         notice.style.left = w * .5f - 360;
+        string offer = ElderboomPrompt.Current;
+        if (offer != lastPrompt) { lastPrompt = offer; Show(prompt, offer != null); if (offer != null) prompt.text = offer; }
+        if (offer != null) { prompt.style.left = w * .5f - 260; prompt.style.top = h * .67f; }
+        string line = ElderboomPrompt.CurrentHint;
+        if (line != lastHint) { lastHint = line; Show(hint, line != null); if (line != null) hint.text = line; }
 
         float bannerAge = game.WaveBannerAge;
         Show(banner, bannerAge < 2.6f);

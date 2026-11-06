@@ -121,12 +121,14 @@ public sealed class ElderboomHorseAssembly : MonoBehaviour
         else TryInteract((byte)focused, player.transform.position, true, Revision);
     }
 
-    void OnGUI()
+    void LateUpdate() => PromptTick();
+
+    void PromptTick()
     {
         if (focused < 0 || Built || player == null || player.IsDead || player.SettingsOpen || Time.timeScale == 0 || ElderboomGame.Active == null || !ElderboomGame.Active.CanInteract) return;
         string text = focused == Assemble
             ? (Ready ? "ASSEMBLE MECHANICAL HORSE" : $"WORKSHOP · COMPONENTS {CollectedCount}/{parts.Length}")
             : "RECOVER " + parts[focused].label.ToUpperInvariant();
-        GUI.Label(new Rect(Screen.width / 2 - 240, Screen.height * .67f, 480, 34), player.ActionLabel("interact") + " · " + text, GUI.skin.box);
+        ElderboomPrompt.Offer(player.transform.position, transform.position, player.ActionLabel("interact") + " · " + text);
     }
 }

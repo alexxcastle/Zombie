@@ -204,21 +204,31 @@ static class ElderboomCleanup
 
     // ---- Frame rate in the game scene (Play Mode, 30 s after start): frames per real second and draw stats ----
     const string PerfPending = "claude_cleanup_perf";
-    static double perfStart; static int perfFrames;
+    static double perfStart; static int perfFrames; static bool promptShot, shotTaken;
     [InitializeOnLoadMethod] static void InitPerf() { EditorApplication.update += PerfPoll; }
     static string StartPerf(string mode)
     {
         if (UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().isDirty) return "FAIL unsaved scene";
         UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/Elderboom_Unity_Port.unity");
-        SessionState.SetBool(PerfPending, true); perfStart = 0;
+        SessionState.SetBool(PerfPending, true); perfStart = 0; promptShot = mode.Contains("prompt"); SessionState.SetBool("claude_cleanup_prompt", promptShot);
         EditorApplication.isPlaying = true;
         return "perf started\n";
     }
     static void PerfPoll()
     {
         if (!SessionState.GetBool(PerfPending, false) || !EditorApplication.isPlaying) return;
+        promptShot = SessionState.GetBool("claude_cleanup_prompt", false);
         double now = EditorApplication.timeSinceStartup;
         if (perfStart <= 0) { perfStart = now; return; }
+        if (promptShot && now - perfStart > 8 && now - perfStart < 9.5)
+        {
+            var st = GameObject.Find("Station_PISTOLS"); var pl = ElderboomGame.Active != null ? ElderboomGame.Active.Player : null;
+            if (st != null && pl != null) { var d = st.transform.forward; pl.transform.position = st.transform.position - Vector3.up * (st.transform.position.y - pl.transform.position.y) + new Vector3(1.6f, 0, 0); pl.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(st.transform.position - pl.transform.position, Vector3.up)); }
+            return;
+        }
+        if (promptShot && now - perfStart > 11 && !shotTaken) { shotTaken = true; ScreenCapture.CaptureScreenshot("Logs/prompt_shot.png"); File.AppendAllText(Result, "prompt shot " + (ElderboomPrompt.Current ?? "none") + "\n"); return; }
+        if (promptShot && now - perfStart > 14) { File.AppendAllText(Result, "DONE\n"); SessionState.SetBool(PerfPending, false); shotTaken = false; EditorApplication.isPlaying = false; return; }
+        if (promptShot) return;
         if (now - perfStart < 12) { perfFrames = Time.frameCount; return; }
         if (now - perfStart < 42) return;
         double fps = (Time.frameCount - perfFrames) / 30.0;

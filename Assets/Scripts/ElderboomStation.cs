@@ -77,9 +77,11 @@ public sealed class ElderboomStation : MonoBehaviour
         game.ShowNotice(category==ElderboomIds.Station.Slot?"THIRD SLOT + MOVEMENT SPEED UNLOCKED":label+" PURCHASED");
         ElderboomAudio.Play("menu/single_mouse_click",target.transform.position,.6f);return true;
     }
-    void OnGUI()
+    void LateUpdate() => PromptTick();
+
+    void PromptTick()
     {
         if(player==null || player.IsDead || player.SettingsOpen || ElderboomGame.Active==null || !ElderboomGame.Active.IsPlaying || Vector3.Distance(player.transform.position,transform.position)>=3f)return;
-        GUI.Label(new Rect(Screen.width/2-190,Screen.height*.67f,380,60),player.ActionLabel("interact")+" · "+label+"\n"+cost+" CREDITS",GUI.skin.box);
+        ElderboomPrompt.Offer(player.transform.position, transform.position, player.ActionLabel("interact")+" · "+label+"\n"+cost+" CREDITS");
     }
 }

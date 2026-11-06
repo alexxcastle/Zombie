@@ -38,12 +38,14 @@ public sealed class ElderboomGate : MonoBehaviour
         for(float t=0;t<1;t+=Time.deltaTime){transform.position=start+Vector3.down*3f*Mathf.SmoothStep(0,1,t);yield return null;}
         gameObject.SetActive(false);
     }
-    void OnGUI()
+    void LateUpdate() => PromptTick();
+
+    void PromptTick()
     {
         if(!opened && player!=null && Vector3.Distance(player.transform.position,transform.position)<4f)
         {
             string destination=!string.IsNullOrEmpty(otherAreaName) && ElderboomArea.At(player.transform.position)?.areaName==areaName?otherAreaName:areaName;
-            GUI.Label(new Rect(Screen.width/2-180,Screen.height*.67f,360,60),player.ActionLabel("interact")+" · UNLOCK "+destination.ToUpperInvariant()+"\n"+cost+" CREDITS",new GUIStyle(GUI.skin.label){alignment=TextAnchor.MiddleCenter,fontSize=18});
+            ElderboomPrompt.Offer(player.transform.position, transform.position, player.ActionLabel("interact")+" · UNLOCK "+destination.ToUpperInvariant()+"\n"+cost+" CREDITS");
         }
     }
 }
