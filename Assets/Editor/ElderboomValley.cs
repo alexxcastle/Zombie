@@ -629,7 +629,7 @@ public static class ElderboomValley
     {
         if (!PrefabUtility.IsAnyPrefabInstanceRoot(gameObject)) return false;
         string path = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(gameObject);
-        return !string.IsNullOrEmpty(path) && path.Replace('\\', '/').EndsWith("StreetLamp.glb");
+        return !string.IsNullOrEmpty(path) && path.Replace('\\', '/').EndsWith("StreetLamp.gltf");
     }
 
     static void Bake(Terrain terrain)

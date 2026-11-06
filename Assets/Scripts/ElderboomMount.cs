@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Rideable mechanical horse (MechHorse_Rider.glb, exported from Mechanical_Horse_Gallop.blend).
+// Rideable mechanical horse (MechHorse_Rider.gltf, exported from Mechanical_Horse_Gallop.blend).
 // The horse becomes rideable only after the scene's salvage/assembly objective is complete.
 //   interact (E)  mount / dismount within mountRange
 //   W / S         ride forward / back up      A / D  steer

@@ -15,10 +15,10 @@ public static class HDRPSliceBuilder
     const string ScenePath = "Assets/Scenes/Elderboom_HDRP_PlayableSlice.unity";
     const string PipelinePath = "Assets/Settings/Elderboom_HDRP.asset";
     const string VolumeProfilePath = "Assets/Settings/Elderboom_Night_Profile.asset";
-    const string ArmsPath = "Assets/GameAssets/Soph/Soph_AKMN_Plasma.glb";
+    const string ArmsPath = "Assets/GameAssets/Soph/Soph_AKMN_Plasma.gltf";
     const string HousePath = "Assets/GameAssets/Elderboom/ElderboomHouseSample.glb";
     const string ZombiePath = "Assets/GameAssets/Zombie/StaticZombie.fbx";
-    const string LampPath = "Assets/GameAssets/StreetLamp/StreetLamp.glb";
+    const string LampPath = "Assets/GameAssets/StreetLamp/StreetLamp.gltf";
 
     [MenuItem("Elderboom HDRP/Import Tools/Build Fresh Playable Slice")]
     static void BuildFromMenu()

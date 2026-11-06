@@ -25,7 +25,7 @@ static partial class ElderboomClaudeBlocks
         string folder=ReconGenerated+"RuntimeMeshes";Directory.CreateDirectory(folder);var meshes=new Dictionary<Mesh,Mesh>();
         Mesh Copy(Mesh source)
         {
-            if(!source||!AssetDatabase.GetAssetPath(source).EndsWith(".glb"))return source;
+            if(!source||!AssetDatabase.GetAssetPath(source).EndsWith(".glb")&&!AssetDatabase.GetAssetPath(source).EndsWith(".gltf"))return source;
             if(meshes.TryGetValue(source,out var existing))return existing;
             var copy=Object.Instantiate(source);AssetDatabase.CreateAsset(copy,folder+"/Mesh_"+meshes.Count+".asset");meshes.Add(source,copy);return copy;
         }

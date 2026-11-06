@@ -5,7 +5,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 
 // Full-screen 3D backdrop for the operator menu: a night corner of Elderboom village
-// (Resources/Elderboom/Menu/OperatorSet.glb, cut from the village block in Blender: eli_menu_set.blend).
+// (Resources/Elderboom/Menu/OperatorSet.gltf, cut from the village block in Blender: eli_menu_set.blend).
 // The operator's full-body model stands under the timber frame holding the AKMN (looping Rifle_Idle).
 // Nodes authored in Blender: EliSpot / EliFacing (where the operator stands and faces), BarCenter,
 // CamSpot / CamTarget (framing: operator on the right third, menu text on the left), Light_Lamp, Light_Fire.

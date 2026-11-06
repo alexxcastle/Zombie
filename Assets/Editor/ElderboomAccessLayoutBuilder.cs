@@ -309,7 +309,7 @@ static class ElderboomAccessLayoutBuilder
             if(id=="Red_Bush")return AssetDatabase.LoadAssetAtPath<GameObject>("Assets/TerrainDemoScene_HDRP/Prefabs/Foliage/Red_Bush/Red_Bush.prefab") ?? throw new InvalidOperationException(id);
             if (id == "Elderboom_IronGateLeaf")
             {
-                var imported = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/GameAssets/Ported/ElderboomVillage/generated/elderboom_gate_leaf.glb");
+                var imported = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/GameAssets/Ported/ElderboomVillage/generated/elderboom_gate_leaf.gltf");
                 if (imported != null) return imported;
             }
             if (!prefixes.TryGetValue(id, out var prefix)) throw new InvalidOperationException("Unknown catalog id " + id);

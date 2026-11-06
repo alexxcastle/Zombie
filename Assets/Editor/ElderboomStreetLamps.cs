@@ -20,7 +20,7 @@ public static class ElderboomStreetLamps
         {
             if (!PrefabUtility.IsAnyPrefabInstanceRoot(instance)) continue;
             string path = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(instance);
-            if (string.IsNullOrEmpty(path) || !path.Replace('\\', '/').EndsWith("StreetLamp.glb")) continue;
+            if (string.IsNullOrEmpty(path) || !path.Replace('\\', '/').EndsWith("StreetLamp.gltf")) continue;
             lamps.Add(instance.transform);
         }
         // Eleven existing fixtures distributed along the village roads and approaches.
@@ -76,7 +76,7 @@ public static class ElderboomStreetLamps
         var parent = light.parent;
         if (parent == null || !PrefabUtility.IsAnyPrefabInstanceRoot(parent.gameObject)) return false;
         string path = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(parent.gameObject);
-        return !string.IsNullOrEmpty(path) && path.Replace('\\', '/').EndsWith("StreetLamp.glb");
+        return !string.IsNullOrEmpty(path) && path.Replace('\\', '/').EndsWith("StreetLamp.gltf");
     }
 
     static void Tune(Light light)

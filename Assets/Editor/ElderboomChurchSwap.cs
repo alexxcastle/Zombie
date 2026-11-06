@@ -11,7 +11,7 @@ using Object = UnityEngine.Object;
 
 static partial class ElderboomClaudeBlocks
 {
-    const string ChurchModelPath = "Assets/GameAssets/Ported/FallenCityChurch/church.glb";
+    const string ChurchModelPath = "Assets/GameAssets/Ported/FallenCityChurch/church.gltf";
     const string ChurchRootName = "FallenCity_Church_HumanScale";
     const string ChurchReview = "Logs/ArtReview/Church";
 

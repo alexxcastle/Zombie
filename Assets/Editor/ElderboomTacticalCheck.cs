@@ -10,10 +10,10 @@ using UnityEngine.SceneManagement;
 public static class ElderboomTacticalCheck
 {
     const string ScenePath = "Assets/Scenes/Elderboom_Unity_Port.unity";
-    const string StrikerAsset = "Assets/GameAssets/Ported/Tactical/Striker-12-shockwaveattack.glb";
-    const string LiftAsset = "Assets/GameAssets/Ported/Tactical/Abilities/LiftSmash.glb";
-    const string KeepAsset = "Assets/GameAssets/Ported/Tactical/Abilities/KeepAway.glb";
-    const string PistolAsset = "Assets/GameAssets/Ported/Sidearms/1911_idle.glb";
+    const string StrikerAsset = "Assets/GameAssets/Ported/Tactical/Striker-12-shockwaveattack.gltf";
+    const string LiftAsset = "Assets/GameAssets/Ported/Tactical/Abilities/LiftSmash.gltf";
+    const string KeepAsset = "Assets/GameAssets/Ported/Tactical/Abilities/KeepAway.gltf";
+    const string PistolAsset = "Assets/GameAssets/Ported/Sidearms/1911_idle.gltf";
 
     public static void Apply()
     {

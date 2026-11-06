@@ -22,7 +22,7 @@ static class ElderboomCleanup
         next = EditorApplication.timeSinceStartup + 2;
         if (!File.Exists(Flag) || EditorApplication.isPlayingOrWillChangePlaymode || BuildPipeline.isBuildingPlayer) return;
         string mode = File.ReadAllText(Flag).Trim(); File.Delete(Flag);
-        try { File.WriteAllText(Result, mode.StartsWith("deps") ? Deps() : mode.StartsWith("missing") ? Missing() : "FAIL unknown mode " + mode); }
+        try { File.WriteAllText(Result, mode.StartsWith("deps") ? Deps() : mode.StartsWith("missing") ? Missing() : mode.StartsWith("textures") ? Textures() : "FAIL unknown mode " + mode); }
         catch (System.Exception e) { File.WriteAllText(Result, "FAIL " + e); }
     }
 
@@ -100,6 +100,55 @@ static class ElderboomCleanup
             }
         }
         sb.AppendLine("prefabs: missing scripts " + pm + ", URP components " + pu);
+        sb.AppendLine("DONE");
+        return sb.ToString();
+    }
+    // Texture files split out of the .glb models (Logs/texture_roles.json): normal maps as normal maps, data maps
+    // linear, colour maps sRGB; all compressed with a size limit. Then the models are reimported on them.
+    [System.Serializable] class Role { public string role; public int max; }
+    static string Textures()
+    {
+        var text = File.ReadAllText("Logs/texture_roles.json");
+        var sb = new StringBuilder();
+        int changed = 0, missing = 0;
+        var models = new HashSet<string>();
+        AssetDatabase.StartAssetEditing();
+        try
+        {
+            foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(text, "\"([^\"]+)\":\\s*\\{\\s*\"role\":\\s*\"(\\w+)\",\\s*\"max\":\\s*(\\d+)"))
+            {
+                string path = m.Groups[1].Value, role = m.Groups[2].Value; int max = int.Parse(m.Groups[3].Value);
+                var imp = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (imp == null) { missing++; continue; }
+                imp.textureShape = TextureImporterShape.Texture2D;
+                imp.textureType = role == "normal" ? TextureImporterType.NormalMap : TextureImporterType.Default;
+                imp.sRGBTexture = role == "color";
+                imp.maxTextureSize = max;
+                imp.textureCompression = TextureImporterCompression.Compressed;
+                imp.mipmapEnabled = true;
+                imp.isReadable = false;
+                imp.anisoLevel = 4;
+                imp.SaveAndReimport();
+                changed++;
+                var dir = Path.GetDirectoryName(Path.GetDirectoryName(path)).Replace('\\', '/');
+                var stem = Path.GetFileName(Path.GetDirectoryName(path)); if (stem.EndsWith("_Textures")) models.Add(dir + "/" + stem.Substring(0, stem.Length - 9) + ".gltf");
+            }
+        }
+        finally { AssetDatabase.StopAssetEditing(); }
+        foreach (var model in models) if (File.Exists(model)) AssetDatabase.ImportAsset(model, ImportAssetOptions.ForceUpdate);
+        sb.AppendLine("textures set " + changed + ", not found " + missing + ", models reimported " + models.Count);
+        // Report what the models hold now.
+        long total = 0;
+        foreach (var model in models)
+        {
+            long bytes = 0;
+            foreach (var o in AssetDatabase.LoadAllAssetsAtPath(model)) if (o is Material mat)
+                foreach (var name in mat.GetTexturePropertyNames()) { var t = mat.GetTexture(name) as Texture2D; if (t != null) bytes += UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(t); }
+            int nullMats = 0; foreach (var o in AssetDatabase.LoadAllAssetsAtPath(model)) if (o is Renderer r && r.sharedMaterials.Any(x => x == null)) nullMats++;
+            sb.AppendLine("  " + model + " textures in materials " + (bytes / 1048576) + " MB" + (nullMats > 0 ? " null materials " + nullMats : ""));
+            total += bytes;
+        }
+        sb.AppendLine("total texture memory referenced by these models (shared counted per model) " + (total / 1048576) + " MB");
         sb.AppendLine("DONE");
         return sb.ToString();
     }

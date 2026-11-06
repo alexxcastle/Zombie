@@ -16,9 +16,9 @@ public static class ElderboomPortBuilder
     const string SourceSlice = "Assets/Scenes/Elderboom_HDRP_PlayableSlice.unity";
     const string VillagePath = "Assets/GameAssets/Ported/ElderboomVillage/ElderBoomVillage_Full.glb";
     const string MaleZombiePath = "Assets/GameAssets/Ported/ZombieMale/Meshy_AI_male_zombie_rigged_biped/Meshy_AI_male_zombie_rigged_biped_Meshy_Merged_Animations.fbx";
-    const string LampPath = "Assets/GameAssets/StreetLamp/StreetLamp.glb";
-    const string EliPath = "Assets/GameAssets/Ported/Eli/Eli_Acoustic_Ignore.glb";
-    const string TacticalPath = "Assets/GameAssets/Ported/Tactical/Striker-12-shockwaveattack.glb";
+    const string LampPath = "Assets/GameAssets/StreetLamp/StreetLamp.gltf";
+    const string EliPath = "Assets/GameAssets/Ported/Eli/Eli_Acoustic_Ignore.gltf";
+    const string TacticalPath = "Assets/GameAssets/Ported/Tactical/Striker-12-shockwaveattack.gltf";
     const string ZombiePrefabPath = "Assets/Resources/Elderboom/Zombie.prefab";
     const string VolumeProfilePath = "Assets/Settings/Elderboom_Night_Profile.asset";
 
@@ -260,7 +260,7 @@ public static class ElderboomPortBuilder
         if (eli != null) eli.gameObject.SetActive(false);
         if (tactical != null) tactical.gameObject.SetActive(false);
         controller.ConfigurePortedViewmodels(soph, eli, tactical);
-        ConfigureViewmodel(soph, "Assets/GameAssets/Soph/Soph_AKMN_Plasma.glb", "SOPH");
+        ConfigureViewmodel(soph, "Assets/GameAssets/Soph/Soph_AKMN_Plasma.gltf", "SOPH");
         ConfigureViewmodel(eli, EliPath, "ELI");
         ConfigureViewmodel(tactical, TacticalPath, "TACTICAL");
     }

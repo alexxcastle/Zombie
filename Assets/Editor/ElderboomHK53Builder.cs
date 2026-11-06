@@ -11,7 +11,7 @@ public static class ElderboomHK53Builder
     // Actual open aperture and front-post tip in the weapon's Unity coordinates.
     static readonly Vector3 RearAperture = new Vector3(.00125f, .249f, -.08285125f);
     static readonly Vector3 FrontPostTip = new Vector3(.000043f, .246769f, .306757f);
-    public const string Asset = "Assets/GameAssets/Soph/HK53/HK53_FPS.glb";
+    public const string Asset = "Assets/GameAssets/Soph/HK53/HK53_FPS.gltf";
     public const string Prefab = "Assets/Resources/Elderboom/Weapons/hk53.prefab";
     [Serializable] sealed class ApertureData
     {

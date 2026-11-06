@@ -25,7 +25,7 @@ static class ElderboomHorseAssemblyBuilder
         var scene = EditorSceneManager.GetActiveScene();
         if (scene.name != "Elderboom_Unity_Port" || scene.isDirty) throw new InvalidOperationException("Save the intended map scene before building horse salvage.");
         Directory.CreateDirectory(Folder); Directory.CreateDirectory(Report); AssetDatabase.Refresh();
-        var source = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Elderboom/Mounts/MechHorse_Rider.glb");
+        var source = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Resources/Elderboom/Mounts/MechHorse_Rider.gltf");
         if (source == null) throw new InvalidOperationException("Horse GLB missing");
         var preview = Object.Instantiate(source);
         preview.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);

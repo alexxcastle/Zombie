@@ -32,9 +32,9 @@ public static class ElderboomViewmodelCalibrator
         var camera = player.GetComponentInChildren<Camera>(true);
         if (camera == null) throw new InvalidOperationException("FPS camera missing");
 
-        FrameOperator(camera.transform, "Soph_Viewmodel_Pivot", "AKMN ZENITCO", "SOPH", "Assets/GameAssets/Soph/Soph_AKMN_Plasma.glb", report);
-        FrameOperator(camera.transform, "Eli_Viewmodel_Pivot", "SIG 550", "ELI", "Assets/GameAssets/Ported/Eli/Eli_Acoustic_Ignore.glb", report);
-        FrameOperator(camera.transform, "Tactical_Viewmodel_Pivot", "STRIKER-12", "TACTICAL", "Assets/GameAssets/Ported/Tactical/Striker-12-shockwaveattack.glb", report);
+        FrameOperator(camera.transform, "Soph_Viewmodel_Pivot", "AKMN ZENITCO", "SOPH", "Assets/GameAssets/Soph/Soph_AKMN_Plasma.gltf", report);
+        FrameOperator(camera.transform, "Eli_Viewmodel_Pivot", "SIG 550", "ELI", "Assets/GameAssets/Ported/Eli/Eli_Acoustic_Ignore.gltf", report);
+        FrameOperator(camera.transform, "Tactical_Viewmodel_Pivot", "STRIKER-12", "TACTICAL", "Assets/GameAssets/Ported/Tactical/Striker-12-shockwaveattack.gltf", report);
 
         if (!AssetDatabase.IsValidFolder("Assets/Resources/Elderboom/Weapons"))
             AssetDatabase.CreateFolder("Assets/Resources/Elderboom", "Weapons");
