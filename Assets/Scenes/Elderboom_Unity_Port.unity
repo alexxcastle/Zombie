@@ -635932,6 +635932,56 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2044674294}
   m_Mesh: {fileID: 4300000, guid: 0a3d15ab518de4bdfb268cb0d4e23533, type: 2}
+--- !u!1 &2045016009
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2045016011}
+  - component: {fileID: 2045016010}
+  m_Layer: 0
+  m_Name: Elderboom_Birds
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2045016010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045016009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e1e14f6819aa42818cc7f0652f6d54b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElderboomBackdropBirds
+  count: 12
+  radius: 65
+  height: 58
+  speed: 8
+  birdMesh: {fileID: 4300000, guid: 61a1e2449e2a74ad1ace39de9da9f4e6, type: 2}
+  birdMaterial: {fileID: 2100000, guid: c5914a1b63cd34e5e9b51a937ac745b6, type: 2}
+--- !u!4 &2045016011
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045016009}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 15, y: 0, z: -5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2045188568
 GameObject:
   m_ObjectHideFlags: 0
@@ -921966,3 +922016,4 @@ SceneRoots:
   - {fileID: 2031528204}
   - {fileID: 192410046}
   - {fileID: 1422882284}
+  - {fileID: 2045016011}

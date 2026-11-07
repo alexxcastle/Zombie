@@ -13,7 +13,7 @@ public static class ElderboomMapCapture
         Directory.CreateDirectory(directory);
         var cameraObject=new GameObject("Orthographic map export");
         var camera=cameraObject.AddComponent<Camera>();camera.orthographic=true;camera.aspect=1;
-        camera.nearClipPlane=1;camera.farClipPlane=1600;camera.cullingMask=~(1<<19);
+        camera.nearClipPlane=1;camera.farClipPlane=1600;camera.cullingMask=~((1<<19)|(1<<30)); // no capture helpers, no backdrop
         var hd=cameraObject.AddComponent<HDAdditionalCameraData>();
         hd.clearColorMode=HDAdditionalCameraData.ClearColorMode.Color;hd.backgroundColorHDR=new Color(.025f,.035f,.04f);
         hd.antialiasing=HDAdditionalCameraData.AntialiasingMode.None;
