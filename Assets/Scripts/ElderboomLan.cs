@@ -500,6 +500,8 @@ public sealed class ElderboomLan : MonoBehaviour
 
     bool StartDriver(NetworkSettings settings, NetworkEndpoint bind, bool lan)
     {
+        // Big hordes: a snapshot with 130 zombies is about 3 KB, above the 4 KB default once pickups and players are added.
+        Unity.Networking.Transport.Utilities.FragmentationStageParameterExtensions.WithFragmentationStageParameters(ref settings, payloadCapacity: 8192);
         driver = NetworkDriver.Create(settings);
         // Snapshots: unreliable (a newer one follows); events (join, hits, damage, kills): reliable and ordered.
         fastPipe = driver.CreatePipeline(typeof(FragmentationPipelineStage));
@@ -1053,7 +1055,7 @@ public sealed class ElderboomLan : MonoBehaviour
         var list = game.Zombies;
         int zombieCount = 0;
         foreach (var z in list) if (z != null && z.gameObject.activeInHierarchy) zombieCount++;
-        zombieCount = Mathf.Min(zombieCount, 72);
+        zombieCount = Mathf.Min(zombieCount, 140);
         w.Write((byte)zombieCount);
         int written = 0;
         foreach (var z in list)

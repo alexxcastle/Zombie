@@ -32,7 +32,7 @@ static partial class ElderboomClaudeBlocks
     static string ChurchScale(string mode)
     {
         if (EditorSceneManager.GetActiveScene().path != "Assets/Scenes/Elderboom_Unity_Port.unity") EditorSceneManager.OpenScene("Assets/Scenes/Elderboom_Unity_Port.unity");
-        terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).OrderByDescending(t => t.terrainData.size.x).First(); data = terrain.terrainData;
+        terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).Where(t => t.gameObject.layer != 30).OrderByDescending(t => t.terrainData.size.x).First(); data = terrain.terrainData;
         var church = GameObject.Find(ChurchRootName); if (!church) return "FAIL church not found";
         Directory.CreateDirectory(ChurchReview);
         var sb = new StringBuilder();

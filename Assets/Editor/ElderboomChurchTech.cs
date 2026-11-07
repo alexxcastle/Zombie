@@ -47,7 +47,7 @@ static partial class ElderboomClaudeBlocks
     static string ChurchTech(string mode)
     {
         if (EditorSceneManager.GetActiveScene().path != "Assets/Scenes/Elderboom_Unity_Port.unity") EditorSceneManager.OpenScene("Assets/Scenes/Elderboom_Unity_Port.unity");
-        terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).OrderByDescending(t => t.terrainData.size.x).First(); data = terrain.terrainData;
+        terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).Where(t => t.gameObject.layer != 30).OrderByDescending(t => t.terrainData.size.x).First(); data = terrain.terrainData;
         var sb = new StringBuilder();
         var old = GameObject.Find("Church_Tech_Setup"); if (old) Object.DestroyImmediate(old);
         var oldH = GameObject.Find("Cemetery_Helicopter"); if (oldH) Object.DestroyImmediate(oldH);

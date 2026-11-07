@@ -7,8 +7,9 @@ using UnityEngine.AI;
 // Wave loop, spawn selection and spawning, the intensity director and atmosphere.
 public sealed partial class ElderboomGame
 {
-    // Zombies alive at once: 40 alone, +6 per extra player, at most 60 (wave 10 alone reaches the cap).
-    public int MaxActiveZombies => Mathf.Min(40 + 6 * (TeamSize - 1), 60);
+    // Zombies alive at once, by difficulty: EASY 40 / NORMAL 70 / HARD 100, +10 per extra player, at most 130.
+    public int MaxActiveZombies => Mathf.Min((selectedDifficulty == "EASY" ? 40 : selectedDifficulty == "HARD" ? 100 : 70) + 10 * (TeamSize - 1), 130);
+    float HordeScale => selectedDifficulty == "EASY" ? .8f : selectedDifficulty == "HARD" ? 1.6f : 1.1f;
 
     public bool CanSpawn(int limit)
     {
@@ -108,13 +109,13 @@ public sealed partial class ElderboomGame
 
     IEnumerator SpawnWave(int number)
     {
-        float multiplier = selectedDifficulty == "EASY" ? .8f : selectedDifficulty == "HARD" ? 1.25f : 1f;
+        float multiplier = HordeScale;
         // Bigger hordes with more players: +50% per extra player (multiplayer host).
         float team = 1f + .5f * (TeamSize - 1);
-        int count = Mathf.Max(3, Mathf.RoundToInt((6 + number * 3) * multiplier * team));
-        int packet = Mathf.Clamp(2 + number, 3, 6);
-        int maxActive = Mathf.Min(MaxActiveZombies, Mathf.RoundToInt((10 + number * 3) * team));
-        float spacing = Mathf.Max(.4f, .95f - number * .07f) * (selectedDifficulty == "EASY" ? 1.15f : selectedDifficulty == "HARD" ? .8f : 1f);
+        int count = Mathf.Max(4, Mathf.RoundToInt((10 + number * 6) * multiplier * team));
+        int packet = Mathf.Clamp(3 + number, 4, 10);
+        int maxActive = Mathf.Min(MaxActiveZombies, Mathf.RoundToInt((16 + number * 6) * multiplier * team));
+        float spacing = Mathf.Max(.18f, .7f - number * .06f) * (selectedDifficulty == "EASY" ? 1.2f : selectedDifficulty == "HARD" ? .65f : 1f);
         waveRemaining = count;
         spawning = true;
         recentSpawns.Clear();
@@ -125,7 +126,7 @@ public sealed partial class ElderboomGame
 
         for (int index = 0; index < count && state == State.Playing; index++)
         {
-            if (index > 0) yield return new WaitForSeconds(index % packet == 0 ? Mathf.Max(2.5f, 5f - number * .35f) : spacing);
+            if (index > 0) yield return new WaitForSeconds(index % packet == 0 ? Mathf.Max(1.5f, 4f - number * .3f) : spacing);
             // Director: after a burst of damage, hold new spawns briefly so pressure comes in waves.
             float relaxStart = Time.time;
             while (intensity > .9f && Time.time - relaxStart < 6f && state == State.Playing) yield return new WaitForSeconds(.25f);

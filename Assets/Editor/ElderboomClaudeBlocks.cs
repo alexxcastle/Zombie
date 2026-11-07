@@ -111,7 +111,7 @@ static partial class ElderboomClaudeBlocks
             sb.AppendLine("-- " + name + " path " + PathOf(g.transform) + " renderers " + r.Length + " colliders " + g.GetComponentsInChildren<Collider>().Length + " bounds " + V(b.min) + ".." + V(b.max));
             int n = 0; foreach (Transform c in g.transform) { if (n++ >= 6) break; sb.AppendLine("   " + c.name + " " + V(c.position)); }
         }
-        var terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).OrderByDescending(t => t.terrainData.size.x).First();
+        var terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).Where(t => t.gameObject.layer != 30).OrderByDescending(t => t.terrainData.size.x).First();
         sb.AppendLine("-- terrain " + terrain.name + " pos " + V(terrain.transform.position) + " size " + V(terrain.terrainData.size) + " res " + terrain.terrainData.heightmapResolution);
         sb.Append("   heights (dx,dz from village, step 20 m, +z rows top):\n");
         for (int dz = 120; dz >= -120; dz -= 20)

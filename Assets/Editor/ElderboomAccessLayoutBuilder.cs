@@ -287,7 +287,7 @@ static class ElderboomAccessLayoutBuilder
 
     static float Ground(Vector2 p)
     {
-        var terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).OrderByDescending(t => t.terrainData.size.x).FirstOrDefault();
+        var terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).Where(t => t.gameObject.layer != 30).OrderByDescending(t => t.terrainData.size.x).FirstOrDefault();
         return terrain == null ? 0 : terrain.SampleHeight(new Vector3(p.x, 0, p.y)) + terrain.transform.position.y;
     }
 

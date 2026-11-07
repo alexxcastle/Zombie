@@ -85,7 +85,7 @@ static partial class ElderboomClaudeBlocks
 
     static string RunBuild(string mode)
     {
-        terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).OrderByDescending(t => t.terrainData.size.x).First();
+        terrain = Object.FindObjectsByType<Terrain>(FindObjectsInactive.Exclude).Where(t => t.gameObject.layer != 30).OrderByDescending(t => t.terrainData.size.x).First();
         data = terrain.terrainData;
         if (mode.StartsWith("shots")) return Shots();
         if (mode.StartsWith("playtest")) return StartPlaytest();
@@ -623,7 +623,7 @@ static partial class ElderboomClaudeBlocks
 
     internal static string BakeAccessNavigation()
     {
-        terrain = Object.FindObjectsByType<Terrain>().OrderByDescending(t => t.terrainData.size.x).First();
+        terrain = Object.FindObjectsByType<Terrain>().Where(t => t.gameObject.layer != 30).OrderByDescending(t => t.terrainData.size.x).First();
         return Bake();
     }
 

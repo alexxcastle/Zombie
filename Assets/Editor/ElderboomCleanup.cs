@@ -211,7 +211,7 @@ static class ElderboomCleanup
     {
         if (UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().isDirty) return "FAIL unsaved scene";
         UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/Elderboom_Unity_Port.unity");
-        SessionState.SetBool(PerfPending, true); perfStart = 0; promptShot = mode.Contains("prompt"); SessionState.SetBool("claude_cleanup_prompt", promptShot);
+        SessionState.SetBool(PerfPending, true); perfStart = 0; { int h = 0; var parts = mode.Split(' '); if (parts.Length > 2 && parts[1] == "horde") int.TryParse(parts[2], out h); SessionState.SetInt("claude_cleanup_horde", h); } promptShot = mode.Contains("prompt"); SessionState.SetBool("claude_cleanup_prompt", promptShot);
         EditorApplication.isPlaying = true;
         return "perf started\n";
     }
@@ -231,13 +231,29 @@ static class ElderboomCleanup
         if (promptShot && now - perfStart > 14) { File.AppendAllText(Result, "DONE\n"); SessionState.SetBool(PerfPending, false); shotTaken = false; EditorApplication.isPlaying = false; return; }
         if (promptShot) return;
         if (now - perfStart < 12) { perfFrames = Time.frameCount; return; }
+        int horde = SessionState.GetInt("claude_cleanup_horde", 0);
+        if (horde > 0 && ElderboomGame.Active != null && ElderboomGame.Active.Player != null)
+        {
+            // Stress test: N zombies on the NavMesh 15-40 m around the player, spawned through the game's own SpawnZombie.
+            SessionState.SetInt("claude_cleanup_horde", 0); HDRPSlicePlayer.DevInvulnerable = true;
+            ScreenCapture.CaptureScreenshot("Logs/start_view.png"); File.AppendAllText(Result, "player at " + ElderboomGame.Active.Player.transform.position + " area " + ElderboomArea.At(ElderboomGame.Active.Player.transform.position)?.areaName + "\n");
+            var game0 = ElderboomGame.Active; var spawn = typeof(ElderboomGame).GetMethod("SpawnZombie", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var marker = new GameObject("Perf_Horde_Marker").transform; int made = 0;
+            for (int i = 0; i < horde * 6 && made < horde; i++)
+            {
+                var c = Random.insideUnitCircle.normalized * Random.Range(15f, 40f);
+                if (!UnityEngine.AI.NavMesh.SamplePosition(game0.Player.transform.position + new Vector3(c.x, 0, c.y), out var hit, 2f, UnityEngine.AI.NavMesh.AllAreas)) continue;
+                marker.position = hit.position; if ((bool)spawn.Invoke(game0, new object[] { marker, 8 })) made++;
+            }
+            File.AppendAllText(Result, "horde spawned " + made + "\n"); perfFrames = Time.frameCount; perfStart = now - 12; return;
+        }
         if (now - perfStart < 42) return;
         double fps = (Time.frameCount - perfFrames) / 30.0;
         var game = ElderboomGame.Active;
-        string line = "fps " + fps.ToString("F1") + " | drawcalls " + UnityStats.drawCalls + " setpass " + UnityStats.setPassCalls + " tris " + (UnityStats.triangles / 1000) + "k | zombies " + (game != null ? game.Zombies.Count : -1)
+        string line = "fps " + fps.ToString("F1") + " | drawcalls " + UnityStats.drawCalls + " setpass " + UnityStats.setPassCalls + " tris " + (UnityStats.triangles / 1000) + "k | zombies " + (game != null ? game.Zombies.Count : -1) + " near20m " + (game != null && game.Player != null ? game.Zombies.Count(z => z != null && z.IsAlive && Vector3.Distance(z.transform.position, game.Player.transform.position) < 20f) : -1) + " dead " + (game != null && game.Player != null && game.Player.IsDead)
             + " | memory " + (UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / 1048576) + " MB, gfx " + (UnityEngine.Profiling.Profiler.GetAllocatedMemoryForGraphicsDriver() / 1048576) + " MB";
         File.AppendAllText(Result, line + "\nDONE\n");
-        SessionState.SetBool(PerfPending, false);
+        SessionState.SetBool(PerfPending, false); HDRPSlicePlayer.DevInvulnerable = false;
         EditorApplication.isPlaying = false;
     }
 

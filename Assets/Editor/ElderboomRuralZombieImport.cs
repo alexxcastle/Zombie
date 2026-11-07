@@ -198,6 +198,8 @@ public static class ElderboomRuralZombieImport
         if (Mathf.Abs(rest.size.y - spec.height_m) > .015f || Mathf.Abs(rest.min.y) > .015f)
             throw new Exception("Incorrect imported scale/ground: " + spec.name + " " + rest);
         var lod = root.AddComponent<LODGroup>();
+        // Hordes: only the near LOD casts shadows; no per-bone motion vectors (each one is an extra pass per zombie).
+        for (int li = 0; li < levels.Length; li++) { if (levels[li] is SkinnedMeshRenderer smr) smr.skinnedMotionVectors = false; if (li > 0) levels[li].shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; }
         lod.SetLODs(new[] { new LOD(.35f, new Renderer[] { levels[0] }), new LOD(.15f, new Renderer[] { levels[1] }), new LOD(.025f, new Renderer[] { levels[2] }) });
         lod.RecalculateBounds();
         var body = root.AddComponent<CapsuleCollider>();
