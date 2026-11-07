@@ -63,6 +63,13 @@ static class ElderboomTechKitImport
             var box = root.AddComponent<BoxCollider>(); box.center = b.center; box.size = b.size;
             foreach (var t in root.GetComponentsInChildren<Transform>(true)) GameObjectUtility.SetStaticEditorFlags(t.gameObject, StaticEditorFlags.BatchingStatic | StaticEditorFlags.OccluderStatic | StaticEditorFlags.OccludeeStatic);
             int tris = root.GetComponentsInChildren<MeshFilter>().Sum(m => m.sharedMesh ? m.sharedMesh.triangles.Length / 3 : 0);
+            // Flat-panel pieces whose generated paint came out in blocks: one even worn charcoal paint instead,
+            // keeping the model's own normal map (panels, rivets) and a tiled detail map for grime and scratches.
+            if (PaintOver.Contains(name))
+            {
+                var painted = Painted(folder);
+                foreach (var r in root.GetComponentsInChildren<Renderer>()) r.sharedMaterials = Enumerable.Repeat(painted, r.sharedMaterials.Length).ToArray();
+            }
             var path = Root + "/Prefabs/" + name + ".prefab";
             var prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
             Object.DestroyImmediate(root);
@@ -88,6 +95,25 @@ static class ElderboomTechKitImport
         EditorSceneManager.OpenScene(string.IsNullOrEmpty(scene) ? "Assets/Scenes/Elderboom_Unity_Port.unity" : scene); // discards the showcase
         sb.AppendLine("DONE");
         return sb.ToString();
+    }
+
+    static readonly HashSet<string> PaintOver = new HashSet<string> { "02_distribution", "06_weapon_case" };
+    static Material Painted(string folder)
+    {
+        string name = Path.GetFileName(folder), path = folder + "/" + name + "_Painted.mat";
+        var detailPath = Root + "/Painted_Detail.png";
+        var di = (TextureImporter)AssetImporter.GetAtPath(detailPath);
+        if (di != null && di.sRGBTexture) { di.sRGBTexture = false; di.maxTextureSize = 1024; di.SaveAndReimport(); }
+        var m = AssetDatabase.LoadAssetAtPath<Material>(path);
+        if (m == null) { m = new Material(Shader.Find("HDRP/Lit")); AssetDatabase.CreateAsset(m, path); }
+        m.SetColor("_BaseColor", new Color(.058f, .06f, .064f)); m.SetTexture("_BaseColorMap", null);
+        m.SetFloat("_Metallic", .45f); m.SetFloat("_Smoothness", .36f); m.SetTexture("_MaskMap", null);
+        var normal = AssetDatabase.LoadAssetAtPath<Texture2D>(folder + "/Textures/texture_normal.png");
+        m.SetTexture("_NormalMap", normal); m.SetFloat("_NormalScale", 1f);
+        m.SetTexture("_DetailMap", AssetDatabase.LoadAssetAtPath<Texture2D>(detailPath)); m.SetTextureScale("_DetailMap", new Vector2(6, 6));
+        m.SetFloat("_DetailAlbedoScale", 1.2f); m.SetFloat("_DetailNormalScale", .6f); m.SetFloat("_DetailSmoothnessScale", 1f);
+        m.SetFloat("_DoubleSidedEnable", 1);
+        HDMaterial.ValidateMaterial(m); EditorUtility.SetDirty(m); return m;
     }
 
     static Dictionary<string, Entry> ParseKit(string json)
