@@ -1,0 +1,46 @@
+{
+  "asset": "gate_woods_fall",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "fe4ea5a75f2bc10033d1711f460d73fb4aef3368f0ddb4dd47f0b23d4d77f6a4",
+      "bytes": 2425964
+    },
+    {
+      "path": "model.glb",
+      "sha256": "d6cdf6e632a20a00a68bd9038ae5fd393397746f4bd3dd32885df1680a86917f",
+      "bytes": 15095256
+    },
+    {
+      "path": "preview.png",
+      "sha256": "807a10e74cbf4bfff84ea99a8d2f69607b2cdc6f837036b7366f5534d464d29a",
+      "bytes": 840684
+    },
+    {
+      "path": "spec.json",
+      "sha256": "e2977f3d64026d4544af39a2a7ec04dca2aff2e6e439c5d4d20f724d602ced57",
+      "bytes": 6521
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "5a0605a67a6b9d6cc8a2658fe67ae8ba224d716b4612c6efa7b8a3fef5c7329d",
+      "bytes": 5307812
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "2f4a4582dd4087427e8f46d09d26c6f9d0170a75e6a1b7679d78f6fbd22456fb",
+      "bytes": 2856484
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "1cc6cbd4bd9e4c7f988cff5dbf72c85e675285e1d981b8116220b29fa9c6ff16",
+      "bytes": 5461070
+    },
+    {
+      "path": "validation.json",
+      "sha256": "03d8c20e6dd8f0af77894e2ce499aa11a3715dfd9b22bc01533d21f7c9d8bc25",
+      "bytes": 1065
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    0.20000000298023224,
+    2.299999952316284,
+    0.20000000298023224
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    108,
+    48,
+    17
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "fence_terminal_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "61caf601173e9d3c226a90a5b24fca812843f92c97ea94f0b3791e1ce24458dc"
+}

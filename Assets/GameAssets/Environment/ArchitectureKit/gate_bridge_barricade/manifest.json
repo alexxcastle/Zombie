@@ -1,0 +1,46 @@
+{
+  "asset": "gate_bridge_barricade",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "7b8dc1bc1861c570304fc2b559755551594e660925257feb33ddce96d9360e62",
+      "bytes": 1537884
+    },
+    {
+      "path": "model.glb",
+      "sha256": "2ccb5bac26851fca1cda9be9dee8f4fccc21e8ef992739294b2c3b0653a36f84",
+      "bytes": 12924148
+    },
+    {
+      "path": "preview.png",
+      "sha256": "159bd3817ffd79a8aa4eb9cbbf12aca63f086c2ed44b28354c0c4ae4032364bd",
+      "bytes": 717727
+    },
+    {
+      "path": "spec.json",
+      "sha256": "7c1774e270e4158c42362cb1bc794c859613e6d866ee1b75f7e6760b908e5aa8",
+      "bytes": 6826
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "6a16688888eda5cfa848ba0e664b4780af860cd6f1451d175b2bbe9a18ec5d21",
+      "bytes": 5219474
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "209ea0d233ec45a2276ac8f6f446e1b77fef015b5f9424a9fc77079a40a8458b",
+      "bytes": 3173969
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "c11600503af93fdaaf0120837724a2826c7c750d6ee10a90cade45eb50d43bb1",
+      "bytes": 3178455
+    },
+    {
+      "path": "validation.json",
+      "sha256": "cf550b0fe578945134e55c95c7e7c7fc15c97742ac48844a4dcb5d44b0d5b0af",
+      "bytes": 1073
+    }
+  ]
+}

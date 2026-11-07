@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    3.9992146492004395,
+    2.823448419570923,
+    0.4513249099254608
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    20000,
+    9000,
+    3200
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_normal.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "plaster_wall_source_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png",
+        "metalrough": "textures/0_metalrough.png",
+        "normal": "textures/0_normal.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "40c52a9d4e19933ceaf3dd4191cc5b0a5f598c050a063295cc9e75cc8a4d5bb0"
+}

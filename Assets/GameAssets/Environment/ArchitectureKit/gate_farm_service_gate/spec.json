@@ -1,0 +1,117 @@
+{
+  "name": "gate_farm_service_gate",
+  "role": "farm service gate",
+  "dimensions_xyz_m": [
+    2.3600000953674316,
+    1.65,
+    0.16
+  ],
+  "source_description": "Weathered oak agricultural five-bar gate leaf, horizontal slender square rails, sturdy vertical end stiles, one diagonal brace, two dark iron strap hinges at the left edge, simple latch at right. Generous empty spaces between rails. Plain utilitarian joinery.",
+  "image_request": {
+    "prompt": "Product photograph of ONE DETACHED MOVABLE GATE LEAF lying upright, isolated on white seamless background. THIS IS A MOVING DOOR PANEL ONLY, NOT A BUILDING OR A DOORWAY. Weathered oak agricultural five-bar gate leaf, horizontal slender square rails, sturdy vertical end stiles, one diagonal brace, two dark iron strap hinges at the left edge, simple latch at right. Generous empty spaces between rails. Plain utilitarian joinery. Dimensions: width 2.3600000953674316m and height 1.65m. Slight three quarter angle, shallow thickness. All members belong to the moving leaf itself. Free standing isolated prop, with empty white space outside the exact panel outline. Photorealistic damp abandoned rural village materials, aged grey brown wood and dull forged iron, realistic small surface wear. Absolutely NO stone, NO masonry, NO plaster, NO stucco, NO slate, NO roof, NO external door frame, NO upright support posts, NO threshold, NO ground base. Full silhouette visible. Neutral diffuse studio light.",
+    "size": "1536x1536"
+  },
+  "input_image": "front.png",
+  "model_request": {
+    "tier": "Gen-2.5-Extreme-High",
+    "mesh_mode": "Raw",
+    "quality_override": 50000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "texture_mode": "high",
+    "quad_normal": true,
+    "preview_render": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "asymmetric"
+  },
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 18000,
+    "front_axis": "+Z",
+    "up_axis": "+Y",
+    "pivot": "hinge",
+    "scale": "metres",
+    "collision": "separate proxy",
+    "lod_count": 3
+  },
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "gate": {
+    "scene_name": "Access_farm_service_gate",
+    "cost": 750,
+    "area": "West Farm",
+    "other_area": "Village Square",
+    "clear_width_m": 4.800000190734863,
+    "leaf_count": 2,
+    "open_angle": 105,
+    "survey": {
+      "name": "Access_farm_service_gate",
+      "area": "West Farm",
+      "otherArea": "Village Square",
+      "sideA": "Village Square",
+      "sideB": "West Farm",
+      "cost": 750,
+      "position": {
+        "x": -39.0,
+        "y": 2.299924373626709,
+        "z": -1.0
+      },
+      "euler": {
+        "x": 0.0,
+        "y": 270.0,
+        "z": 0.0
+      },
+      "scale": {
+        "x": 1.000000238418579,
+        "y": 1.0,
+        "z": 1.000000238418579
+      },
+      "boxSize": {
+        "x": 4.800000190734863,
+        "y": 3.0999999046325684,
+        "z": 1.100000023841858
+      },
+      "boxCenter": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "neighbours": [
+        "Forged_Lantern/Lantern_cap",
+        "Forged_Lantern/Iron_frame",
+        "Physical_Boundary_Banks/Grounded_Bank_6",
+        "Contact_Foliage_And_Path_Edges/Fern_B",
+        "CC0_wine_barrel_01/wine_barrel_01_bung",
+        "Elderboom_ModularFence/S_Modular_Fence_ufflaitdw_lod3_Var2",
+        "Elderboom_Streetlamp",
+        "Contact_Foliage_And_Path_Edges/Fern_C",
+        "Forged_Lantern/Glass_chamber",
+        "Physical_Boundary_Banks/Grounded_Bank_8",
+        "Elderboom_WoodenBollard/S_Wooden_Bollard_tlttae1fa_lod3",
+        "Low_enclosure_section/S_Modular_Fence_ufflaitdw_lod3_Var2",
+        "CC0_wooden_crate_01/wooden_crate_01_lid",
+        "Elderboom_Village_Port/S_Modular_Fence_ufflaitdw_lod3_Var162",
+        "CC0_wine_barrel_01/wine_barrel_01_base",
+        "Physical_Boundary_Banks/Grounded_Bank_4",
+        "Elderboom_Village_Port/S_Modular_Fence_ufflaitdw_lod3_Var167",
+        "CC0_wooden_crate_01/wooden_crate_01",
+        "Physical_Boundary_Banks/Grounded_Bank_7",
+        "CC0_wooden_crate_01/wooden_crate_01_latch",
+        "Road_WestHouseEntrance",
+        "CC0_wine_barrel_01/wine_barrel_01",
+        "Forged_Lantern/Mounting_post",
+        "CC0_wine_barrel_01/wine_barrel_01_Lid",
+        "Warm_Lamp_Light/LanternGlow",
+        "Forged_Lantern/Mounting_arm",
+        "Physical_Boundary_Banks/Grounded_Bank_2",
+        "Physical_Boundary_Banks/Grounded_Bank_3",
+        "Physical_Boundary_Banks/Grounded_Bank_5",
+        "Road_WestEastStreet"
+      ]
+    },
+    "decision": "Weathered oak agricultural five-bar gate leaf, horizontal slender square rails, sturdy vertical end stiles, one diagonal brace, two dark iron strap hinges at the left edge, simple latch at right. Generous empty spaces between rails. Plain utilitarian joinery.",
+    "reviewed_view": "UnityHDRPSlice/Logs/ArchitectureKit/Access_farm_service_gate_nearA.jpg"
+  }
+}

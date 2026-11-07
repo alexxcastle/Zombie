@@ -1,0 +1,46 @@
+{
+  "asset": "gate_churchyard_iron_gate",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "c8712be22cf20e30d596bf884ce5cb40b135299ca7b72f1afd1f507b596c2f72",
+      "bytes": 1992924
+    },
+    {
+      "path": "model.glb",
+      "sha256": "b89f5efe1784ac0c9b293094de35d1927e0f9178da17456a197ea490eb73da29",
+      "bytes": 10858052
+    },
+    {
+      "path": "preview.png",
+      "sha256": "afe52659d7322df94f1d56d4476642c5f5f4788cc2253dc42080af0baf0e620d",
+      "bytes": 634273
+    },
+    {
+      "path": "spec.json",
+      "sha256": "ea3a9c46c21c76e9d795469f29d93543ddfaef196f26df31156a6e711fcce2bc",
+      "bytes": 5142
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "08a3545a47dee501b60be6d7cea9ad13ae04256216929027681882ea358f94f4",
+      "bytes": 3347033
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "ec4a65b29b77ef797f462d2614bef35b212c674f6d0f1f52091841d29f11a409",
+      "bytes": 3497771
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "c0312bb97ef785a0d2e50692833d9b1182efc6e4b6fde34dc026340c46f3772f",
+      "bytes": 3035552
+    },
+    {
+      "path": "validation.json",
+      "sha256": "9a4e316581e4ae733714ea967936b9a34f427ff732de39e612fc276e675c8a03",
+      "bytes": 1075
+    }
+  ]
+}

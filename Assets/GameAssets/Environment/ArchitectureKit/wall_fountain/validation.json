@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    1.903212308883667,
+    2.5103600025177,
+    1.5562357902526855
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    20000,
+    9000,
+    3200
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_normal.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "wall_fountain_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png",
+        "metalrough": "textures/0_metalrough.png",
+        "normal": "textures/0_normal.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "0722f392362ef95e30648ed5d1035a956031b480924fdf3e53bf921636e6b064"
+}

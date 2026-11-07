@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    1.460209608078003,
+    1.650206208229065,
+    0.10072822868824005
+  ],
+  "pivot": "left hinge at floor",
+  "lod_triangles": [
+    18000,
+    8100,
+    2880
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_normal.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "gate_caretaker_wicket_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png",
+        "metalrough": "textures/0_metalrough.png",
+        "normal": "textures/0_normal.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "68badd8271b4af1e85ccb32f0fd96eb902e15db9cabc15fbfa603a8be5775897"
+}

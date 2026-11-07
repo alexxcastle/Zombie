@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    3.174999952316284,
+    2.200000047683716,
+    3.174999952316284
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    11232,
+    4992,
+    1768
+  ],
+  "textures": [
+    {
+      "path": "textures/1_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/1_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/1_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "fence_corner_PBR_0",
+      "textures": {},
+      "index": 0,
+      "base_color": [
+        0.04500000178813934,
+        0.03500000014901161,
+        0.02800000086426735,
+        1.0
+      ],
+      "roughness": 0.6499999761581421,
+      "metallic": 0.800000011920929,
+      "transmission": 0.0
+    },
+    {
+      "name": "fence_corner_PBR_1",
+      "textures": {
+        "diffuse": "textures/1_diffuse.png"
+      },
+      "index": 1,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "b65a2031a391cef7dea762f9a8667eaa6774fe7fc937afcc8258fa02952ef379"
+}

@@ -1,0 +1,36 @@
+{
+  "asset": "fence_farm_rail",
+  "license": "CC0-1.0 materials; original procedural geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "859d9ec5f558dc1d4cd1f85c415b4388924fe3fd1898f880852b860c21497281",
+      "bytes": 89452
+    },
+    {
+      "path": "model.glb",
+      "sha256": "0cd813f8112a1ab726f0f281956a1e21445cebe64c5746dd89d692efc650ff32",
+      "bytes": 16839340
+    },
+    {
+      "path": "preview.png",
+      "sha256": "ba165dfaee76bc19e261e5f316fa02016d7966924959aa74c2778e7702008de8",
+      "bytes": 585054
+    },
+    {
+      "path": "spec.json",
+      "sha256": "099e69297e8659034c29239243106ab33f1dc30dec1d3abb2846d099ff209e9d",
+      "bytes": 444
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "validation.json",
+      "sha256": "f7d5c20f25a4e057db8eea3cb32a3feece99f40fb175ce1b6ec3bb68bad7e2a8",
+      "bytes": 958
+    }
+  ]
+}

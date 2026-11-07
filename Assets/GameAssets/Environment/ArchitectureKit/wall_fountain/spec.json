@@ -1,0 +1,42 @@
+{
+  "name": "wall_fountain",
+  "role": "Communal wall drinking fountain",
+  "dimensions_xyz_m": [
+    1.8,
+    2.5,
+    0.95
+  ],
+  "source_description": "One self contained old rural wall fountain carved in weathered grey limestone. Vertical rectangular back plate with a shallow simple arched top, one small dark iron spout at human waist height, and a deep open rectangular trough attached below with thick rounded stone rim. Narrow freestanding complete stone back, flat rear suitable to place against a building. Clearly empty hollow trough with visible bottom, no water, no flowers, no relief faces, no text, no surrounding wall.",
+  "image_request": {
+    "prompt": "One isolated complete object centred on plain light grey studio background, entire silhouette visible with generous margin. Front-left three quarter view, modest elevated camera showing roof and depth. Neutral broad daylight, crisp physically realistic surfaces. Photorealistic architectural game asset for Elderboom, a damp abandoned rural European village: irregular cool grey fieldstone, aged dark brown oak, cracked muted warm grey lime plaster, dark grey slate shingles, dull hand-forged iron, subtle moss at ground contact. Human-scaled openings, plausible load bearing joinery. Finely resolved surface detail with physically based neutral albedo. Restrained natural materials and believable weathering, no fantasy exaggeration. One self contained old rural wall fountain carved in weathered grey limestone. Vertical rectangular back plate with a shallow simple arched top, one small dark iron spout at human waist height, and a deep open rectangular trough attached below with thick rounded stone rim. Narrow freestanding complete stone back, flat rear suitable to place against a building. Clearly empty hollow trough with visible bottom, no water, no flowers, no relief faces, no text, no surrounding wall. No people, no text, no signage lettering, no surrounding village, no background scenery, no terrain island, no display pedestal, no giant roots or vegetation, no snow, no red roof tiles, no modern concrete, no vivid colours, no stylized cartoon, no baked dramatic light.",
+    "size": "1536x1536"
+  },
+  "negative_prompt": "No people, no text, no signage lettering, no surrounding village, no background scenery, no terrain island, no display pedestal, no giant roots or vegetation, no snow, no red roof tiles, no modern concrete, no vivid colours, no stylized cartoon, no baked dramatic light.",
+  "input_image": "front.png",
+  "model_request": {
+    "tier": "Gen-2.5-Extreme-High",
+    "mesh_mode": "Raw",
+    "quality_override": 60000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "texture_mode": "high",
+    "quad_normal": true,
+    "preview_render": true,
+    "image_label": [
+      "FL"
+    ],
+    "is_symmetric": "balanced"
+  },
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 20000,
+    "front_axis": "+Z",
+    "up_axis": "+Y",
+    "pivot": "base centre",
+    "scale": "metres",
+    "collision": "separate proxy",
+    "lod_count": 3
+  },
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms"
+}

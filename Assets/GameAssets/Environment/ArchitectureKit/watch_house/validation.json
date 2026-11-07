@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    11.10611343383789,
+    14.050224304199219,
+    7.172459602355957
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    60000,
+    27000,
+    9600
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_normal.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "watch_house_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png",
+        "metalrough": "textures/0_metalrough.png",
+        "normal": "textures/0_normal.png"
+      }
+    }
+  ],
+  "source_sha256": "231eb1d24b4562ed9e43505735d0030d705b37be28d0bf3a44c6a6275e61525a"
+}

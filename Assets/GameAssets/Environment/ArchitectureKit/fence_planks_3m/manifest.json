@@ -1,0 +1,41 @@
+{
+  "asset": "fence_planks_3m",
+  "license": "CC0-1.0 materials; original procedural geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "12838e03a1822b5bd194fd2b33a9c61864572f3c32f64010737097254755a3c6",
+      "bytes": 747580
+    },
+    {
+      "path": "model.glb",
+      "sha256": "1d4c78fc9dce73f71c9cdf089c15d86be41208ebeed1d2fa95d59777dfa85927",
+      "bytes": 17204864
+    },
+    {
+      "path": "preview.png",
+      "sha256": "0f3a8f72a60d4780db34fb8fe5362c137541dd2c79b59f5913e4cf30d98b13c2",
+      "bytes": 734262
+    },
+    {
+      "path": "spec.json",
+      "sha256": "e0b65432a5723ba4badef2ab51396363eecaaaac9208f8287fb3e6196fbdc74d",
+      "bytes": 444
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "textures/1_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "validation.json",
+      "sha256": "8189d87ef1312c42eb9eb571aed5c82a929b9ac87403af1d66c522a167e03e80",
+      "bytes": 1284
+    }
+  ]
+}

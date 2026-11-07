@@ -1,0 +1,46 @@
+{
+  "asset": "village_fountain",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "3ef77a2724ccbd1f412207d20625251f0610d0606c163705eadefbdec2830e61",
+      "bytes": 1703452
+    },
+    {
+      "path": "model.glb",
+      "sha256": "c3915ad37c5bb29f339e131d9908e7fe7b1cb1f7ec4e0623057867b8aa0ea3a9",
+      "bytes": 10175596
+    },
+    {
+      "path": "preview.png",
+      "sha256": "cf687f0b470d7396bb1d6f6ffa182232f16ed14b89eaf1c23591cf9e6feb1694",
+      "bytes": 742556
+    },
+    {
+      "path": "spec.json",
+      "sha256": "429639f4d02e6a7178d61d21e581ea6d1f7b2cb9f7e1de5087385f6decc513d0",
+      "bytes": 3350
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "97ef15ec3b1041b5124790bb15ab34957364a5aaabd03a0f970b0713abf956a3",
+      "bytes": 4561512
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "faa51b7f50eeb88d96de606dd3a16d743e1cbffacdfb88752aa9045223aa25a8",
+      "bytes": 2584859
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "26d324d2d915e574233179b50e1cdb0fa5567d72d0ab6f9c1ff65ba41ce7e464",
+      "bytes": 2339574
+    },
+    {
+      "path": "validation.json",
+      "sha256": "eda928546308dfd5a20a71e91da1ec903bb1de2d018b855a562fa9255a19c2ad",
+      "bytes": 1058
+    }
+  ]
+}

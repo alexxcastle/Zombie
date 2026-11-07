@@ -1,0 +1,46 @@
+{
+  "asset": "fieldstone_wall_source",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "2531e61a73d6466f3f201c534ce80fa82a798e0ee6d9857329173ffa703e4018",
+      "bytes": 2363196
+    },
+    {
+      "path": "model.glb",
+      "sha256": "bb02317edb6b9bfc548e340ee7f775948edbd92c44462bb885cd9b379a702358",
+      "bytes": 14559636
+    },
+    {
+      "path": "preview.png",
+      "sha256": "022bf1667cbe4c3e9fdbf8d7e06b40bc56629491f070ead88f0031149fd55717",
+      "bytes": 749270
+    },
+    {
+      "path": "spec.json",
+      "sha256": "fa34a1bbd477eef07379b8f4d228651dd26386b80bac21b72d9a3dd857fddc40",
+      "bytes": 3183
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "8507096db5c368507a86ab18f66c1e0176cb072025f7a911455c6fa69b367a7f",
+      "bytes": 5802393
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "5f0dd46a5c94daf095d29b69e4e68f8e736361c2a6c28ecc4c59dbd237b82c78",
+      "bytes": 3015560
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "f7ab17ea2d4bc9c50d758e4fbbb13dce9584e9f0376e2248689c90ec717a564d",
+      "bytes": 4469111
+    },
+    {
+      "path": "validation.json",
+      "sha256": "fdbcce4b83793f4e46772af979b963eed84a69b87b314f00c5063a52aebc919b",
+      "bytes": 847
+    }
+  ]
+}

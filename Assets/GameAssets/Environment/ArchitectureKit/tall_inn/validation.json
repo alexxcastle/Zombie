@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    7.509982585906982,
+    11.203542709350586,
+    9.49073600769043
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    60000,
+    27000,
+    9600
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_normal.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "tall_inn_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png",
+        "metalrough": "textures/0_metalrough.png",
+        "normal": "textures/0_normal.png"
+      }
+    }
+  ],
+  "source_sha256": "27eb0179e58f217676e700c930dc7f125df6db5312ead519a3f92d4595e36e55"
+}

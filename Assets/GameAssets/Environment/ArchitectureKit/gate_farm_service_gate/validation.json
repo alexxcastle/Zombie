@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    2.384920597076416,
+    1.6609632968902588,
+    0.1713973581790924
+  ],
+  "pivot": "left hinge at floor",
+  "lod_triangles": [
+    18000,
+    8100,
+    2880
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_normal.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "gate_farm_service_gate_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png",
+        "metalrough": "textures/0_metalrough.png",
+        "normal": "textures/0_normal.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "2240ef178d8b195ed69fa09c02aad268238c9901fb43ec9e59c4b1d43d58f444"
+}

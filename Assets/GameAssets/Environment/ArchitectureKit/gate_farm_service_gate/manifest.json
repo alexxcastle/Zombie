@@ -1,0 +1,46 @@
+{
+  "asset": "gate_farm_service_gate",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "2379af5b32db155e0ff558bd6618bad80c1cbacf35fc7873644cccd37e847dbb",
+      "bytes": 2919980
+    },
+    {
+      "path": "model.glb",
+      "sha256": "7e0c91e8ca7d702440dfb175a38824510eef71266612e641f5363cc855394f6e",
+      "bytes": 16294988
+    },
+    {
+      "path": "preview.png",
+      "sha256": "0f3e9ccc7081ce18c38f6040877523d121da9d53a9fce721e8512107c370ad68",
+      "bytes": 744223
+    },
+    {
+      "path": "spec.json",
+      "sha256": "26812094c3f97c28f6af42bf56e92f8fe47592b3ae24d44038b340cc53201ac6",
+      "bytes": 4982
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "c9a2be04296376140ad6ca22f15808cb6f3e93b22dd0aec4912880631a8fc8ae",
+      "bytes": 5384682
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "7d7fa3cf4c4653ee8f0706fd76f5be17f938136983dbeb4988ee0e9b263086b6",
+      "bytes": 3531672
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "0000d07cbab4f0f7ddf111ba9f15fba02b5aadf993182d2057ef3c27eca9f3bb",
+      "bytes": 5464600
+    },
+    {
+      "path": "validation.json",
+      "sha256": "d54e79b6c4e5b15470d044b66ebbe6bda589b4ea50a9387776a6a9923948a144",
+      "bytes": 1072
+    }
+  ]
+}

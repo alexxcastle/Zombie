@@ -1,0 +1,46 @@
+{
+  "asset": "greenhouse_small",
+  "license": "CC0-1.0 materials; original procedural geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "b54ed472996160db3c06fac1620b883f323ca9502438f2a92ca29cfc69e885f6",
+      "bytes": 703164
+    },
+    {
+      "path": "model.glb",
+      "sha256": "ece0f9009a899a5e2eea1c1e17afe076afa9db7773bd936b9367d60cd7466154",
+      "bytes": 36188556
+    },
+    {
+      "path": "preview.png",
+      "sha256": "4932763c2616b08b6e4a865699272d4469ad963e909594016a655a4b9cad158d",
+      "bytes": 714539
+    },
+    {
+      "path": "spec.json",
+      "sha256": "6de0d779ad698bde4ce321c938e1c7cea1023492010d2bab7fe637560a57907d",
+      "bytes": 472
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "textures/1_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "textures/2_diffuse.png",
+      "sha256": "87121db6d7bbbd88cbc348cbdb980db696563b1123d6352127bc3b9c0b80528b",
+      "bytes": 9158326
+    },
+    {
+      "path": "validation.json",
+      "sha256": "a921842869706b76c3e4874884d578c54fe8139b5d123e7847cb442cefeb429f",
+      "bytes": 1909
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "asset": "watch_house",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "8615e3057500d3a912acb1b08829851d843e5fa6914455a0073d6aaf9517a2e7",
+      "bytes": 8490140
+    },
+    {
+      "path": "model.glb",
+      "sha256": "db46c880c3e66160edbbb80c019f306fa9ca9c45aa9f381365ef725992354548",
+      "bytes": 18936424
+    },
+    {
+      "path": "preview.png",
+      "sha256": "6ad7365b742c2e30c48990802c9f5cb2704c40a02d706abd11fdc0548dca370b",
+      "bytes": 793350
+    },
+    {
+      "path": "spec.json",
+      "sha256": "d7b28da800eb309d5a1497d6229b36721d11f1bd8cc558b124e2899943f2c390",
+      "bytes": 3405
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "4b069e8362bbf2bae2ed69efb65e5c8ecd28d7eb1620f6381d75233622a60462",
+      "bytes": 5596574
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "6092235496747c46cd19744ce84014f0b65919bdc32f2cbae326c9a2a37e9e95",
+      "bytes": 3024388
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "a4d7442843a1ed3f47212846e67d9652580f81112ff042b1b12c64ef4a58e553",
+      "bytes": 6228073
+    },
+    {
+      "path": "validation.json",
+      "sha256": "0bc788a48a1fd307f17ad0225339e3a7602844ef3a9dadd832cead72dac0bc23",
+      "bytes": 837
+    }
+  ]
+}

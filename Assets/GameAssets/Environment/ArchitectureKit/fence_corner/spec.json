@@ -1,0 +1,17 @@
+{
+  "name": "fence_corner",
+  "role": "Modular timber enclosure",
+  "dimensions_xyz_m": [
+    3,
+    2.2,
+    3
+  ],
+  "license": "CC0-1.0 materials; original procedural geometry",
+  "license_url": "https://polyhaven.com/license",
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 20000
+  },
+  "source": "Original metric Blender construction, Poly Haven weathered_brown_planks and stone_wall_05 CC0",
+  "procedural": true
+}

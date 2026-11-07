@@ -1,0 +1,46 @@
+{
+  "asset": "gate_mill_cart_shortcut",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "db18e2552dbd0c563d5a07eb88b65364135ca63745f6a10adaecf1766b326d87",
+      "bytes": 1516556
+    },
+    {
+      "path": "model.glb",
+      "sha256": "983a7e5ca43452ce0dc7e9b4dd9c3f20dd942217f411eb7af095054f01603ba6",
+      "bytes": 14270728
+    },
+    {
+      "path": "preview.png",
+      "sha256": "72be0a71dc2271f6f7290af5ca418912836cf559e268399a4e85381368fb949c",
+      "bytes": 765105
+    },
+    {
+      "path": "spec.json",
+      "sha256": "96b6b2c68e3fd1ca884c00476740913ddb0311a87ac6072ada8c85492c90d9ab",
+      "bytes": 5384
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "dad0c45ae143b44e228554663e04416c2643954d7dffd59977100ffe52c9a3d8",
+      "bytes": 5352916
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "0e7f7c99d8ddeb9b8a963ef52372ececb05002eddefbe85bfefdf7212b9e30d9",
+      "bytes": 3187063
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "d3b2e664cadbd46befe57b6b333ea5509410f6e32f301f532d1cf40d591634c6",
+      "bytes": 4496634
+    },
+    {
+      "path": "validation.json",
+      "sha256": "5270da498b8095ad2f841b033c4cfc28488864e3def4385619d0e3e42041f0d9",
+      "bytes": 1074
+    }
+  ]
+}

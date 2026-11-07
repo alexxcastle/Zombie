@@ -55,6 +55,30 @@ static class ElderboomStartSpawn
             for (int k = 0; k < 16; k++) { var d = Quaternion.Euler(0, k * 22.5f, 0) * Vector3.forward; o.AppendLine($"yaw {k * 22.5f} " + (Physics.Raycast(eye, d, out var lh, 60f, ~(1 << 30), QueryTriggerInteraction.Ignore) ? lh.distance.ToString("F1") + " " + lh.collider.name + " / " + (lh.collider.transform.root.name) : "clear")); }
             return o.ToString();
         }
+        if (mode == "gates")
+        {
+            var navH = Object.FindAnyObjectByType<ElderboomNavigation>(); if (navH != null && navH.data != null) { NavMesh.RemoveAllNavMeshData(); NavMesh.AddNavMeshData(navH.data); }
+            var o = new StringBuilder();
+            foreach (var g in Object.FindObjectsByType<ElderboomGate>(FindObjectsSortMode.None).Where(x => x.name.StartsWith("Access_")))
+            {
+                var a = g.transform.position - g.transform.forward * 4f; var b = g.transform.position + g.transform.forward * 4f;
+                bool sa = NavMesh.SamplePosition(a, out var ah, 2.5f, NavMesh.AllAreas), sb2 = NavMesh.SamplePosition(b, out var bh, 2.5f, NavMesh.AllAreas);
+                var path = new NavMeshPath(); bool cp = sa && sb2 && NavMesh.CalculatePath(ah.position, bh.position, NavMesh.AllAreas, path);
+                float len = 0; for (int i = 1; i < path.corners.Length; i++) len += Vector3.Distance(path.corners[i - 1], path.corners[i]);
+                var box = g.GetComponent<BoxCollider>();
+                o.AppendLine($"{g.name} pos {g.transform.position} fwd {g.transform.forward} box {box.size} sampleA {sa} {(sa ? ah.position.ToString() : "")} sampleB {sb2} {(sb2 ? bh.position.ToString() : "")} path {cp} {path.status} len {len:F1} corners {path.corners.Length}");
+                if (sa && sb2 && NavMesh.Raycast(ah.position, bh.position, out var nh, NavMesh.AllAreas))
+                {
+                    o.AppendLine($"   navray hit {nh.position} dist {nh.distance:F2}");
+                    foreach (var c in Physics.OverlapSphere(nh.position + Vector3.up * .3f, 1.2f, ~0, QueryTriggerInteraction.Collide).Where(c => !(c is TerrainCollider)))
+                        o.AppendLine($"     near {c.GetType().Name} {c.name} root {c.transform.root.name} layer {c.gameObject.layer} trig {c.isTrigger} en {c.enabled} bounds {c.bounds.center} {c.bounds.size}");
+                    if (Physics.Raycast(nh.position + Vector3.up * 5f, Vector3.down, out var gh, 10f, ~0, QueryTriggerInteraction.Ignore)) o.AppendLine($"     ground {gh.collider.name} y {gh.point.y:F2}");
+                }
+                var cols = Physics.OverlapBox(g.transform.position, new Vector3(Mathf.Max(box.size.x, 3) * .5f, 1f, 1.5f), g.transform.rotation, ~(1 << 30), QueryTriggerInteraction.Ignore);
+                foreach (var c in cols.Where(c => !(c is TerrainCollider)).Take(8)) o.AppendLine($"   col {c.GetType().Name} {c.name} parent {(c.transform.parent ? c.transform.parent.name : "-")} leaves {c.GetComponentInParent<ElderboomGateLeaves>() != null} gate {c.GetComponent<ElderboomGate>() != null} bounds {c.bounds.center} {c.bounds.size}");
+            }
+            return o.ToString();
+        }
         if (mode == "save") { bool dirty = EditorSceneManager.GetActiveScene().isDirty; EditorSceneManager.SaveOpenScenes(); return "saved (was dirty " + dirty + ")"; }
         var player = Object.FindAnyObjectByType<HDRPSlicePlayer>(FindObjectsInactive.Include);
         var heli = GameObject.Find("Cemetery_Helicopter");

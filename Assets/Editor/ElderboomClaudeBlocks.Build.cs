@@ -645,12 +645,12 @@ static partial class ElderboomClaudeBlocks
                     sources.Add(new NavMeshBuildSource { shape = NavMeshBuildSourceShape.Box, transform = box.transform.localToWorldMatrix * Matrix4x4.Translate(box.center), size = box.size, area = 0 });
         foreach (var collider in Object.FindObjectsByType<MeshCollider>(FindObjectsInactive.Exclude))
         {
-            if (collider.sharedMesh == null || !collider.enabled || !collider.gameObject.activeInHierarchy || collider.GetComponent<Terrain>() != null) continue;
+            if (collider.sharedMesh == null || !collider.enabled || !collider.gameObject.activeInHierarchy || collider.GetComponent<Terrain>() != null || collider.GetComponentInParent<ElderboomGateLeaves>() != null) continue;
             sources.Add(new NavMeshBuildSource { shape = NavMeshBuildSourceShape.Mesh, sourceObject = collider.sharedMesh, transform = collider.transform.localToWorldMatrix, area = 0 });
         }
         foreach (var box in Object.FindObjectsByType<BoxCollider>(FindObjectsInactive.Exclude))
         {
-            if (!box.enabled || !box.gameObject.activeInHierarchy || box.GetComponent<ElderboomGate>() != null || box.isTrigger) continue;
+            if (!box.enabled || !box.gameObject.activeInHierarchy || box.GetComponent<ElderboomGate>() != null || box.GetComponentInParent<ElderboomGateLeaves>() != null || box.isTrigger) continue;
             sources.Add(new NavMeshBuildSource { shape = NavMeshBuildSourceShape.Box, transform = box.transform.localToWorldMatrix * Matrix4x4.Translate(box.center), size = box.size, area = 0 });
         }
         var settings = NavMesh.GetSettingsByIndex(0);

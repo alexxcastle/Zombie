@@ -1,0 +1,132 @@
+{
+  "name": "gate_woods_fall",
+  "role": "woods fall",
+  "dimensions_xyz_m": [
+    1.7599999523162841,
+    1.75,
+    0.18
+  ],
+  "source_description": "Rustic woodland access gate leaf built from irregular split chestnut vertical staves within a simple stout weathered timber rectangle, two crossrails and one diagonal brace. Uneven stave tops but controlled rectangular outer dimensions, spaced open gaps, damp grey brown wood, hand forged strap hinges on the left edge. Plausible forestry enclosure, restrained small lichen patches, no surrounding trees.",
+  "image_request": {
+    "prompt": "Product photograph of ONE DETACHED MOVABLE GATE LEAF lying upright, isolated on white seamless background. THIS IS A MOVING DOOR PANEL ONLY, NOT A BUILDING OR A DOORWAY. Rustic woodland access gate leaf built from irregular split chestnut vertical staves within a simple stout weathered timber rectangle, two crossrails and one diagonal brace. Uneven stave tops but controlled rectangular outer dimensions, spaced open gaps, damp grey brown wood, hand forged strap hinges on the left edge. Plausible forestry enclosure, restrained small lichen patches, no surrounding trees. Dimensions: width 1.7599999523162841m and height 1.75m. Slight three quarter angle, shallow thickness. All members belong to the moving leaf itself. Free standing isolated prop, with empty white space outside the exact panel outline. Photorealistic damp abandoned rural village materials, aged grey brown wood and dull forged iron, realistic small surface wear. Absolutely NO stone, NO masonry, NO plaster, NO stucco, NO slate, NO roof, NO external door frame, NO upright support posts, NO threshold, NO ground base. Full silhouette visible. Neutral diffuse studio light.",
+    "size": "1536x1536"
+  },
+  "input_image": "front.png",
+  "model_request": {
+    "tier": "Gen-2.5-Extreme-High",
+    "mesh_mode": "Raw",
+    "quality_override": 50000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "texture_mode": "high",
+    "quad_normal": true,
+    "preview_render": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "asymmetric"
+  },
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 18000,
+    "front_axis": "+Z",
+    "up_axis": "+Y",
+    "pivot": "hinge",
+    "scale": "metres",
+    "collision": "separate proxy",
+    "lod_count": 3
+  },
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "gate": {
+    "scene_name": "Access_woods_fall",
+    "cost": 1500,
+    "area": "Outer Woods",
+    "other_area": "North Timber Yard",
+    "clear_width_m": 3.5999999046325684,
+    "leaf_count": 2,
+    "open_angle": 105,
+    "survey": {
+      "name": "Access_woods_fall",
+      "area": "Outer Woods",
+      "otherArea": "North Timber Yard",
+      "sideA": "Outer Woods",
+      "sideB": "North Timber Yard",
+      "cost": 1500,
+      "position": {
+        "x": 39.0,
+        "y": 2.9817686080932617,
+        "z": 51.0
+      },
+      "euler": {
+        "x": 0.0,
+        "y": 270.0,
+        "z": 0.0
+      },
+      "scale": {
+        "x": 1.000000238418579,
+        "y": 1.0,
+        "z": 1.000000238418579
+      },
+      "boxSize": {
+        "x": 3.5999999046325684,
+        "y": 3.0999999046325684,
+        "z": 1.399999976158142
+      },
+      "boxCenter": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "neighbours": [
+        "Red_Bush/Red_Bush_A_LOD2",
+        "Rock_B_02/Rock_B_02_LOD02",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod13",
+        "Road_NorthEastCottage",
+        "Elderboom_Village_Port/SM_BlackAlder_Field_71",
+        "Perimeter_Building_5/S_Medieval_Modular_Corner_Wall_ueoidegdw_lod3_Var1",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod11",
+        "Red_Bush/Red_Bush_A_LOD1",
+        "Forged_Lantern/Iron_frame",
+        "Elderboom_WornWoodenBeam/S_Worn_Wooden_Beam_tgmsdc0fa_lod4",
+        "Perimeter_Building_5/S_Medieval_Modular_Gable_udsreiudw_lod3_Var2",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod4",
+        "Red_Bush/Red_Bush_A_LOD0",
+        "Elderboom_Streetlamp",
+        "Rock_B_02/Rock_B_02_LOD00",
+        "Rock_B_02/Rock_B_02_LOD01",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod6",
+        "Forged_Lantern/Mounting_post",
+        "Perimeter_Building_5/S_Medieval_Modular_Door_ueoqaewdw_lod3_Var1",
+        "Perimeter_Building_5/Wall_400x200",
+        "Forged_Lantern/Lantern_cap",
+        "Perimeter_Building_5/S_Medieval_Modular_Wall_udsreafdw_lod3_Var1",
+        "Perimeter_Building_5/S_Medieval_Modular_Door_ueoqceudw_lod3_Var1",
+        "Perimeter_Building_5/S_Medieval_Modular_Wall_uewibaydw_lod3_Var1",
+        "Perimeter_Building_5/S_Medieval_Modular_Wall_uewiaiqdw_lod3_Var1",
+        "Perimeter_Building_5/S_Medieval_Modular_Wall_ueojbazdw_lod3_Var1",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod18",
+        "Perimeter_Building_5/Wall_400x201",
+        "Perimeter_Building_5/S_Medieval_Modular_Wall_ueoqbdhdw_lod3_Var1",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod15",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod19",
+        "Perimeter_Building_5/S_Medieval_Modular_Corner_Wall_ueoidegdw_lod3_Var4",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod10",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod7",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod9",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod3",
+        "Rock_B_02/Rock_B_02_LOD03",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod17",
+        "Elderboom_Village_Port/S_Mossy_Stone_Wall_ukhgdfyga_lod3_Var145",
+        "Forged_Lantern/Glass_chamber",
+        "Rock_B_02/Rock_B_02_LOD04",
+        "Perimeter_Building_5/S_Medieval_Modular_Wall_udsreafdw_lod3_Var2",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod14",
+        "Forged_Lantern/Mounting_arm",
+        "Perimeter_Building_5/S_Wooden_Bollard_tlttae1fa_lod20"
+      ]
+    },
+    "decision": "Rustic woodland access gate leaf built from irregular split chestnut vertical staves within a simple stout weathered timber rectangle, two crossrails and one diagonal brace. Uneven stave tops but controlled rectangular outer dimensions, spaced open gaps, damp grey brown wood, hand forged strap hinges on the left edge. Plausible forestry enclosure, restrained small lichen patches, no surrounding trees.",
+    "reviewed_view": "UnityHDRPSlice/Logs/ArchitectureKit/Access_woods_fall_nearA.jpg"
+  }
+}

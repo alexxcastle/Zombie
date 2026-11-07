@@ -207,6 +207,14 @@ static class ElderboomAccessLayoutBuilder
             float deck = ElderboomClaudeBlocks.BridgeSurface(bridge, pos2.x, pos2.y);
             gate.transform.position = new Vector3(pos2.x, deck + 1.35f, pos2.y);
         }
+        // A vetted, context-specific gate prefab supersedes the old catalog recipe.
+        // The gate root remains data-owned here: it preserves access graph, cost and
+        // blocker dimensions while the prefab contributes only movable leaves/posts.
+        if (InstallGeneratedGate(gate.transform, a.id))
+        {
+            log.AppendLine($"{a.id}: generated gate leaves; {a.clearWidth:F1}m; {a.cost} credits");
+            return;
+        }
         switch (art.recipe)
         {
             case "farm_service_gate": FenceClosure(gate.transform, catalog, art.catalogAssetIds, false); break;
@@ -219,6 +227,31 @@ static class ElderboomAccessLayoutBuilder
             default: throw new InvalidOperationException("No catalog treatment for " + a.id);
         }
         log.AppendLine($"{a.id}: {a.from} -> {a.to}; {a.clearWidth:F1}m; {string.Join(",", art.catalogAssetIds)}");
+    }
+
+    static bool InstallGeneratedGate(Transform gate, string id)
+    {
+        const string folder = "Assets/GameAssets/Environment/ArchitectureKit/gate_";
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(folder + id + "/gate_" + id + ".prefab");
+        if (prefab == null) return false;
+        var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        instance.name = "GeneratedGateLeaves";
+        PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
+        // Preserve child transforms verbatim: prefab root has the same convention
+        // (origin 1.35m above finished ground) as the access builder.
+        while (instance.transform.childCount > 0)
+            instance.transform.GetChild(0).SetParent(gate, false);
+        Object.DestroyImmediate(instance);
+        var motion = gate.gameObject.AddComponent<ElderboomGateLeaves>();
+        motion.leftHinge = gate.Find("LeftHinge");
+        motion.rightHinge = gate.Find("RightHinge");
+        if (motion.leftHinge == null || motion.rightHinge == null)
+            throw new InvalidOperationException("Generated gate missing hinge transforms: " + id);
+        motion.openingDegrees = 105;
+        motion.leafColliders = new[] { motion.leftHinge.GetComponent<Collider>(), motion.rightHinge.GetComponent<Collider>() }
+            .Where(c => c != null).ToArray();
+        if (motion.leafColliders.Length != 2) throw new InvalidOperationException("Generated gate missing leaf colliders: " + id);
+        return true;
     }
 
     // Fit catalog instances in gate-local metres. Imported meshes have different

@@ -1,0 +1,46 @@
+{
+  "asset": "gate_caretaker_wicket",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "3f19934c680c76598659b6d56b4044c751b935b8b2c5dddc28716105f155f9cc",
+      "bytes": 1744028
+    },
+    {
+      "path": "model.glb",
+      "sha256": "02bb4c6087bfa91480a8944ce7944bbb1b05f55fcc5cabffd14783153b88776c",
+      "bytes": 9946112
+    },
+    {
+      "path": "preview.png",
+      "sha256": "aa4f9f4e93781c83890c743022a1aee913589b086a6a04b3ed1f7fd791ca928c",
+      "bytes": 664580
+    },
+    {
+      "path": "spec.json",
+      "sha256": "6e703a142e8186c299ea3b22f40889e64af4b3b793574def106d707155cb4e95",
+      "bytes": 4357
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "2e2d8bb07bb4f5d99cbc6cb69dc38cb1cbbb5c5643710631224042816cac82f2",
+      "bytes": 3443815
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "fbab3567ed3f990f5971c6be1e36dcfe5effb25b8d204d8c8fe5b659b57d5793",
+      "bytes": 3173330
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "f7cb269f4eff7772eb0e392ab6098f6f33c174b9d0ddad156cdd206c5c96dc85",
+      "bytes": 2569699
+    },
+    {
+      "path": "validation.json",
+      "sha256": "215d4c7375945ab3e70705a27f50ed5d1c8b48392371830ac498f836a43c695e",
+      "bytes": 1071
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "asset": "fence_terminal",
+  "license": "CC0-1.0 materials; original procedural geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "531fa93ad56f6a72188bf7b1032ec16e60880f26ff1e49c6e0b45360d862e6f1",
+      "bytes": 31132
+    },
+    {
+      "path": "model.glb",
+      "sha256": "cd03a28e2b58e1e5355b7794c998af05662cd3ddd750199d7aa5751711b0c42a",
+      "bytes": 16807936
+    },
+    {
+      "path": "preview.png",
+      "sha256": "795b89a81b602290a6de2f2dd9fb60e99f1d36c0fc9520098ec30fed3bc7b3d8",
+      "bytes": 580980
+    },
+    {
+      "path": "spec.json",
+      "sha256": "c1710fef761eeed194f133b815aa6d9fc5141546327af411e484fc07f08782a7",
+      "bytes": 435
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "validation.json",
+      "sha256": "e1c7637c1fab751ec793b929cd56ebbb80a4d5196227b63fd8c3690ab7d62254",
+      "bytes": 956
+    }
+  ]
+}

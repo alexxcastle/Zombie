@@ -1,0 +1,95 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    3.168889045715332,
+    3.0999999046325684,
+    4.133333206176758
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    4044,
+    1944,
+    859
+  ],
+  "textures": [
+    {
+      "path": "textures/1_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/1_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/1_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/2_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/2_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/2_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "greenhouse_small_PBR_0",
+      "textures": {},
+      "index": 0,
+      "base_color": [
+        0.6499999761581421,
+        0.7699999809265137,
+        0.7200000286102295,
+        1.0
+      ],
+      "roughness": 0.18000000715255737,
+      "metallic": 0.0,
+      "transmission": 0.9200000166893005
+    },
+    {
+      "name": "greenhouse_small_PBR_1",
+      "textures": {
+        "diffuse": "textures/1_diffuse.png"
+      },
+      "index": 1,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    },
+    {
+      "name": "greenhouse_small_PBR_2",
+      "textures": {
+        "diffuse": "textures/2_diffuse.png"
+      },
+      "index": 2,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "eff340123990a7e7b4146595590b254c19ebbb5a0b53c8e5e67f8a077056d1c8"
+}

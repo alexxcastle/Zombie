@@ -1,0 +1,114 @@
+{
+  "name": "gate_churchyard_iron_gate",
+  "role": "churchyard iron gate",
+  "dimensions_xyz_m": [
+    1.7599999523162841,
+    2.15,
+    0.12
+  ],
+  "source_description": "Old wrought iron cemetery gate leaf with slender evenly spaced vertical square bars, modest pointed spear finials and a gently rising arched top toward the right latch side, three horizontal crossrails, restrained small curved scrolls only at top corners. Open transparent gaps between all bars, blackened oxidized iron, forged joints. Two hinge sleeves along left stile. No stone pillars.",
+  "image_request": {
+    "prompt": "Product photograph of ONE DETACHED MOVABLE GATE LEAF lying upright, isolated on white seamless background. THIS IS A MOVING DOOR PANEL ONLY, NOT A BUILDING OR A DOORWAY. Old wrought iron cemetery gate leaf with slender evenly spaced vertical square bars, modest pointed spear finials and a gently rising arched top toward the right latch side, three horizontal crossrails, restrained small curved scrolls only at top corners. Open transparent gaps between all bars, blackened oxidized iron, forged joints. Two hinge sleeves along left stile. No stone pillars. Dimensions: width 1.7599999523162841m and height 2.15m. Slight three quarter angle, shallow thickness. All members belong to the moving leaf itself. Free standing isolated prop, with empty white space outside the exact panel outline. Photorealistic damp abandoned rural village materials, aged grey brown wood and dull forged iron, realistic small surface wear. Absolutely NO stone, NO masonry, NO plaster, NO stucco, NO slate, NO roof, NO external door frame, NO upright support posts, NO threshold, NO ground base. Full silhouette visible. Neutral diffuse studio light.",
+    "size": "1536x1536"
+  },
+  "input_image": "front.png",
+  "model_request": {
+    "tier": "Gen-2.5-Extreme-High",
+    "mesh_mode": "Raw",
+    "quality_override": 50000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "texture_mode": "high",
+    "quad_normal": true,
+    "preview_render": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "asymmetric"
+  },
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 18000,
+    "front_axis": "+Z",
+    "up_axis": "+Y",
+    "pivot": "hinge",
+    "scale": "metres",
+    "collision": "separate proxy",
+    "lod_count": 3
+  },
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "gate": {
+    "scene_name": "Access_churchyard_iron_gate",
+    "cost": 1000,
+    "area": "East Cemetery",
+    "other_area": "Village Square",
+    "clear_width_m": 3.5999999046325684,
+    "leaf_count": 2,
+    "open_angle": 105,
+    "survey": {
+      "name": "Access_churchyard_iron_gate",
+      "area": "East Cemetery",
+      "otherArea": "Village Square",
+      "sideA": "East Cemetery",
+      "sideB": "Village Square",
+      "cost": 1000,
+      "position": {
+        "x": 52.0,
+        "y": 2.26057767868042,
+        "z": 0.0
+      },
+      "euler": {
+        "x": 0.0,
+        "y": 270.0,
+        "z": 0.0
+      },
+      "scale": {
+        "x": 1.000000238418579,
+        "y": 1.0,
+        "z": 1.000000238418579
+      },
+      "boxSize": {
+        "x": 3.5999999046325684,
+        "y": 3.0999999046325684,
+        "z": 0.8999999761581421
+      },
+      "boxCenter": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "neighbours": [
+        "FallenCity_Church_HumanScale/Circle.055",
+        "SupplyCabinet/Door_plank",
+        "Elderboom_MossyStoneWall/S_Mossy_Stone_Wall_ukhgdfyga_lod3_Var1",
+        "Contact_Foliage_And_Path_Edges/Fern_C",
+        "Forged_Lantern/Iron_frame",
+        "SupplyCabinet/Shelf",
+        "StoneWall_Border/S_Mossy_Stone_Wall_ukhgdfyga_lod3_Var1_ChurchSiteShift",
+        "Elderboom_IronGateLeaf/elderboom_gate_leaf",
+        "Contact_Foliage_And_Path_Edges/Fern_B",
+        "Station_THIRD_WEAPON_SLOT",
+        "SupplyCabinet/Cabinet_side",
+        "FallenCity_Church_HumanScale/Circle.020",
+        "SupplyCabinet/Cabinet_back",
+        "Road_EastHouseEntrance",
+        "FallenCity_Church_HumanScale/Circle.019",
+        "FallenCity_Church_HumanScale/Circle.050",
+        "Cemetery_Consecrated_Ground/S_Old_Wooden_Bench_udlufetqx_lod3",
+        "Forged_Lantern/Mounting_post",
+        "Road_NorthHomes",
+        "SupplyCabinet/Ammunition_case",
+        "FallenCity_Church_HumanScale/Circle.051",
+        "SupplyCabinet/Cabinet_roof",
+        "Forged_Lantern/Mounting_arm",
+        "SupplyCabinet/Forged_strap",
+        "Road_WestEastStreet",
+        "Forged_Lantern/Lantern_cap",
+        "Forged_Lantern/Glass_chamber"
+      ]
+    },
+    "decision": "Old wrought iron cemetery gate leaf with slender evenly spaced vertical square bars, modest pointed spear finials and a gently rising arched top toward the right latch side, three horizontal crossrails, restrained small curved scrolls only at top corners. Open transparent gaps between all bars, blackened oxidized iron, forged joints. Two hinge sleeves along left stile. No stone pillars.",
+    "reviewed_view": "UnityHDRPSlice/Logs/ArchitectureKit/Access_churchyard_iron_gate_nearA.jpg"
+  }
+}

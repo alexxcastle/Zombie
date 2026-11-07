@@ -1,0 +1,115 @@
+{
+  "name": "gate_mill_cart_shortcut",
+  "role": "mill cart shortcut",
+  "dimensions_xyz_m": [
+    1.6600000476837158,
+    1.5,
+    0.14
+  ],
+  "source_description": "Old village cart passage gate leaf of dark aged oak, light rectangular frame, four horizontal square rails with open gaps, traditional half lap joints and a single diagonal brace. A small repaired iron splice plate across one rail, left edge iron strap hinges and right latch. Functional modest agricultural gate, no cart or wheels.",
+  "image_request": {
+    "prompt": "Product photograph of ONE DETACHED MOVABLE GATE LEAF lying upright, isolated on white seamless background. THIS IS A MOVING DOOR PANEL ONLY, NOT A BUILDING OR A DOORWAY. Old village cart passage gate leaf of dark aged oak, light rectangular frame, four horizontal square rails with open gaps, traditional half lap joints and a single diagonal brace. A small repaired iron splice plate across one rail, left edge iron strap hinges and right latch. Functional modest agricultural gate, no cart or wheels. Dimensions: width 1.6600000476837158m and height 1.5m. Slight three quarter angle, shallow thickness. All members belong to the moving leaf itself. Free standing isolated prop, with empty white space outside the exact panel outline. Photorealistic damp abandoned rural village materials, aged grey brown wood and dull forged iron, realistic small surface wear. Absolutely NO stone, NO masonry, NO plaster, NO stucco, NO slate, NO roof, NO external door frame, NO upright support posts, NO threshold, NO ground base. Full silhouette visible. Neutral diffuse studio light.",
+    "size": "1536x1536"
+  },
+  "input_image": "front.png",
+  "model_request": {
+    "tier": "Gen-2.5-Extreme-High",
+    "mesh_mode": "Raw",
+    "quality_override": 50000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "texture_mode": "high",
+    "quad_normal": true,
+    "preview_render": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "asymmetric"
+  },
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 18000,
+    "front_axis": "+Z",
+    "up_axis": "+Y",
+    "pivot": "hinge",
+    "scale": "metres",
+    "collision": "separate proxy",
+    "lod_count": 3
+  },
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "gate": {
+    "scene_name": "Access_mill_cart_shortcut",
+    "cost": 650,
+    "area": "North Timber Yard",
+    "other_area": "West Farm",
+    "clear_width_m": 3.4000000953674316,
+    "leaf_count": 2,
+    "open_angle": 105,
+    "survey": {
+      "name": "Access_mill_cart_shortcut",
+      "area": "North Timber Yard",
+      "otherArea": "West Farm",
+      "sideA": "North Timber Yard",
+      "sideB": "West Farm",
+      "cost": 650,
+      "position": {
+        "x": -50.0,
+        "y": 2.37662410736084,
+        "z": 24.0
+      },
+      "euler": {
+        "x": 0.0,
+        "y": 202.380126953125,
+        "z": 0.0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "boxSize": {
+        "x": 3.4000000953674316,
+        "y": 3.0999999046325684,
+        "z": 1.0
+      },
+      "boxCenter": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "neighbours": [
+        "Perimeter_Building_4/Wall_400x201",
+        "Elderboom_Village_Port/S_Modular_Fence_ufflaitdw_lod3_Var180",
+        "Perimeter_Building_4/S_Medieval_Modular_Gable_udsreiudw_lod3_Var1",
+        "Elderboom_ModularFence/S_Modular_Fence_ufflaitdw_lod3_Var2",
+        "Forged_Lantern/Iron_frame",
+        "Elderboom_Village_Port/SM_AssetPlatform3",
+        "Perimeter_Building_4/S_Wooden_Bollard_tlttae1fa_lod21",
+        "Perimeter_Building_4/S_Medieval_Modular_Wall_ueoqbdhdw_lod3_Var2",
+        "Perimeter_Building_4/S_Medieval_Modular_Corner_Wall_ueoidegdw_lod3_Var2",
+        "Perimeter_Building_4/S_Wooden_Bollard_tlttae1fa_lod16",
+        "Elderboom_Streetlamp",
+        "Forged_Lantern/Glass_chamber",
+        "Perimeter_Building_4/S_Wooden_Bollard_tlttae1fa_lod5",
+        "Elderboom_WoodenWheel/S_Wooden_Wheel_ugciag2ga_lod3_Var1",
+        "Elderboom_WoodenBollard/S_Wooden_Bollard_tlttae1fa_lod3",
+        "Elderboom_Village_Port/S_Modular_Fence_ufflaitdw_lod3_Var176",
+        "Perimeter_Building_4/Wall_400x200",
+        "Perimeter_Building_4/S_Wooden_Bollard_tlttae1fa_lod12",
+        "Physical_Boundary_Banks/Grounded_Bank_1",
+        "Forged_Lantern/Lantern_cap",
+        "Forged_Lantern/Mounting_post",
+        "Perimeter_Building_4/S_Wooden_Bollard_tlttae1fa_lod22",
+        "Perimeter_Building_4/S_Wooden_Bollard_tlttae1fa_lod8",
+        "Perimeter_Building_4/S_Wooden_Bollard_tlttae1fa_lod24",
+        "Perimeter_Building_4/S_Wooden_Bollard_tlttae1fa_lod23",
+        "Perimeter_Building_4/S_Medieval_Modular_Door_ueoqceudw_lod3_Var1",
+        "Perimeter_Building_4/S_Medieval_Modular_Corner_Wall_ueoidegdw_lod3_Var3",
+        "Forged_Lantern/Mounting_arm"
+      ]
+    },
+    "decision": "Old village cart passage gate leaf of dark aged oak, light rectangular frame, four horizontal square rails with open gaps, traditional half lap joints and a single diagonal brace. A small repaired iron splice plate across one rail, left edge iron strap hinges and right latch. Functional modest agricultural gate, no cart or wheels.",
+    "reviewed_view": "UnityHDRPSlice/Logs/ArchitectureKit/Access_mill_cart_shortcut_nearA.jpg"
+  }
+}

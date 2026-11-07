@@ -1,0 +1,46 @@
+{
+  "asset": "weavers_house",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "df2d0194d90e5d8fd9a12c954457e5e7a0fa6ab3dcfe599a2a7bb09b63bba8f2",
+      "bytes": 7596316
+    },
+    {
+      "path": "model.glb",
+      "sha256": "67b5ade25bcedee4f755a221fa547178b4eddc84a97bbb698243b78d27455964",
+      "bytes": 17660864
+    },
+    {
+      "path": "preview.png",
+      "sha256": "ea4533671a50f3bba10775518f5938418b4ab87e11eb9fb5aab57169ac67127c",
+      "bytes": 852197
+    },
+    {
+      "path": "spec.json",
+      "sha256": "b1a51097f29ea483f450fbf2bb0de4bb40d7315654cdf1376e8b0ec6f2f7e43f",
+      "bytes": 3402
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "7d2a97863a9426056cd76cb329d6cc5ef6b4fc80a4a549189c63d2f3270e5693",
+      "bytes": 5400522
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "283003a6c00a7091ae55ddc7bfd5366abb691abf0b923c932b236c5402b4169a",
+      "bytes": 3007246
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "8a2bd5aa9e7737090bdbd93874bb793d11c729994615db482d3a8ce3e53f5582",
+      "bytes": 5129356
+    },
+    {
+      "path": "validation.json",
+      "sha256": "767d555a3939a48877ce1112d4af70627b1409ee65ae91cdcf53ad7ed72a5170",
+      "bytes": 838
+    }
+  ]
+}

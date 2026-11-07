@@ -1,0 +1,98 @@
+{
+  "name": "gate_caretaker_wicket",
+  "role": "caretaker wicket",
+  "dimensions_xyz_m": [
+    1.46,
+    1.65,
+    0.1
+  ],
+  "source_description": "Modest cemetery caretakers wrought iron wicket gate leaf with a perfectly flat top, narrow evenly spaced plain vertical iron bars between rectangular outer stiles, two slim horizontal rails and small diamond iron details along the lower rail. Open gaps, aged dull black iron with local rust, left hinge sleeves, simple latch. Understated service entrance, no large ornaments, no pillars.",
+  "image_request": {
+    "prompt": "Product photograph of ONE DETACHED MOVABLE GATE LEAF lying upright, isolated on white seamless background. THIS IS A MOVING DOOR PANEL ONLY, NOT A BUILDING OR A DOORWAY. Modest cemetery caretakers wrought iron wicket gate leaf with a perfectly flat top, narrow evenly spaced plain vertical iron bars between rectangular outer stiles, two slim horizontal rails and small diamond iron details along the lower rail. Open gaps, aged dull black iron with local rust, left hinge sleeves, simple latch. Understated service entrance, no large ornaments, no pillars. Dimensions: width 1.46m and height 1.65m. Slight three quarter angle, shallow thickness. All members belong to the moving leaf itself. Free standing isolated prop, with empty white space outside the exact panel outline. Photorealistic damp abandoned rural village materials, aged grey brown wood and dull forged iron, realistic small surface wear. Absolutely NO stone, NO masonry, NO plaster, NO stucco, NO slate, NO roof, NO external door frame, NO upright support posts, NO threshold, NO ground base. Full silhouette visible. Neutral diffuse studio light.",
+    "size": "1536x1536"
+  },
+  "input_image": "front.png",
+  "model_request": {
+    "tier": "Gen-2.5-Extreme-High",
+    "mesh_mode": "Raw",
+    "quality_override": 50000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "texture_mode": "high",
+    "quad_normal": true,
+    "preview_render": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "asymmetric"
+  },
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 18000,
+    "front_axis": "+Z",
+    "up_axis": "+Y",
+    "pivot": "hinge",
+    "scale": "metres",
+    "collision": "separate proxy",
+    "lod_count": 3
+  },
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "gate": {
+    "scene_name": "Access_caretaker_wicket",
+    "cost": 850,
+    "area": "Outer Woods",
+    "other_area": "East Cemetery",
+    "clear_width_m": 3.0,
+    "leaf_count": 2,
+    "open_angle": 105,
+    "survey": {
+      "name": "Access_caretaker_wicket",
+      "area": "Outer Woods",
+      "otherArea": "East Cemetery",
+      "sideA": "East Cemetery",
+      "sideB": "Outer Woods",
+      "cost": 850,
+      "position": {
+        "x": 76.0,
+        "y": 2.518765449523926,
+        "z": 24.0
+      },
+      "euler": {
+        "x": 0.0,
+        "y": 4.573919296264648,
+        "z": 0.0
+      },
+      "scale": {
+        "x": 0.9999999403953552,
+        "y": 1.0,
+        "z": 0.9999999403953552
+      },
+      "boxSize": {
+        "x": 3.0,
+        "y": 3.0999999046325684,
+        "z": 0.8999999761581421
+      },
+      "boxCenter": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "neighbours": [
+        "Contact_Foliage_And_Path_Edges/Fern_C",
+        "Forged_Lantern/Iron_frame",
+        "Contact_Foliage_And_Path_Edges/Fern_B",
+        "Forged_Lantern/Glass_chamber",
+        "Forged_Lantern/Mounting_arm",
+        "Ecological_Contact_Layers/Fern_C",
+        "Elderboom_MossyStoneWall/S_Mossy_Stone_Wall_ukhgdfyga_lod3_Var1",
+        "Forged_Lantern/Mounting_post",
+        "Forged_Lantern/Lantern_cap",
+        "Elderboom_Valley/Elderboom_Hollow_Water",
+        "Elderboom_IronGateLeaf/elderboom_gate_leaf"
+      ]
+    },
+    "decision": "Modest cemetery caretakers wrought iron wicket gate leaf with a perfectly flat top, narrow evenly spaced plain vertical iron bars between rectangular outer stiles, two slim horizontal rails and small diamond iron details along the lower rail. Open gaps, aged dull black iron with local rust, left hinge sleeves, simple latch. Understated service entrance, no large ornaments, no pillars.",
+    "reviewed_view": "UnityHDRPSlice/Logs/ArchitectureKit/Access_caretaker_wicket_nearA.jpg"
+  }
+}

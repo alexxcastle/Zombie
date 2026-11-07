@@ -1,0 +1,46 @@
+{
+  "asset": "bakers_house",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "bd7caf677bd03e125f80c455650c3a639d2e940be9808fb3f1d3b3a23406154c",
+      "bytes": 7733196
+    },
+    {
+      "path": "model.glb",
+      "sha256": "d2e66ef657f4fd3cf5f91e6b959354ee346dd228042d6dfa5c193ed44cd165aa",
+      "bytes": 17717388
+    },
+    {
+      "path": "preview.png",
+      "sha256": "bd7abb825ef1c937460c51e527137b119c275152e2303e885a959b130db46303",
+      "bytes": 940724
+    },
+    {
+      "path": "spec.json",
+      "sha256": "3c0bf5e181146f29e22268a5f02ef3cdf59775e2c9a12ee9d10f41335b8beb7f",
+      "bytes": 3275
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "28c3c594fa7550dabc1ddd62f7c3a01deab2fef014eb625e44b827e1d0920353",
+      "bytes": 5759616
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "c7e445597bd416dfe001ce91136e67b0ece9736f753b8dc726f5e0cf818d1410",
+      "bytes": 3270410
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "a9bc4221a5c9cd17359ed3851aeb510bf624002bb223a1ded0ae04ba20ee2741",
+      "bytes": 4761874
+    },
+    {
+      "path": "validation.json",
+      "sha256": "32cc9500dc1563de6301eed069545b326551afdf2ced125cc3a3e882ae7e69d8",
+      "bytes": 837
+    }
+  ]
+}

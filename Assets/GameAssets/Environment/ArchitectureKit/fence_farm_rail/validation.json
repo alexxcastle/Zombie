@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    3.1599998474121094,
+    1.1999999284744263,
+    0.16749998927116394
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    540,
+    240,
+    85
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "fence_farm_rail_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "5b87778926edcbd0091e321b85a6d6c71f41474aea7f363fb889d67ecf90d2ad"
+}

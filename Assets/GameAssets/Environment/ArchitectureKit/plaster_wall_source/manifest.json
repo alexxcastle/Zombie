@@ -1,0 +1,46 @@
+{
+  "asset": "plaster_wall_source",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "fb4271d49e66521656c5f8986bf021169c1b1b404e444f7e65d24a795199ae25",
+      "bytes": 3139660
+    },
+    {
+      "path": "model.glb",
+      "sha256": "a09452254977d32c8b6d78f216c89bb2e6d6afaa37c998f3188e50f0dababf36",
+      "bytes": 14432472
+    },
+    {
+      "path": "preview.png",
+      "sha256": "d6de7da813a33a564c943ca947890696fa7f64961bfd3b7c7ddf78faac5b9228",
+      "bytes": 759930
+    },
+    {
+      "path": "spec.json",
+      "sha256": "8af1161f7de0309ec276370640dd7ccbe450a363ea3688c92bc2f42e9c193058",
+      "bytes": 3086
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "f7b0aee2b40b37c34dddd4f350adbcd90cb165141049958483286411bddc7d65",
+      "bytes": 5655225
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "9ec6563c6d278309d8592447f8b6995bdf9dba0cbd9186fcc100f924c12eb4b8",
+      "bytes": 3017622
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "dc3983e5c467905002dd38318d0f3db1e3e46d34a44ad3ea63379faba6345df0",
+      "bytes": 4436040
+    },
+    {
+      "path": "validation.json",
+      "sha256": "c4d4f95d220e19043b99cd87130aba4cb1a1bb1e25f40bed518c8b26f20242bd",
+      "bytes": 1061
+    }
+  ]
+}

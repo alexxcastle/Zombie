@@ -1,0 +1,41 @@
+{
+  "asset": "fence_corner",
+  "license": "CC0-1.0 materials; original procedural geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "a2ec92caf1dd6c97eb8bed6531732567a59c3a9a2eb88693ec5b2331997b73c5",
+      "bytes": 1482220
+    },
+    {
+      "path": "model.glb",
+      "sha256": "54c3f2c395dea3ce13bbc52c7e6e3c5fce86166af189df8267201be5c79ebc3c",
+      "bytes": 17635252
+    },
+    {
+      "path": "preview.png",
+      "sha256": "869292d92543536faefb089a409008db7f2f6ad113d6d99105c078c450d7422e",
+      "bytes": 794771
+    },
+    {
+      "path": "spec.json",
+      "sha256": "90b71c92489c92a4fd6caf2c81c57cd84e454eefcab904bb3ea0c59907f9e21d",
+      "bytes": 439
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "textures/1_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "validation.json",
+      "sha256": "4fb7e395a98e5875fe8fd5f2678b8fb17b6ed5204bbd7456976022df0fae9f6a",
+      "bytes": 1277
+    }
+  ]
+}

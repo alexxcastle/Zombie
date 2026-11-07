@@ -1,0 +1,46 @@
+{
+  "asset": "wall_fountain",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "15ce93839c82653212ebb634af1be162b6d912e0181d255359ba780d6adf1310",
+      "bytes": 2713900
+    },
+    {
+      "path": "model.glb",
+      "sha256": "ca33ae2e5ed57eb7a2f75596d239410a414468b81b961b9763baa877873c4acf",
+      "bytes": 14485784
+    },
+    {
+      "path": "preview.png",
+      "sha256": "946992fe41316229dc5cc653e4dab111a2c1e00750acbf6c057ba7b3c405b25d",
+      "bytes": 841966
+    },
+    {
+      "path": "spec.json",
+      "sha256": "18c65e00ba45bad0d109b02c930b36d9d029087eb7d904e6e97cd71ad82e4481",
+      "bytes": 3167
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "f0a82ed386741a2910b2b75bdf0c64b9d5b908303b5bfca1d6f2a94267e2a395",
+      "bytes": 5521006
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "fbc8ba9ab62b3de207aa04595472c405987f873552f50225de41365b90b95f44",
+      "bytes": 2878521
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "3c54b852cf176a6efed7c6588c1d2a86d8d1f6fee225cfc912e9c9ddaa9cf5fd",
+      "bytes": 4813848
+    },
+    {
+      "path": "validation.json",
+      "sha256": "4a0dfd63712cbc1f6db837d34233bdef1fbab608825b8dd87e6e9366728de402",
+      "bytes": 1052
+    }
+  ]
+}

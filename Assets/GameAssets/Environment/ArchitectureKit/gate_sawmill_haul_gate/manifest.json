@@ -1,0 +1,46 @@
+{
+  "asset": "gate_sawmill_haul_gate",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "792141227d5a8ae7f67eca35b41ecd4064dc315abc4afb164f3b107669a3c936",
+      "bytes": 1973180
+    },
+    {
+      "path": "model.glb",
+      "sha256": "847089fe801c84b758adf2cfe344677345ea90627369fdec24a1a5c2077ea2a6",
+      "bytes": 15086336
+    },
+    {
+      "path": "preview.png",
+      "sha256": "a5bd632269a13ae8e0716905dd754423e721c76e33da389b608bf6a302460c50",
+      "bytes": 791897
+    },
+    {
+      "path": "spec.json",
+      "sha256": "bebe8b4e05a4bfdd9654e717d7f1548692162866eb56b9d0b68080e5f8725380",
+      "bytes": 8935
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "7265b13afae09d6c70cb9388fbc2c456be306b3b1b1c19b5d72e3d35b8051b11",
+      "bytes": 5663986
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "efc1a3c0653d047c2b84abf96586f44c691ededb8c5176151457c4f8bc10f9e5",
+      "bytes": 3256360
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "677c48ab000445800718daeb3b2d05f3337da6451622f4a340fe85eabaf2c800",
+      "bytes": 4949099
+    },
+    {
+      "path": "validation.json",
+      "sha256": "e744f9decb54c051ccc10bcdce581a9ee917b41cc52da4121fed258b15c1feb8",
+      "bytes": 1073
+    }
+  ]
+}
