@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public sealed class ElderboomZombie : MonoBehaviour
+public sealed partial class ElderboomZombie : MonoBehaviour
 {
     ElderboomGame game;
     HDRPSlicePlayer player;
@@ -124,6 +124,7 @@ public sealed class ElderboomZombie : MonoBehaviour
         voiceAt=Time.time+Random.Range(4f,9f);SetMotion(Locomotion());
         slot=nextSlot++;progressPos=transform.position;progressAt=Time.time;
         if(player!=null && Vector3.Distance(transform.position,player.transform.position)<=6f)ElderboomAudio.Zombie("spawn", ref spawnVariant, transform.position);
+        InitSkills();
     }
 
     // ---- State machine ---------------------------------------------------------------
@@ -167,6 +168,7 @@ public sealed class ElderboomZombie : MonoBehaviour
         if (!lifted && !agent.isOnNavMesh) { SetState(ElderboomZombieState.OffMesh); TickOffMesh(); return; }
         offMeshTime = 0f;
         float distance = Vector3.Distance(transform.position, TargetPos);
+        if (SkillTick(distance)) return;
         TickBody(distance);
         // Global ignore (Eli's Ignore Signal) also silences noises; a per-zombie ignore
         // (Acoustic Pulse decoy) only stops the chase, so the zombie still investigates.
@@ -183,9 +185,11 @@ public sealed class ElderboomZombie : MonoBehaviour
             case ElderboomZombieState.Pushed: TickPushed(); return;
             case ElderboomZombieState.KeepAway: TickKeepAway(); return;
         }
-        if (chase && distance <= 1.45f && Time.time >= nextAttack && HasLineOfSight())
+        if (chase && distance <= AttackReach && Time.time >= nextAttack && HasLineOfSight())
         {
-            StartCoroutine(Strike());
+            if (weapon != null) StartCoroutine(WeaponStrike());
+            else if (WantsGrab) StartCoroutine(Grab());
+            else StartCoroutine(Strike());
             SetState(ElderboomZombieState.Attack);
             return;
         }
@@ -218,7 +222,7 @@ public sealed class ElderboomZombie : MonoBehaviour
             if(!waking && !hitReacting)animator.cullingMode=normalCulling;
             float travel=agent.velocity.magnitude;
             bool moving=travel>0.18f && !melee && !stunned && !lifted && !hitReacting;
-            animator.speed=stunned?0f:hitReacting?ShotReactionSpeed:(lifted||melee||reacting||waking||pushing||moving)?(moving&&!melee&&!lifted&&!reacting?Mathf.Clamp(travel/2.2f*1.5f,.12f,2.6f):1f):0f;
+            animator.speed=stunned?0f:hitReacting?ShotReactionSpeed:(lifted||melee||reacting||waking||pushing||moving)?(moving&&!melee&&!lifted&&!reacting?Mathf.Clamp(travel/2.2f*1.5f,.12f,2.6f):(melee?meleeAnimSpeed:1f)):0f;
         }
         agent.isStopped=stunned || melee || lifted || hitReacting || InsideKeepAway() || Time.time<pushUntil;
     }
@@ -315,7 +319,7 @@ public sealed class ElderboomZombie : MonoBehaviour
         }
         if(animator!=null)animator.speed=1;
     }
-    void CancelMelee(){attackToken++;melee=false;}
+    void CancelMelee(){attackToken++;melee=false;meleeAnimSpeed=1f;}
     bool InsideKeepAway()
     {
         if(Time.time>keepUntil)return false;
@@ -344,6 +348,7 @@ public sealed class ElderboomZombie : MonoBehaviour
 
     string Locomotion()
     {
+        if(Sprinter && animator!=null && animator.HasState(0,Animator.StringToHash("Sprint")))return "Sprint";
         if(animator!=null && animator.HasState(0,Animator.StringToHash("WalkB")) && Random.value>.5f)return "WalkB";
         return "WalkA";
     }

@@ -312,9 +312,26 @@ public sealed partial class ElderboomGame
         zombie.SetVariant(kind);
         zombie.NetFemale = prefab.name.IndexOf("Female", StringComparison.OrdinalIgnoreCase) >= 0;
         zombie.NetModel = netModel;
+        AssignZombieSkill(zombie, kind, number);
         zombies.Add(zombie);
         recentSpawns.Add(marker.position);
         if (recentSpawns.Count > 3) recentSpawns.RemoveAt(0);
         return true;
+    }
+
+    // Most of the horde stays plain: only a minority gets a skill, with a cap on how many are alive at once.
+    // Ambush from wave 2, grab from wave 1. Armed zombies (the cook's cleaver) never get a second skill.
+    void AssignZombieSkill(ElderboomZombie zombie, string kind, int number)
+    {
+        if (zombie.GetComponent<ElderboomZombieWeapon>() != null || kind == "brute") return;
+        float ambushChance = selectedDifficulty == "EASY" ? .06f : selectedDifficulty == "HARD" ? .14f : .10f;
+        float grabChance = selectedDifficulty == "EASY" ? .08f : selectedDifficulty == "HARD" ? .16f : .12f;
+        int maxAmbush = selectedDifficulty == "EASY" ? 2 : selectedDifficulty == "HARD" ? 6 : 4;
+        int maxGrab = selectedDifficulty == "EASY" ? 3 : selectedDifficulty == "HARD" ? 8 : 5;
+        int ambushers = 0, grabbers = 0;
+        foreach (var z in zombies) if (z != null && z.IsAlive) { if (z.Skill == ElderboomZombieSkill.Ambush) ambushers++; else if (z.Skill == ElderboomZombieSkill.Grab) grabbers++; }
+        float roll = UnityEngine.Random.value;
+        if (number >= 2 && kind != "runner" && roll < ambushChance && ambushers < maxAmbush) zombie.AssignSkill(ElderboomZombieSkill.Ambush);
+        else if (roll >= ambushChance && roll < ambushChance + grabChance && grabbers < maxGrab) zombie.AssignSkill(ElderboomZombieSkill.Grab);
     }
 }

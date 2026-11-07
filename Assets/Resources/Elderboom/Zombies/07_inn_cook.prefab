@@ -547,6 +547,7 @@ GameObject:
   - component: {fileID: 7040430925460845446}
   - component: {fileID: 7995146029752594227}
   - component: {fileID: 8260678336823891583}
+  - component: {fileID: 5979625269309439933}
   m_Layer: 0
   m_Name: 07_inn_cook
   m_TagString: Untagged
@@ -633,6 +634,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5fefd9bfaeb7d4a2499192a0fc3d7a01, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ElderboomZombie
+--- !u!114 &5979625269309439933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2121929007753995738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0d60cc3717d946d4b58e96d62822e0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ElderboomZombieWeapon
+  weaponPrefab: {fileID: 2921247155376369597, guid: 365b70a52d2604e2184116782019263a, type: 3}
+  damageMultiplier: 1.8
+  reach: 1.75
+  swingSpeed: 1.45
+  attackStates:
+  - CleaverDown
+  - CleaverSide
+  hitFraction:
+  - 0.43
+  - 0.42
+  gripOffset: {x: 0.075, y: 0.02, z: 0}
+  gripEuler: {x: 0, y: 0, z: 0}
 --- !u!1 &2154362879644470907
 GameObject:
   m_ObjectHideFlags: 0

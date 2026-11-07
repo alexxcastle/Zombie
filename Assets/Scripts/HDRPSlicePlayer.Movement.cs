@@ -104,7 +104,17 @@ public sealed partial class HDRPSlicePlayer
         return Mathf.Lerp(sprintSpeed * 1.45f, walkSpeed * .5f, t * t);
     }
 
-    float MoveSpeed() => sliding ? SlideSpeed() : crouched ? walkSpeed * .5f : sprinting ? sprintSpeed : walkSpeed;
+    float MoveSpeed() => (sliding ? SlideSpeed() : crouched ? walkSpeed * .5f : sprinting ? sprintSpeed : walkSpeed) * (Grabbed ? grabFactor : 1f);
+
+    // Grab zombies hold the player: much slower while held; walking out of reach breaks the hold.
+    float grabUntil, grabFactor = 1f, grabStartedAt = -10f;
+    public bool Grabbed => Time.time < grabUntil;
+    public void ApplyGrab(float factor, float seconds, Vector3 from)
+    {
+        if (IsDead) return;
+        if (!Grabbed && Time.time - grabStartedAt > .5f) { grabStartedAt = Time.time; AddTrauma(.22f); sprinting = false; }
+        grabFactor = factor; grabUntil = Mathf.Max(grabUntil, Time.time + seconds);
+    }
 
     // ---- Vault / mantle --------------------------------------------------------------
     // Jumping while moving into a waist-high obstacle climbs onto it, or over it when
@@ -217,7 +227,7 @@ public sealed partial class HDRPSlicePlayer
         UpdateCrouch(x, z);
         bool request=Held("sprint") && z>.1f && !aiming && !crouched;
         if(!request)exhausted=false;
-        bool wasSprinting=sprinting;sprinting=request && !exhausted && stamina>0;
+        bool wasSprinting=sprinting;sprinting=request && !exhausted && stamina>0 && !Grabbed;
         if(sprinting){stamina=Mathf.Max(0,stamina-SprintDrainPerSecond*Time.deltaTime);regenAt=Time.time+StaminaRecoveryDelay;if(stamina<=0){exhausted=true;sprinting=false;}}
         else if(Time.time>=regenAt)stamina=Mathf.Min(100,stamina+StaminaRecoveryPerSecond*Time.deltaTime);
         if(sprinting && !wasSprinting)sprintStarted=Time.time;
