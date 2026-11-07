@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
 
 // Editor automation for the cleanup pass (Logs/claude_cleanup.txt -> Logs/claude_cleanup_result.txt).
 // "deps": every asset the game can reach (build scenes, Resources, StreamingAssets, plus the folders the editor
@@ -22,7 +23,7 @@ static class ElderboomCleanup
         next = EditorApplication.timeSinceStartup + 2;
         if (!File.Exists(Flag) || EditorApplication.isPlayingOrWillChangePlaymode || BuildPipeline.isBuildingPlayer) return;
         string mode = File.ReadAllText(Flag).Trim(); File.Delete(Flag);
-        try { File.WriteAllText(Result, mode.StartsWith("deps") ? Deps() : mode.StartsWith("missing") ? Missing() : mode.StartsWith("textures") ? Textures() : mode.StartsWith("settings") ? Settings(mode.Contains("apply")) : mode.StartsWith("perf") ? StartPerf(mode) : "FAIL unknown mode " + mode); }
+        try { File.WriteAllText(Result, mode.StartsWith("deps") ? Deps() : mode.StartsWith("missing") ? Missing() : mode.StartsWith("textures") ? Textures() : mode.StartsWith("settings") ? Settings(mode.Contains("apply")) : mode.StartsWith("perf") ? StartPerf(mode) : mode.StartsWith("downscale") ? Downscale(2048) : "FAIL unknown mode " + mode); }
         catch (System.Exception e) { File.WriteAllText(Result, "FAIL " + e); }
     }
 
@@ -238,5 +239,44 @@ static class ElderboomCleanup
         File.AppendAllText(Result, line + "\nDONE\n");
         SessionState.SetBool(PerfPending, false);
         EditorApplication.isPlaying = false;
+    }
+
+    // Generated Texture2D assets (BC7 4096) in the art-reconstruction folders: halve to 2048 and re-encode BC7 in place.
+    // The asset keeps its GUID and fileID, so materials keep pointing at it. Terminal: -executeMethod ElderboomCleanup.DownscaleBatch
+    static readonly string[] DownscaleFolders = { "Assets/GameAssets/Elderboom/ArtDirectionGenerated/RuntimeMaterials", "Assets/GameAssets/AltarUpgrader/Runtime" };
+    public static void DownscaleBatch() { File.WriteAllText(Result, Downscale(2048)); EditorApplication.Exit(0); }
+
+    static string Downscale(int size)
+    {
+        var sb = new StringBuilder(); int done = 0; long before = 0, after = 0;
+        foreach (var g in AssetDatabase.FindAssets("t:Texture2D", DownscaleFolders))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(g);
+            if (!path.EndsWith(".asset")) continue;
+            var src = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (src == null || src.width <= size) continue;
+            bool linear = !GraphicsFormatUtility.IsSRGBFormat(src.graphicsFormat);
+            int w = size, h = Mathf.Max(4, src.height * size / src.width);
+            var rt = RenderTexture.GetTemporary(w, h, 0, RenderTextureFormat.ARGB32, linear ? RenderTextureReadWrite.Linear : RenderTextureReadWrite.sRGB);
+            Graphics.Blit(src, rt);
+            var prev = RenderTexture.active; RenderTexture.active = rt;
+            var dst = new Texture2D(w, h, TextureFormat.RGBA32, true, linear) { name = src.name, wrapMode = src.wrapMode, filterMode = src.filterMode, anisoLevel = src.anisoLevel };
+            dst.ReadPixels(new Rect(0, 0, w, h), 0, 0); dst.Apply(true);
+            RenderTexture.active = prev; RenderTexture.ReleaseTemporary(rt);
+            EditorUtility.CompressTexture(dst, src.format == TextureFormat.BC7 ? TextureFormat.BC7 : src.format, UnityEditor.TextureCompressionQuality.Normal);
+            dst.Apply(false, true);
+            long b = new FileInfo(path).Length;
+            EditorUtility.CopySerialized(dst, src);
+            EditorUtility.SetDirty(src);
+            AssetDatabase.SaveAssetIfDirty(src);
+            Object.DestroyImmediate(dst);
+            before += b; after += new FileInfo(path).Length; done++;
+            sb.AppendLine(path + " " + (linear ? "linear" : "srgb") + " -> " + w + "x" + h);
+            if (done % 6 == 0) { Resources.UnloadUnusedAssets(); System.GC.Collect(); }
+        }
+        AssetDatabase.SaveAssets();
+        sb.AppendLine("downscaled " + done + ", files " + (before >> 20) + " MB -> " + (after >> 20) + " MB");
+        sb.AppendLine("DONE");
+        return sb.ToString();
     }
 }

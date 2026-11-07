@@ -214,7 +214,7 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
         if(active?.root==null || operatorRoot==null || active.root==operatorRoot || showingAbility)return false;
         var view=operatorRoot.GetComponent<ElderboomViewmodel>();if(view==null || view.ability==null)return false;
         var current=active.root.GetComponent<ElderboomViewmodel>();
-        if(current==null || current.model==null || !current.model.name.EndsWith("_Grips"))return false;
+        if(current==null || current.model==null)return false; // any weapon whose model carries an arm rig (authored grips or a full FPS model); Bind checks the bones
         var left=active.root.GetComponent<ElderboomLeftArmAbility>();if(left==null)left=active.root.gameObject.AddComponent<ElderboomLeftArmAbility>();
         if(left.Bind(operatorRoot,bothArms)<8)return false;
         showingAbility=true;leftArmAbility=left;
@@ -225,6 +225,8 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
         return true;
     }
     ElderboomLeftArmAbility leftArmAbility;
+    // The ability took the weapon out of the right hand (old whole-viewmodel path): no firing until it ends.
+    public bool AbilityHidesWeapon=>showingAbility && leftArmAbility==null;
     readonly System.Collections.Generic.List<Renderer> hiddenRenderers=new System.Collections.Generic.List<Renderer>();
     readonly System.Collections.Generic.List<Light> hiddenLights=new System.Collections.Generic.List<Light>();
     // The operator's own viewmodel animates the ability unseen: it is only the source of the left arm's pose.

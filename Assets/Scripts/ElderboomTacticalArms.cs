@@ -27,6 +27,8 @@ public sealed class ElderboomTacticalArms : MonoBehaviour
 
     public bool Playing { get; private set; }
     public bool LocksAim => Playing && mode == "shock";
+    // The Striker's own shockwave clip, or an ability that swapped the weapon out: the right hand is busy.
+    public bool HidesWeapon => Playing && (hidden != null || (mode == "shock" && shockLeds == null));
     public string Mode => mode;
 
     public void BindStriker(Transform pivot)
@@ -83,7 +85,7 @@ public sealed class ElderboomTacticalArms : MonoBehaviour
     static bool HeldByOwnArms(Transform root)
     {
         var view = root != null ? root.GetComponent<ElderboomViewmodel>() : null;
-        return view != null && view.model != null && view.model.name.EndsWith("_Grips");
+        return view != null && view.model != null; // the arm-bone match in Bind decides
     }
 
     float BeginSwap(string next, ElderboomAbilityView view, Transform activeWeapon, float fallback)

@@ -162,9 +162,13 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
 
         var arms = GetComponent<ElderboomTacticalArms>();
         bool abilityBusy = ElderboomGame.Active != null && ElderboomGame.Active.AbilityBusy;
+        // Abilities play on the left arm: the right hand keeps firing (no aiming or reloading meanwhile).
+        // Only an ability that took the weapon away blocks the trigger.
+        var arsenal = GetComponent<ElderboomArsenal>();
+        bool handBusy = abilityBusy && ((arms != null && arms.HidesWeapon) || (arsenal != null && arsenal.AbilityHidesWeapon));
         UpdateWeaponPose(arms, abilityBusy);
         ApplyViewBob();
-        UpdateWeaponActions(abilityBusy);
+        UpdateWeaponActions(abilityBusy, handBusy);
     }
 
     // Riding behind on the mechanical horse (ElderboomMount): no walking, everything else as usual.

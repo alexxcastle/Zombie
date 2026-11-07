@@ -190,7 +190,7 @@ public sealed class ElderboomHud : MonoBehaviour
         Show(root, visible);
         if (!visible) return;
 
-        float s = Mathf.Max(.65f, Screen.width / 1920f) * Mathf.Clamp(PlayerPrefs.GetFloat("hdrp.settings.hud_scale", 1f), 0.75f, 1.25f);
+        float s = Mathf.Max(.65f, Screen.width / 1920f) * Mathf.Clamp(HudScaleSetting(), 0.75f, 1.25f);
         if (!Mathf.Approximately(panel.scale, s)) panel.scale = s;
         float w = Screen.width / s, h = Screen.height / s;
 
@@ -354,5 +354,12 @@ public sealed class ElderboomHud : MonoBehaviour
             shard.style.rotate = new StyleRotate(new Rotate(new Angle(Mathf.Atan2(b.y - a.y, b.x - a.x) * Mathf.Rad2Deg, AngleUnit.Degree)));
             shard.style.backgroundColor = color;
         }
+    }
+    // Read from PlayerPrefs at most twice a second (the settings menu may change it while playing).
+    float hudScaleSetting = 1f, hudScaleReadAt = -1f;
+    float HudScaleSetting()
+    {
+        if (Time.unscaledTime >= hudScaleReadAt) { hudScaleReadAt = Time.unscaledTime + .5f; hudScaleSetting = PlayerPrefs.GetFloat("hdrp.settings.hud_scale", 1f); }
+        return hudScaleSetting;
     }
 }

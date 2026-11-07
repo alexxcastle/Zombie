@@ -14,9 +14,14 @@ public sealed partial class HDRPSlicePlayer
     // Priority order: the first matching condition wins.
     ElderboomWeaponState ResolveWeaponState(bool abilityBusy)
     {
+        return ResolveWeaponState(abilityBusy, abilityBusy);
+    }
+
+    ElderboomWeaponState ResolveWeaponState(bool abilityBusy, bool handBusy)
+    {
         if (dead || WeaponDeposited) return ElderboomWeaponState.Disabled;
         if (reloading) return ElderboomWeaponState.Reloading;
-        if (abilityBusy) return ElderboomWeaponState.Ability;
+        if (handBusy) return ElderboomWeaponState.Ability;
         if (Equipping) return ElderboomWeaponState.Equipping;
         // Sprint-to-fire: the weapon must come back up from the sprint pose before it fires.
         if (sprinting || sprintPose >= .35f || Vaulting || WeaponObstructed) return ElderboomWeaponState.Lowered;
@@ -63,11 +68,11 @@ public sealed partial class HDRPSlicePlayer
         }
     }
 
-    void UpdateWeaponActions(bool abilityBusy)
+    void UpdateWeaponActions(bool abilityBusy, bool handBusy)
     {
-        SetWeaponState(ResolveWeaponState(abilityBusy));
+        SetWeaponState(ResolveWeaponState(abilityBusy, handBusy));
         if (WeaponDeposited) return;
-        if (Down("reload") && weaponState != ElderboomWeaponState.Reloading && weaponState != ElderboomWeaponState.Ability && ammo < magazineSize && reserveAmmo > 0)
+        if (Down("reload") && weaponState != ElderboomWeaponState.Reloading && !abilityBusy && ammo < magazineSize && reserveAmmo > 0)
             StartCoroutine(Reload());
         if (Input.GetKeyDown(KeyCode.Alpha1)) ElderboomGame.Active?.SelectAbility(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) ElderboomGame.Active?.SelectAbility(1);
@@ -79,7 +84,7 @@ public sealed partial class HDRPSlicePlayer
         }
         bool trigger=weaponDisplayName=="STRIKER-12" || audioCategory==ElderboomIds.Category.Handgun || audioCategory==ElderboomIds.Category.Melee ? Down("fire"):Held("fire");
         // Sprint-to-fire: the weapon must come back up from the sprint pose before it fires.
-        SetWeaponState(ResolveWeaponState(abilityBusy));
+        SetWeaponState(ResolveWeaponState(abilityBusy, handBusy));
         if (trigger && weaponState == ElderboomWeaponState.Ready && Time.time >= nextShotTime)
             Fire();
     }
@@ -90,7 +95,7 @@ public sealed partial class HDRPSlicePlayer
         if (ammo <= 0 && audioCategory!=ElderboomIds.Category.Melee)
         {
             ElderboomAudio.DryFire(audioCategory, transform.position);
-            if (reserveAmmo > 0) StartCoroutine(Reload());
+            if (reserveAmmo > 0 && !(ElderboomGame.Active != null && ElderboomGame.Active.AbilityBusy)) StartCoroutine(Reload()); // the left hand is busy with the ability
             return;
         }
         if(audioCategory!=ElderboomIds.Category.Melee)ammo--;
