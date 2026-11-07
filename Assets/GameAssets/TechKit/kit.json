@@ -70,5 +70,13 @@
    10.0,
    3.6
   ]
+ },
+ "12_work_floodlight": {
+  "label": "Tall Work Floodlight",
+  "size_xyz_blender": [
+   0.85,
+   0.85,
+   2.9
+  ]
  }
 }
