@@ -34,6 +34,7 @@ static partial class ElderboomBackdrop
         if (mode.StartsWith("inspect")) return Inspect();
         if (mode.StartsWith("build")) return Build(mode);
         if (mode.StartsWith("sky")) return Sky();
+        if (mode.StartsWith("terrain")) return MountainTerrain();
         if (mode.StartsWith("shots")) { Horizon("now"); return "DONE"; }
         return "FAIL unknown mode " + mode;
     }
@@ -235,6 +236,137 @@ static partial class ElderboomBackdrop
         foreach (var n in new[] { "Ring0_ForestRidge", "Ring1_Hills", "Ring2_Karst", "Ring3_FarRange", "Pagoda", "Pagoda_Lanterns", "Power_Poles", "Power_Wires" }) AssetDatabase.DeleteAsset(Dir + "/Meshes/" + n + ".asset");
         foreach (var f in Directory.GetFiles(Dir + "/Meshes", "*.asset")) if (Path.GetFileName(f).StartsWith("Village_") || Path.GetFileName(f).StartsWith("Smoke_") || Path.GetFileName(f).StartsWith("Fire_")) AssetDatabase.DeleteAsset(f.Replace('\\', '/'));
         Horizon("sky");
+        sb.AppendLine("DONE");
+        return sb.ToString();
+    }
+
+    // Real mountains: one HDRP terrain 3.6 km wide around the valley terrain (hole in the middle), on the Backdrop layer,
+    // seen through ElderboomFarView. Forested hills next to the valley, a field of karst towers, high ridges behind.
+    static string MountainTerrain()
+    {
+        var sb = new StringBuilder(); rng = new System.Random(77);
+        var main = Object.FindObjectsByType<Terrain>(FindObjectsSortMode.None).Where(t => t.name != "Elderboom_Mountains").OrderByDescending(x => x.terrainData.size.x).First();
+        terrainMain = main;
+        var old = GameObject.Find("Elderboom_Mountains"); if (old) Object.DestroyImmediate(old);
+        foreach (var n in new[] { "Elderboom_Backdrop", "Elderboom_FarView" }) { var o = GameObject.Find(n); if (o) Object.DestroyImmediate(o); }
+        const int Res = 1025; const float Size = 3600f, MaxH = 620f;
+        var origin = new Vector3(C.x - Size / 2, -12f, C.z - Size / 2);
+        var mo = main.transform.position; var ms = main.terrainData.size;
+        var data = new TerrainData { heightmapResolution = Res };
+        data.size = new Vector3(Size, MaxH, Size);
+        // Karst towers: random centres outside the valley, each a steep-sided tower with a rounded top.
+        var towers = new List<(Vector2 p, float r, float h, float steep)>();
+        foreach (var clusterDeg in new[] { 20f, 95f, 170f, 240f, 310f })
+        {
+            float ca = (clusterDeg + R(-12, 12)) * Mathf.Deg2Rad, cd = R(820, 1150);
+            for (int i = 0; i < 16; i++)
+            {
+                float a = ca + R(-.12f, .12f), d = cd + R(-160, 160);
+                var p = new Vector2(C.x + Mathf.Cos(a) * d, C.z + Mathf.Sin(a) * d);
+                float h = R(130, 290);
+                towers.Add((p, R(45, 85) * (h / 220f + .3f), h, R(2.6f, 3.6f)));
+            }
+        }
+        float MainEdge(Vector2 p, out float outside)
+        {
+            float cx = Mathf.Clamp(p.x, mo.x, mo.x + ms.x), cz = Mathf.Clamp(p.y, mo.z, mo.z + ms.z);
+            outside = Vector2.Distance(p, new Vector2(cx, cz));
+            return main.SampleHeight(new Vector3(cx, 0, cz)) + mo.y;
+        }
+        var heights = new float[Res, Res]; var groundArr = new float[Res, Res]; var holes = new bool[Res - 1, Res - 1];
+        float step = Size / (Res - 1);
+        for (int z = 0; z < Res; z++)
+            for (int x = 0; x < Res; x++)
+            {
+                var p = new Vector2(origin.x + x * step, origin.z + z * step);
+                float edgeH = MainEdge(p, out float outside);
+                float a = Mathf.Atan2(p.y - C.z, p.x - C.x), dist = Vector2.Distance(p, new Vector2(C.x, C.z));
+                // foothills right outside the valley terrain, then rising ground with the towers, then the far ridges
+                float hills = (outside > 0 ? 1 : 0) * (Mathf.SmoothStep(0, 1, outside / 260f) * (30 + 45 * Mathf.PerlinNoise(p.x * .004f, p.y * .004f)) + 8 * Mathf.PerlinNoise(p.x * .02f, p.y * .02f));
+                float ground = edgeH - 1.5f + hills;
+                // Ridged multifractal mountains rising with distance: sharp crests, branching valleys.
+                float sum = 0, w = 1, f = 1f / 650f, ampl = 1, norm = 0;
+                for (int o = 0; o < 6; o++)
+                {
+                    float nn = 1 - Mathf.Abs(Mathf.PerlinNoise(p.x * f + 31.7f * o, p.y * f + 17.3f * o) * 2 - 1);
+                    nn *= nn; nn *= w; w = Mathf.Clamp01(nn * 1.6f);
+                    sum += nn * ampl; norm += ampl; ampl *= .5f; f *= 2.05f;
+                }
+                float mount = sum / norm;
+                float amp = Mathf.Lerp(0, 230, Mathf.SmoothStep(0, 1, Mathf.InverseLerp(430, 950, dist))) + Mathf.Lerp(0, 330, Mathf.SmoothStep(0, 1, Mathf.InverseLerp(1000, 1750, dist)));
+                float h = ground + mount * amp;
+                groundArr[z, x] = ground;
+                heights[z, x] = Mathf.Clamp01((h - origin.y) / MaxH);
+                if (x < Res - 1 && z < Res - 1) holes[z, x] = outside > 6f;   // true = solid; the valley terrain shows inside
+            }
+        foreach (var t in towers)
+        {
+            int x0 = Mathf.Max(0, (int)((t.p.x - t.r * 1.1f - origin.x) / step)), x1 = Mathf.Min(Res - 1, (int)((t.p.x + t.r * 1.1f - origin.x) / step) + 1);
+            int z0 = Mathf.Max(0, (int)((t.p.y - t.r * 1.1f - origin.z) / step)), z1 = Mathf.Min(Res - 1, (int)((t.p.y + t.r * 1.1f - origin.z) / step) + 1);
+            for (int z = z0; z <= z1; z++)
+                for (int x = x0; x <= x1; x++)
+                {
+                    var p = new Vector2(origin.x + x * step, origin.z + z * step);
+                    float d = Vector2.Distance(p, t.p); if (d >= t.r) continue;
+                    float s = 1 - Mathf.Pow(d / t.r, t.steep);
+                    float crag = 1 + .16f * (Mathf.PerlinNoise(p.x * .05f + t.h, p.y * .05f) - .5f) + .07f * (Mathf.PerlinNoise(p.x * .17f, p.y * .17f + t.h) - .5f);
+                    float th = groundArr[z, x] + t.h * Mathf.Pow(s, .4f) * crag;
+                    float n = Mathf.Clamp01((th - origin.y) / MaxH); if (n > heights[z, x]) heights[z, x] = n;
+                }
+        }
+        data.SetHeights(0, 0, heights);
+        data.SetHoles(0, 0, holes);
+        // Paint: rock on steep faces, moss and heather elsewhere (the valley's own layers).
+        var layers = main.terrainData.terrainLayers;
+        TerrainLayer Find(params string[] keys) => layers.FirstOrDefault(l => l && keys.Any(k => l.name.Contains(k))) ?? layers[0];
+        string TexName(TerrainLayer l) => l && l.diffuseTexture ? l.diffuseTexture.name.ToLowerInvariant() : "";
+        foreach (var l in layers) sb.AppendLine("  valley layer " + (l ? l.name : "-") + " = " + TexName(l));
+        TerrainLayer ByTex(params string[] keys) => layers.FirstOrDefault(l => keys.Any(k => TexName(l).Contains(k)));
+        var rock = ByTex("cliff", "rock") ?? layers[layers.Length - 1]; var moss = ByTex("moss") ?? layers[0]; var heather = ByTex("heather") ?? ByTex("grass") ?? layers[0];
+        // Darker, cooler copies of the valley layers: at night and at this distance the slopes must not glow green.
+        TerrainLayer Dim(TerrainLayer src, string name, Vector4 remap)
+        {
+            string path = Dir + "/" + name + ".terrainlayer";
+            var l = AssetDatabase.LoadAssetAtPath<TerrainLayer>(path);
+            if (l == null) { l = new TerrainLayer(); AssetDatabase.CreateAsset(l, path); }
+            l.diffuseTexture = src.diffuseTexture; l.normalMapTexture = src.normalMapTexture; l.maskMapTexture = src.maskMapTexture;
+            l.tileSize = src.tileSize * 3f; l.normalScale = src.normalScale; l.metallic = 0; l.smoothness = .05f;
+            l.diffuseRemapMin = Vector4.zero; l.diffuseRemapMax = remap; l.maskMapRemapMin = src.maskMapRemapMin; l.maskMapRemapMax = src.maskMapRemapMax;
+            EditorUtility.SetDirty(l); return l;
+        }
+        moss = Dim(moss, "Mountain_Moss", new Vector4(.32f, .36f, .36f, 1)); heather = Dim(heather, "Mountain_Heather", new Vector4(.38f, .36f, .40f, 1)); rock = Dim(rock, "Mountain_Rock", new Vector4(.5f, .52f, .58f, 1));
+        data.terrainLayers = new[] { moss, heather, rock };
+        data.alphamapResolution = 512;
+        var alpha = new float[512, 512, 3];
+        for (int z = 0; z < 512; z++)
+            for (int x = 0; x < 512; x++)
+            {
+                float u = x / 511f, v = z / 511f; float steep = data.GetSteepness(u, v), hh = data.GetInterpolatedHeight(u, v);
+                float r = Mathf.SmoothStep(0, 1, Mathf.InverseLerp(30, 45, steep)); float he = Mathf.InverseLerp(60, 260, hh) * (1 - r);
+                alpha[z, x, 2] = r; alpha[z, x, 1] = he * .6f; alpha[z, x, 0] = 1 - r - he * .6f;
+            }
+        data.SetAlphamaps(0, 0, alpha);
+        Directory.CreateDirectory(Dir);
+        AssetDatabase.DeleteAsset(Dir + "/Elderboom_Mountains.asset"); AssetDatabase.CreateAsset(data, Dir + "/Elderboom_Mountains.asset");
+        var go = Terrain.CreateTerrainGameObject(data); go.name = "Elderboom_Mountains"; go.layer = ElderboomFarView.Layer; go.transform.position = origin;
+        var terr = go.GetComponent<Terrain>(); terr.materialTemplate = main.materialTemplate; terr.heightmapPixelError = 12; terr.basemapDistance = 0;
+        terr.shadowCastingMode = ShadowCastingMode.Off; terr.drawTreesAndFoliage = false; terr.drawInstanced = true; terr.allowAutoConnect = false;
+        terr.groupingID = 99; var col = go.GetComponent<TerrainCollider>(); if (col) Object.DestroyImmediate(col);
+        var fv = new GameObject("Elderboom_FarView"); fv.AddComponent<ElderboomFarView>();
+        // Shadows used to stop at the camera's 120 m far plane; keep them there now that the far plane is longer.
+        var night = AssetDatabase.LoadAssetAtPath<VolumeProfile>("Assets/Settings/Elderboom_Night_Profile.asset");
+        if (night)
+        {
+            bool added = false;
+            if (!night.TryGet<HDShadowSettings>(out var shadows)) { shadows = night.Add<HDShadowSettings>(true); added = true; }
+            shadows.maxShadowDistance.Override(120f);
+            if (added) AssetDatabase.AddObjectToAsset(shadows, night);
+            EditorUtility.SetDirty(shadows); EditorUtility.SetDirty(night); AssetDatabase.SaveAssets();
+            sb.AppendLine("shadow distance capped at 120 m");
+        }
+        sb.AppendLine("mountain terrain " + Size + " m, " + towers.Count + " karst towers, layers " + string.Join(",", data.terrainLayers.Select(l => l.name)));
+        EditorSceneManager.MarkSceneDirty(go.scene); EditorSceneManager.SaveScene(go.scene);
+        Horizon("terrain");
         sb.AppendLine("DONE");
         return sb.ToString();
     }
