@@ -1,0 +1,74 @@
+{
+ "01_generator": {
+  "label": "Field Generator",
+  "size_xyz_blender": [
+   1.55,
+   0.95,
+   1.18
+  ]
+ },
+ "02_distribution": {
+  "label": "Power Distribution Cabinet",
+  "size_xyz_blender": [
+   0.65,
+   0.42,
+   1.1
+  ]
+ },
+ "03_tripod_floodlight": {
+  "label": "Tripod Floodlight",
+  "size_xyz_blender": [
+   1.1,
+   1.0,
+   2.25
+  ]
+ },
+ "04_floor_floodlight": {
+  "label": "Low Work Light",
+  "size_xyz_blender": [
+   0.5,
+   0.32,
+   0.48
+  ]
+ },
+ "05_ammo_crate": {
+  "label": "Stackable Ammunition Crate",
+  "size_xyz_blender": [
+   0.66,
+   0.42,
+   0.38
+  ]
+ },
+ "06_weapon_case": {
+  "label": "Long Weapon Transit Case",
+  "size_xyz_blender": [
+   1.35,
+   0.43,
+   0.2
+  ]
+ },
+ "07_cable_reel": {
+  "label": "Heavy Cable Reel",
+  "size_xyz_blender": [
+   0.58,
+   0.46,
+   0.62
+  ]
+ },
+ "08_battery": {
+  "label": "Portable Battery Station",
+  "size_xyz_blender": [
+   0.48,
+   0.36,
+   0.7
+  ]
+ },
+ "11_transport_helicopter": {
+  "label": "Field Transport Helicopter",
+  "size_xyz_blender": [
+   11.0,
+   10.0,
+   3.6
+  ]
+ }
+}

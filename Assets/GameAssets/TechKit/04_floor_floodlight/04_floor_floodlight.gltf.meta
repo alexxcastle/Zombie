@@ -1,0 +1,40 @@
+fileFormatVersion: 2
+guid: 86723a50ec4804557b28686458c9f029
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 715df9372183c47e389bb6e19fbc3b52, type: 3}
+  editorImportSettings:
+    generateSecondaryUVSet: 0
+  importSettings:
+    nodeNameMethod: 1
+    animationMethod: 2
+    generateMipMaps: 1
+    texturesReadable: 0
+    defaultMinFilterMode: 9729
+    defaultMagFilterMode: 9729
+    anisotropicFilterLevel: 1
+  instantiationSettings:
+    mask: -1
+    layer: 0
+    skinUpdateWhenOffscreen: 1
+    lightIntensityFactor: 1
+    sceneObjectCreation: 2
+  assetDependencies:
+  - type: 0
+    originalUri: Assets/GameAssets/TechKit/04_floor_floodlight/04_floor_floodlight.bin
+    assetPath: Assets/GameAssets/TechKit/04_floor_floodlight/04_floor_floodlight.bin
+  - type: 1
+    originalUri: Assets/GameAssets/TechKit/04_floor_floodlight/Textures/texture_normal.png
+    assetPath: Assets/GameAssets/TechKit/04_floor_floodlight/Textures/texture_normal.png
+  - type: 1
+    originalUri: Assets/GameAssets/TechKit/04_floor_floodlight/Textures/texture_diffuse.png
+    assetPath: Assets/GameAssets/TechKit/04_floor_floodlight/Textures/texture_diffuse.png
+  - type: 1
+    originalUri: Assets/GameAssets/TechKit/04_floor_floodlight/Textures/texture_metallic-texture_roughness.png
+    assetPath: Assets/GameAssets/TechKit/04_floor_floodlight/Textures/texture_metallic-texture_roughness.png
+  reportItems: []
