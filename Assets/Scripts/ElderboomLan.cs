@@ -323,6 +323,17 @@ public sealed class ElderboomLan : MonoBehaviour
         lan.Send(lan.host, true);
     }
 
+    // The church generator travels with the gates: a client that starts it tells the host (as a gate index), the host
+    // carries it in every snapshot, so every machine has the floodlights and the weapon upgrader on.
+    const int PowerBit = 1 << 30; const byte PowerIndex = 250;
+    public static void GeneratorStarted()
+    {
+        var lan = Instance;
+        if (lan == null || lan.mode != Mode.Client || !lan.Accepted) return;
+        var w = lan.Begin(Msg.GateOpen); w.Write(PowerIndex);
+        lan.Send(lan.host, true);
+    }
+
     static ElderboomGate[] gates;
     // Same order on every machine: sorted by position.
     static ElderboomGate[] Gates()
@@ -341,7 +352,8 @@ public sealed class ElderboomLan : MonoBehaviour
     void WritePickupsAndGates(BinaryWriter w)
     {
         int mask = 0; var g = Gates();
-        for (int i = 0; i < g.Length && i < 31; i++) if (g[i] != null && g[i].Opened) mask |= 1 << i;
+        for (int i = 0; i < g.Length && i < 30; i++) if (g[i] != null && g[i].Opened) mask |= 1 << i;
+        if (ElderboomPowerGrid.Instance != null && ElderboomPowerGrid.Instance.On) mask |= PowerBit; // generator running
         w.Write(mask);
         int count = 0;
         foreach (var p in ElderboomPowerUp.All) if (p != null && !p.NetProxy) count++;
@@ -367,7 +379,8 @@ public sealed class ElderboomLan : MonoBehaviour
     {
         int mask = r.ReadInt32();
         var g = Gates();
-        for (int i = 0; i < g.Length && i < 31; i++) if ((mask & (1 << i)) != 0 && g[i] != null && !g[i].Opened) g[i].NetOpen();
+        for (int i = 0; i < g.Length && i < 30; i++) if ((mask & (1 << i)) != 0 && g[i] != null && !g[i].Opened) g[i].NetOpen();
+        ElderboomPowerGrid.Instance?.NetSetPower((mask & PowerBit) != 0);
         int count = r.ReadByte();
         seenPickups.Clear();
         for (int i = 0; i < count; i++)
@@ -933,6 +946,7 @@ public sealed class ElderboomLan : MonoBehaviour
             {
                 if (mode != Mode.Host || !peers.TryGetValue(remote.Key, out var peer)) return;
                 int index = r.ReadByte();
+                if (index == PowerIndex) { ElderboomPowerGrid.Instance?.NetSetPower(true); return; }
                 var g = Gates();
                 if (index < g.Length && g[index] != null) g[index].NetOpen();
                 return;

@@ -15,6 +15,7 @@ public sealed class ElderboomPowerGrid : MonoBehaviour
     readonly List<Light> lights = new List<Light>();
     readonly List<(Renderer r, Material[] lit)> glows = new List<(Renderer, Material[])>();
     bool on;
+    public bool On => on;
     AudioSource hum;
 
     public static void Ensure()
@@ -39,6 +40,14 @@ public sealed class ElderboomPowerGrid : MonoBehaviour
     }
     void OnDestroy() { ElderboomEvents.SessionStarted -= ResetSession; if (Instance == this) Instance = null; }
     void ResetSession() => Apply(false, false);
+
+    // Co-op: the generator state from the host (or a client's start, on the host). Starting it plays the full
+    // start-up here too; a running grid is never switched off by a late snapshot.
+    public void NetSetPower(bool power)
+    {
+        if (!power || on) return;
+        Apply(true, true);
+    }
 
     void Apply(bool power, bool announce)
     {
@@ -82,5 +91,6 @@ public sealed class ElderboomPowerGrid : MonoBehaviour
         if (game.Credits < Cost) { game.ShowNotice("NEED " + Cost + " CREDITS"); return; }
         if (!game.TrySpend(Cost)) return;
         Apply(true, true);
+        ElderboomLan.GeneratorStarted(); // co-op: the host shares it with everyone
     }
 }
