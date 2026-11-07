@@ -1,0 +1,52 @@
+{
+  "name": "10_wounded_labourer",
+  "version": "1.0.0",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "source_image_sha256": "6244161e7e506177d5a4f650753b566f76bf1777b9a1b0a35692eb0cf9994360",
+  "model_task": "54ed533c-b236-43f6-b5f5-c25777e691ae",
+  "rig_task": "52a8a949-1694-4879-954c-2c5717ea5275",
+  "credits": 1.0,
+  "files": [
+    {
+      "path": "character.fbx",
+      "bytes": 1521932,
+      "sha256": "446c185cb8d570009e972789c1f595c0829ffb556c61a73b081dbce15d49b332"
+    },
+    {
+      "path": "model.glb",
+      "bytes": 12778556,
+      "sha256": "394d09c7457f6b6c547f8b425d6e4bbcce6c87f013f0f463fe6ffb897ee9b3ed"
+    },
+    {
+      "path": "spec.json",
+      "bytes": 866,
+      "sha256": "7dc742c50c74edd91b70723c387ba63540ffe14eab6f6117abda3d55fa585ed2"
+    },
+    {
+      "path": "textures/texture_diffuse.png",
+      "bytes": 5275493,
+      "sha256": "f03f1506d59cf6b6fd516c1d5386e2ebd644fc9f2e70095ac3c96473d0ed2906"
+    },
+    {
+      "path": "textures/texture_metallic.png",
+      "bytes": 725572,
+      "sha256": "c0c0dc0f7734c1a42ed94c54c7ab5371efb6a62c3fece0e940c75e14a0c49199"
+    },
+    {
+      "path": "textures/texture_normal.png",
+      "bytes": 3820892,
+      "sha256": "e8aa326ea195d1db794b83e5451b0ed0e963b46cd888588bccf8e96777a3c1e1"
+    },
+    {
+      "path": "textures/texture_roughness.png",
+      "bytes": 1484010,
+      "sha256": "49e4446d1a88206d5922b1bac6cd451329bb9657a7e823dfc9695b385c456259"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 3086,
+      "sha256": "d7cb65171b4b41c85afa92b34ac2d20958e2dbc05e435991cdaa21ac7759db6c"
+    }
+  ]
+}

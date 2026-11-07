@@ -1,0 +1,52 @@
+{
+  "name": "09_tall_woman",
+  "version": "1.0.0",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "source_image_sha256": "8fbc3657a80984f6b6c918719d270961b6b550d131e080d0df4e42e43dfb4afc",
+  "model_task": "21af2f60-ab48-48ae-a2fd-a290bd88b760",
+  "rig_task": "8313083a-d989-42ab-9e62-bc150c5e675f",
+  "credits": 1.0,
+  "files": [
+    {
+      "path": "character.fbx",
+      "bytes": 1478092,
+      "sha256": "b14c83eab532f0ddad5a0ec80fa9783da9185dc4974ef8cb1bfac8e5acc9883f"
+    },
+    {
+      "path": "model.glb",
+      "bytes": 12978156,
+      "sha256": "e30297dc871ec70f3fb9d4ef8213be2dfd541d622b4692223c420dea13e672bd"
+    },
+    {
+      "path": "spec.json",
+      "bytes": 843,
+      "sha256": "697ced44bd5d19638b02a5252ab56be27f2aa9f6611c28e6dc59900b044ba198"
+    },
+    {
+      "path": "textures/texture_diffuse.png",
+      "bytes": 5824601,
+      "sha256": "ad87c5e5abdd847b4b06ccfaace819d136de9c2e850a33cea68ae389dd722718"
+    },
+    {
+      "path": "textures/texture_metallic.png",
+      "bytes": 683063,
+      "sha256": "0d685c5a859ca21333a81423538487d32e2b03af3e1f261dc98710ab293841d3"
+    },
+    {
+      "path": "textures/texture_normal.png",
+      "bytes": 3660013,
+      "sha256": "2decd2d964a51a81db871d744f8f77473036416526d53222d71231e011e73cbe"
+    },
+    {
+      "path": "textures/texture_roughness.png",
+      "bytes": 1294348,
+      "sha256": "c56a0288e06b36815fdc386f2fb43058d71d095eff5190f010fb6946d02d3ffa"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 3062,
+      "sha256": "ac8e23523a019d4baafb1ecea434842ac7c4f678b2cfcc3f251ee3954e306e39"
+    }
+  ]
+}

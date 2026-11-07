@@ -1,0 +1,33 @@
+{
+  "name": "10_wounded_labourer",
+  "role": "Wounded Stocky Labourer",
+  "height_m": 1.68,
+  "female": false,
+  "input_image": "front.jpg",
+  "source_image": "/Users/alessandrocastellani/Downloads/zombie-set-2/asian-wounded-stocky-male-zombie.jpg",
+  "source_sha256": "6244161e7e506177d5a4f650753b566f76bf1777b9a1b0a35692eb0cf9994360",
+  "image_generation_skipped": true,
+  "model_request": {
+    "tier": "Gen-2.5-High",
+    "mesh_mode": "Quad",
+    "quality_override": 10000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "TAPose": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "balanced",
+    "preview_render": true,
+    "addons": [
+      "HighPack"
+    ],
+    "quad_normal": true
+  },
+  "rig_request": {
+    "bone_template": "human",
+    "skinning_method": "core",
+    "material": "PBR",
+    "geometry_file_format": "fbx"
+  }
+}

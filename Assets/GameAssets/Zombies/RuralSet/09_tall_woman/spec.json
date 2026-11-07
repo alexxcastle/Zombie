@@ -1,0 +1,33 @@
+{
+  "name": "09_tall_woman",
+  "role": "Tall Gaunt Woman",
+  "height_m": 1.8,
+  "female": true,
+  "input_image": "front.jpg",
+  "source_image": "/Users/alessandrocastellani/Downloads/zombie-set-2/asian-tall-female-zombie.jpg",
+  "source_sha256": "8fbc3657a80984f6b6c918719d270961b6b550d131e080d0df4e42e43dfb4afc",
+  "image_generation_skipped": true,
+  "model_request": {
+    "tier": "Gen-2.5-High",
+    "mesh_mode": "Quad",
+    "quality_override": 10000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "TAPose": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "balanced",
+    "preview_render": true,
+    "addons": [
+      "HighPack"
+    ],
+    "quad_normal": true
+  },
+  "rig_request": {
+    "bone_template": "human",
+    "skinning_method": "core",
+    "material": "PBR",
+    "geometry_file_format": "fbx"
+  }
+}

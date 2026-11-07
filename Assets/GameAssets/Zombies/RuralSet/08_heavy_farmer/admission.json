@@ -1,0 +1,37 @@
+{
+  "canonical_package": "/sessions/rcw-01r7acma86q3h4ryhsbyrxyr/mnt/zombie-test/assets/generated/rural_zombies_set2/08_heavy_farmer/package",
+  "package_manifest_sha256": "cf375dc4998b3cc3a14d54245a3be0414aa57cab74dd438af254e0c5b1292642",
+  "derived": {
+    "mask.png": "HDRP R=metallic G=1 B=1 A=1-roughness; source maps unchanged"
+  },
+  "files": [
+    {
+      "path": "character.fbx",
+      "sha256": "4259afdd2d6c54a1f67db02cfcda2f37f689df9f5c3986eac4779a8ba7447d95"
+    },
+    {
+      "path": "diffuse.png",
+      "sha256": "51fab205fe210af9ae33f8c426b0b23fe401100e0b3ce791b40fd963ff913398"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "cf375dc4998b3cc3a14d54245a3be0414aa57cab74dd438af254e0c5b1292642"
+    },
+    {
+      "path": "mask.png",
+      "sha256": "427d3d61aefbd88e02ffed786f9e23deec3e53eef0eedbb6470a327c453f885b"
+    },
+    {
+      "path": "normal.png",
+      "sha256": "c4bc7c55d12c49b10ba8eef866fc763bea1b541ee63e39fcabb34c9201f218bf"
+    },
+    {
+      "path": "spec.json",
+      "sha256": "32fad33991c33e3d804c6dff00ca3babca264b24f9e880287793d8fe6a3965a1"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "5f0fd78d68dad2151d79428c60a05b4b84f945d5f31526769223e6f1e1b2c8f6"
+    }
+  ]
+}

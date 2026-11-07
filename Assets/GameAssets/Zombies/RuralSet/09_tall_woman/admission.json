@@ -1,0 +1,37 @@
+{
+  "canonical_package": "/sessions/rcw-01r7acma86q3h4ryhsbyrxyr/mnt/zombie-test/assets/generated/rural_zombies_set2/09_tall_woman/package",
+  "package_manifest_sha256": "a7d4657b6cf4cf9c09372a87e04efdada2401aa8547fad6cc8791fefa1769dc3",
+  "derived": {
+    "mask.png": "HDRP R=metallic G=1 B=1 A=1-roughness; source maps unchanged"
+  },
+  "files": [
+    {
+      "path": "character.fbx",
+      "sha256": "b14c83eab532f0ddad5a0ec80fa9783da9185dc4974ef8cb1bfac8e5acc9883f"
+    },
+    {
+      "path": "diffuse.png",
+      "sha256": "ad87c5e5abdd847b4b06ccfaace819d136de9c2e850a33cea68ae389dd722718"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "a7d4657b6cf4cf9c09372a87e04efdada2401aa8547fad6cc8791fefa1769dc3"
+    },
+    {
+      "path": "mask.png",
+      "sha256": "cb7bbd9ea38cdd17823d4fc9870256ec11d0d1a7073afe51c3f064870d41dcc8"
+    },
+    {
+      "path": "normal.png",
+      "sha256": "2decd2d964a51a81db871d744f8f77473036416526d53222d71231e011e73cbe"
+    },
+    {
+      "path": "spec.json",
+      "sha256": "697ced44bd5d19638b02a5252ab56be27f2aa9f6611c28e6dc59900b044ba198"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "ac8e23523a019d4baafb1ecea434842ac7c4f678b2cfcc3f251ee3954e306e39"
+    }
+  ]
+}
