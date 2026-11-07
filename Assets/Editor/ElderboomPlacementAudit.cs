@@ -109,6 +109,16 @@ static class ElderboomPlacementAudit
             float best = float.NegativeInfinity;
             foreach (var h in hits) if (!h.transform.IsChildOf(u.t) && h.point.y > best) best = h.point.y;
             if (best > u.support) u.support = best;
+            // Pieces resting on other meshes without colliders (upper walls, beams on posts, roofs): another unit whose
+            // top is at this bottom and whose footprint overlaps this one holds it up.
+            foreach (var o in units.Values)
+            {
+                if (o == u) continue; var ob = o.b;
+                if (ob.max.y < b.min.y - .35f || ob.min.y > b.min.y - .02f) continue;
+                if (ob.max.x < b.min.x || ob.min.x > b.max.x || ob.max.z < b.min.z || ob.min.z > b.max.z) continue;
+                float top = Mathf.Min(ob.max.y, b.min.y);
+                if (top > u.support) u.support = top;
+            }
             float bottom = b.min.y, height = b.size.y, size = Mathf.Max(b.size.x, b.size.z);
             float gap = bottom - u.support;
             if (gap > .25f) { u.issue = "FLOATING " + gap.ToString("F2") + " m"; u.score = gap * 10 + size * .2f; }
