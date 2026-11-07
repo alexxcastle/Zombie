@@ -109,7 +109,8 @@
       "minimumDamage": 0.32,
       "falloffStart": 14,
       "fireInterval": 0.24,
-      "mode": "hitscan"
+      "mode": "hitscan",
+      "retired": true
     },
     {
       "id": "revolver",
@@ -127,7 +128,8 @@
       "minimumDamage": 0.42,
       "falloffStart": 19,
       "fireInterval": 0.58,
-      "mode": "hitscan"
+      "mode": "hitscan",
+      "retired": true
     },
     {
       "id": "ar9",
@@ -145,7 +147,8 @@
       "minimumDamage": 0.5,
       "falloffStart": 24,
       "fireInterval": 0.12,
-      "mode": "hitscan"
+      "mode": "hitscan",
+      "retired": true
     },
     {
       "id": "carbine",
@@ -163,7 +166,8 @@
       "minimumDamage": 0.5,
       "falloffStart": 27,
       "fireInterval": 0.32,
-      "mode": "hitscan"
+      "mode": "hitscan",
+      "retired": true
     },
     {
       "id": "shotgun",
@@ -199,7 +203,8 @@
       "minimumDamage": 0.06,
       "falloffStart": 2.5,
       "fireInterval": 0.84,
-      "mode": "hitscan"
+      "mode": "hitscan",
+      "retired": true
     },
     {
       "id": "wrench",
