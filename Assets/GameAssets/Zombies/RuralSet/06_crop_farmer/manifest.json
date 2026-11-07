@@ -1,0 +1,52 @@
+{
+  "name": "06_crop_farmer",
+  "version": "1.0.0",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "source_image_sha256": "b1c30ea704c86385a2b258ce355a51b8abd969132b5d49044c1c7b009feaef4d",
+  "model_task": "51ec85a6-efb3-4368-8bf1-f922daa250d9",
+  "rig_task": "65205013-60b2-4d88-9315-048c578222fb",
+  "credits": 1.0,
+  "files": [
+    {
+      "path": "character.fbx",
+      "bytes": 1500076,
+      "sha256": "bb3211ac10ae86dbcb5df545bfdc08e3af2c74c9fb4fd96e80a677c3528935f6"
+    },
+    {
+      "path": "model.glb",
+      "bytes": 11745328,
+      "sha256": "e8dfb46a478fc3cc01f7f0fb289d203344a2126898c49b6c13ce76c7e71d24f0"
+    },
+    {
+      "path": "spec.json",
+      "bytes": 829,
+      "sha256": "c478f38c069a5a9e5acee265a6ab9fa3fedfe8848f0ce3382e33de22b3bb573e"
+    },
+    {
+      "path": "textures/texture_diffuse.png",
+      "bytes": 4655739,
+      "sha256": "9b5b69f9587d02829618bde03b9dc701fd5790ff2780d196a76f797f5040cc43"
+    },
+    {
+      "path": "textures/texture_metallic.png",
+      "bytes": 349902,
+      "sha256": "607bde6794c5f70861f8430816f1f656341434a827b50bf2375f9c7b29ab73ce"
+    },
+    {
+      "path": "textures/texture_normal.png",
+      "bytes": 3828139,
+      "sha256": "085f36a4c823e0600e420ea40ef0534f77bb244b00a92de2503cc6d49552f4a9"
+    },
+    {
+      "path": "textures/texture_roughness.png",
+      "bytes": 1390595,
+      "sha256": "3a5ccb2bbf3a5c1d2a4ea3d1b897230cfe6d9a37ef454346da459d3e7aebb7f1"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 3064,
+      "sha256": "0f6d48b1fc68b9db89ac944ade2d5a4072c1aa2688eeeb7269f80d355f0cc9f1"
+    }
+  ]
+}

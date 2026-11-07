@@ -1,0 +1,33 @@
+{
+  "name": "04_sawmill_worker",
+  "role": "Sawmill Worker",
+  "height_m": 1.78,
+  "female": false,
+  "input_image": "front.jpg",
+  "source_image": "/Users/alessandrocastellani/Downloads/zombie-images-set/zombie 4.jpg",
+  "source_sha256": "208cc59d5428d3d5a05048194d229000328518430fe7c1e4cecaa0ec2759b923",
+  "image_generation_skipped": true,
+  "model_request": {
+    "tier": "Gen-2.5-High",
+    "mesh_mode": "Quad",
+    "quality_override": 10000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "TAPose": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "balanced",
+    "preview_render": true,
+    "addons": [
+      "HighPack"
+    ],
+    "quad_normal": true
+  },
+  "rig_request": {
+    "bone_template": "human",
+    "skinning_method": "core",
+    "material": "PBR",
+    "geometry_file_format": "fbx"
+  }
+}

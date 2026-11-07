@@ -1,0 +1,33 @@
+{
+  "name": "07_inn_cook",
+  "role": "Inn Cook",
+  "height_m": 1.65,
+  "female": true,
+  "input_image": "front.jpg",
+  "source_image": "/Users/alessandrocastellani/Downloads/zombie-images-set/zombie 7.jpg",
+  "source_sha256": "3e5a97701c2f5b76993b4847830c6fb5859f25fde1d1df343815d23e6ba6769e",
+  "image_generation_skipped": true,
+  "model_request": {
+    "tier": "Gen-2.5-High",
+    "mesh_mode": "Quad",
+    "quality_override": 10000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "TAPose": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "balanced",
+    "preview_render": true,
+    "addons": [
+      "HighPack"
+    ],
+    "quad_normal": true
+  },
+  "rig_request": {
+    "bone_template": "human",
+    "skinning_method": "core",
+    "material": "PBR",
+    "geometry_file_format": "fbx"
+  }
+}

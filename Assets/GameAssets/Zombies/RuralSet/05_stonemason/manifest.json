@@ -1,0 +1,52 @@
+{
+  "name": "05_stonemason",
+  "version": "1.0.0",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "source_image_sha256": "11bb7a090d261f86d89af52aae7f98da951fe13b19602fbeddaeacd0082e7993",
+  "model_task": "c98da998-b02e-486f-b5e6-c853a9f960a6",
+  "rig_task": "6ef2aa40-7222-47b4-b9dc-72d23c8965ab",
+  "credits": 1.0,
+  "files": [
+    {
+      "path": "character.fbx",
+      "bytes": 1448796,
+      "sha256": "0a4acd6d5df445ca585f6301504f725fb1344fffab2679723dc790e6499b1407"
+    },
+    {
+      "path": "model.glb",
+      "bytes": 11410748,
+      "sha256": "086bc75857ab32844c227360f2444f4fd6af5ff36e1ce629cd305ef27162fe4a"
+    },
+    {
+      "path": "spec.json",
+      "bytes": 828,
+      "sha256": "ff0c2a9bf650c0cc2df463455cd030ec403e8ec4430e374fc68d45fc9f3399f2"
+    },
+    {
+      "path": "textures/texture_diffuse.png",
+      "bytes": 4921402,
+      "sha256": "a024df779acabf9fcde0c1fba3838750845823b9d3886a94b80d5b549f9e41df"
+    },
+    {
+      "path": "textures/texture_metallic.png",
+      "bytes": 397072,
+      "sha256": "04c6b2098075edd74b58dd9d2a3445782c7a7dab1b6cd49ee8689c31748ee1fe"
+    },
+    {
+      "path": "textures/texture_normal.png",
+      "bytes": 3579652,
+      "sha256": "0859b63405ec5eaf31c707e9bfd506575825c298cf41354333b7c5fe2f314bbf"
+    },
+    {
+      "path": "textures/texture_roughness.png",
+      "bytes": 1112860,
+      "sha256": "e79c62e0a0cc0061849e6633d7fca50f5d1be5ebb56de438ac4d55df3b479e83"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 3059,
+      "sha256": "5aee143ce3367aebe6e4108a28379453bc1669fdd38f76ecb67cce918428b5e9"
+    }
+  ]
+}

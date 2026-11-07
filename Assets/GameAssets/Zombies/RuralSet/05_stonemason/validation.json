@@ -1,0 +1,138 @@
+{
+  "passed": true,
+  "source_fbx": "/Users/alessandrocastellani/zombie-test/assets/generated/rural_zombies_user/05_stonemason/rig/base.fbx",
+  "source_sha256": "3fc9d2b58f1425d38f9f76bec6668b3b7de1ea1e613a562b1e3337b197c2f890",
+  "bones": 52,
+  "bone_names": [
+    "Hips",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "Neck",
+    "Head",
+    "LeftShoulder",
+    "LeftArm",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftHandThumb1",
+    "LeftHandThumb2",
+    "LeftHandThumb3",
+    "LeftHandIndex1",
+    "LeftHandIndex2",
+    "LeftHandIndex3",
+    "LeftHandMiddle1",
+    "LeftHandMiddle2",
+    "LeftHandMiddle3",
+    "LeftHandRing1",
+    "LeftHandRing2",
+    "LeftHandRing3",
+    "LeftHandPinky1",
+    "LeftHandPinky2",
+    "LeftHandPinky3",
+    "RightShoulder",
+    "RightArm",
+    "RightForeArm",
+    "RightHand",
+    "RightHandThumb1",
+    "RightHandThumb2",
+    "RightHandThumb3",
+    "RightHandIndex1",
+    "RightHandIndex2",
+    "RightHandIndex3",
+    "RightHandMiddle1",
+    "RightHandMiddle2",
+    "RightHandMiddle3",
+    "RightHandRing1",
+    "RightHandRing2",
+    "RightHandRing3",
+    "RightHandPinky1",
+    "RightHandPinky2",
+    "RightHandPinky3",
+    "LeftUpLeg",
+    "LeftLeg",
+    "LeftFoot",
+    "LeftToeBase",
+    "RightUpLeg",
+    "RightLeg",
+    "RightFoot",
+    "RightToeBase"
+  ],
+  "before": [
+    {
+      "name": "model",
+      "vertices": 9385,
+      "triangles": 18741,
+      "uv_layers": 1,
+      "max_weights": 8,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    }
+  ],
+  "after": [
+    {
+      "name": "05_stonemason_LOD0",
+      "vertices": 9385,
+      "triangles": 18741,
+      "uv_layers": 1,
+      "max_weights": 4,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    },
+    {
+      "name": "05_stonemason_LOD1",
+      "vertices": 4699,
+      "triangles": 9369,
+      "uv_layers": 1,
+      "max_weights": 4,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    },
+    {
+      "name": "05_stonemason_LOD2",
+      "vertices": 1886,
+      "triangles": 3747,
+      "uv_layers": 1,
+      "max_weights": 4,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    }
+  ],
+  "dimensions_m": [
+    1.4351537227630615,
+    0.35042837262153625,
+    1.809999942779541
+  ],
+  "min_z_m": 7.28364746294119e-09,
+  "textures": {
+    "diffuse": {
+      "width": 2048,
+      "height": 2048
+    },
+    "metallic": {
+      "width": 2048,
+      "height": 2048
+    },
+    "roughness": {
+      "width": 2048,
+      "height": 2048
+    },
+    "normal": {
+      "width": 2048,
+      "height": 2048
+    }
+  },
+  "operations": [
+    "Skin influences limited to four and renormalized",
+    "Uniform height normalization; feet at z=0",
+    "LOD1 50%, LOD2 20% decimation preserving skeleton and UVs",
+    "PBR materials reconstructed from provider maps"
+  ],
+  "limitations": [
+    "Back geometry inferred from one front image",
+    "Unity Humanoid retarget and visual review are separate checks"
+  ]
+}

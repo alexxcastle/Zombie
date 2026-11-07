@@ -1,0 +1,33 @@
+{
+  "name": "05_stonemason",
+  "role": "Stonemason",
+  "height_m": 1.81,
+  "female": false,
+  "input_image": "front.jpg",
+  "source_image": "/Users/alessandrocastellani/Downloads/zombie-images-set/zombie 5.jpg",
+  "source_sha256": "11bb7a090d261f86d89af52aae7f98da951fe13b19602fbeddaeacd0082e7993",
+  "image_generation_skipped": true,
+  "model_request": {
+    "tier": "Gen-2.5-High",
+    "mesh_mode": "Quad",
+    "quality_override": 10000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "TAPose": true,
+    "image_label": [
+      "F"
+    ],
+    "is_symmetric": "balanced",
+    "preview_render": true,
+    "addons": [
+      "HighPack"
+    ],
+    "quad_normal": true
+  },
+  "rig_request": {
+    "bone_template": "human",
+    "skinning_method": "core",
+    "material": "PBR",
+    "geometry_file_format": "fbx"
+  }
+}

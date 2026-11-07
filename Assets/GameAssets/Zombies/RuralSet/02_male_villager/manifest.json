@@ -1,0 +1,52 @@
+{
+  "name": "02_male_villager",
+  "version": "1.0.0",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "source_image_sha256": "e25fbc80d2d9acc5a0fba8af63a8812a68734894de4396591d8cb150ff162d4d",
+  "model_task": "71f95725-58ce-4fe2-887b-36a675e02fd5",
+  "rig_task": "827d6653-8dd0-49d1-ac28-857e073b936d",
+  "credits": 1.0,
+  "files": [
+    {
+      "path": "character.fbx",
+      "bytes": 1451132,
+      "sha256": "2b47f751caac4abf74297ec6a699dcfe4292d53cd43c0df95f147adcd569380f"
+    },
+    {
+      "path": "model.glb",
+      "bytes": 10627376,
+      "sha256": "bfc146468ceedac1edb99a7f6f7dc6b846ade2f06b9b0f8f6e0aefb0007a2dab"
+    },
+    {
+      "path": "spec.json",
+      "bytes": 834,
+      "sha256": "e816ff6289666552402bd3c087a77b049b39d11b1e629bb6e3126a7502864d9e"
+    },
+    {
+      "path": "textures/texture_diffuse.png",
+      "bytes": 4158409,
+      "sha256": "13680dc13dbe7160063320af3726e31efd4a880107151aaa6f7183811294f38d"
+    },
+    {
+      "path": "textures/texture_metallic.png",
+      "bytes": 778661,
+      "sha256": "7b0cc90ff3f11d75e8c0daf9b4a0fbb2302b8ce55925aaee1aa724764f7fe87f"
+    },
+    {
+      "path": "textures/texture_normal.png",
+      "bytes": 3596322,
+      "sha256": "10bf1e91cce16dcc1622a59a160cff7d67194d01fa03ec811ba91e210fcf2bd2"
+    },
+    {
+      "path": "textures/texture_roughness.png",
+      "bytes": 846843,
+      "sha256": "d9663e9c4596edf12e4b85409095b01bcb102c5cdc364dc0998ba1438d162cd4"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 3072,
+      "sha256": "d60110de77df007eccaa447cf84161d51ea4edd6941f95bf164d22e284c699dd"
+    }
+  ]
+}

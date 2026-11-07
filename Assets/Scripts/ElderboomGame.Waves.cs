@@ -277,8 +277,10 @@ public sealed partial class ElderboomGame
     bool SpawnZombie(Transform marker, int number)
     {
         if (marker == null) return false;
+        // The rural set (all villagers of the valley); the old prefabs only if the set is missing.
+        var prefab = ElderboomZombieModels.Pick(out int netModel);
         var keys = new[] { "Elderboom/Zombie", "Elderboom/ZombieFemale" };
-        var prefab = Resources.Load<GameObject>(keys[UnityEngine.Random.Range(0, keys.Length)]);
+        if (prefab == null) prefab = Resources.Load<GameObject>(keys[UnityEngine.Random.Range(0, keys.Length)]);
         if (prefab == null)
         {
             foreach (var key in keys)
@@ -308,6 +310,7 @@ public sealed partial class ElderboomGame
         zombie.Initialize(this, player, health, hit, speed, interval);
         zombie.SetVariant(kind);
         zombie.NetFemale = prefab.name.IndexOf("Female", StringComparison.OrdinalIgnoreCase) >= 0;
+        zombie.NetModel = netModel;
         zombies.Add(zombie);
         recentSpawns.Add(marker.position);
         if (recentSpawns.Count > 3) recentSpawns.RemoveAt(0);

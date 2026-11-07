@@ -1,0 +1,37 @@
+{
+  "canonical_package": "/Users/alessandrocastellani/zombie-test/assets/generated/rural_zombies_user/05_stonemason/package",
+  "package_manifest_sha256": "d47d5d958544898537e2ecd723020261a334a31322473a940fbac77f18e05097",
+  "derived": {
+    "mask.png": "HDRP R=metallic G=1 B=1 A=1-roughness; source maps unchanged"
+  },
+  "files": [
+    {
+      "path": "character.fbx",
+      "sha256": "0a4acd6d5df445ca585f6301504f725fb1344fffab2679723dc790e6499b1407"
+    },
+    {
+      "path": "diffuse.png",
+      "sha256": "a024df779acabf9fcde0c1fba3838750845823b9d3886a94b80d5b549f9e41df"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "d47d5d958544898537e2ecd723020261a334a31322473a940fbac77f18e05097"
+    },
+    {
+      "path": "mask.png",
+      "sha256": "39675c6e2fc51f907b255e275ea37c3f17689a2dbd14bd6c1aa3fc6c2316df5d"
+    },
+    {
+      "path": "normal.png",
+      "sha256": "0859b63405ec5eaf31c707e9bfd506575825c298cf41354333b7c5fe2f314bbf"
+    },
+    {
+      "path": "spec.json",
+      "sha256": "ff0c2a9bf650c0cc2df463455cd030ec403e8ec4430e374fc68d45fc9f3399f2"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "5aee143ce3367aebe6e4108a28379453bc1669fdd38f76ecb67cce918428b5e9"
+    }
+  ]
+}

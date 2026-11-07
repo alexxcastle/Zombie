@@ -1,0 +1,37 @@
+{
+  "canonical_package": "/Users/alessandrocastellani/zombie-test/assets/generated/rural_zombies_user/03_female_villager/package",
+  "package_manifest_sha256": "fb89185f3310152c235e0e0f4f7dcfab86eee50ad9e22fa92f8f4af8ba2d3e0f",
+  "derived": {
+    "mask.png": "HDRP R=metallic G=1 B=1 A=1-roughness; source maps unchanged"
+  },
+  "files": [
+    {
+      "path": "character.fbx",
+      "sha256": "34c2be5e386a1322bc7343dafd7809db6101763be99a00a9d74ac2c82419d7cb"
+    },
+    {
+      "path": "diffuse.png",
+      "sha256": "dc322aacb9d296c88e0e6b4463ba603b83895de8a2b2a7d2af7eb67b14089898"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "fb89185f3310152c235e0e0f4f7dcfab86eee50ad9e22fa92f8f4af8ba2d3e0f"
+    },
+    {
+      "path": "mask.png",
+      "sha256": "67f4f3d99fd409ec83f5108ea3830e6c077d9716860c528c5954404510155c33"
+    },
+    {
+      "path": "normal.png",
+      "sha256": "5dc0453ca15692af8a538696e26a13f956ba3b08858119e25ffd2da82433ceb4"
+    },
+    {
+      "path": "spec.json",
+      "sha256": "a72aa33b6c3feea2337a325af9c9f534938cf1fec49f44fd02537b14a7df5107"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "65fbbc145f3a6e0f680326e6ac5fd65c9bd7be5c7cf096ff4f587300856cded3"
+    }
+  ]
+}

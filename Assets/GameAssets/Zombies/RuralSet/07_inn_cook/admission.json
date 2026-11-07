@@ -1,0 +1,37 @@
+{
+  "canonical_package": "/Users/alessandrocastellani/zombie-test/assets/generated/rural_zombies_user/07_inn_cook/package",
+  "package_manifest_sha256": "c062dce1a96050ea2dc5b138897c2c9570bc2bf8417d636b8ee499ed62d3fad4",
+  "derived": {
+    "mask.png": "HDRP R=metallic G=1 B=1 A=1-roughness; source maps unchanged"
+  },
+  "files": [
+    {
+      "path": "character.fbx",
+      "sha256": "1deed78026226848b1ba806d0c7e7945c824427fa0d04d8fd2ac489c2486df50"
+    },
+    {
+      "path": "diffuse.png",
+      "sha256": "76a235107ef94c0159a8fdbabe7a8b8c919352d36f4afcea6884877d6cab4b4d"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "c062dce1a96050ea2dc5b138897c2c9570bc2bf8417d636b8ee499ed62d3fad4"
+    },
+    {
+      "path": "mask.png",
+      "sha256": "e588a64297d83b398d564acd4fe52666df6ef6ad45babfcf2d9d3685f82fba50"
+    },
+    {
+      "path": "normal.png",
+      "sha256": "f3f30d4a8cab20467c0df4ca3c897920d8d4ccc13744dc28612f31d08d794dc2"
+    },
+    {
+      "path": "spec.json",
+      "sha256": "6e342313ed23c2673ae68dbc11ae3b1506743d91452c286d9616d63acd8400e6"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "e8c833bc841de51cd223e5c16a6641995944615494e9641703fda7b8a2967411"
+    }
+  ]
+}

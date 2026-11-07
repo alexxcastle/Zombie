@@ -1,0 +1,37 @@
+{
+  "canonical_package": "/Users/alessandrocastellani/zombie-test/assets/generated/rural_zombies_user/01_market_vendor/package",
+  "package_manifest_sha256": "5d953f2deafbbda45d8087ca277a76765b7ad7d0c10431ef49cc902ed2ca5470",
+  "derived": {
+    "mask.png": "HDRP R=metallic G=1 B=1 A=1-roughness; source maps unchanged"
+  },
+  "files": [
+    {
+      "path": "character.fbx",
+      "sha256": "b74bd3ac875b9306d77419d0e70d3c6dfa48919d479fa144b84d771171b1855c"
+    },
+    {
+      "path": "diffuse.png",
+      "sha256": "adf0307e6ed3379e97fb12aedd13e3d9ef9eb26477c7565b462838c196880984"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "5d953f2deafbbda45d8087ca277a76765b7ad7d0c10431ef49cc902ed2ca5470"
+    },
+    {
+      "path": "mask.png",
+      "sha256": "f6446084868ec8bb041ffb3c8f6cc0736982958d1bb4cb8965640b4951db2fb8"
+    },
+    {
+      "path": "normal.png",
+      "sha256": "fb0fd7d9b586e206eaa535637dd9b78f9c79d5666ecaebda778ee183a0bfd7bc"
+    },
+    {
+      "path": "spec.json",
+      "sha256": "b6890863dc2ba13ce62574b19e0dba6731896a8fae3f1838ced5c9e25d99bd93"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "f23698ec88bcaeedf6d746a5695712a4732342e4059b85c3dce3e0519cdd257a"
+    }
+  ]
+}

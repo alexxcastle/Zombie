@@ -1,0 +1,37 @@
+{
+  "canonical_package": "/Users/alessandrocastellani/zombie-test/assets/generated/rural_zombies_user/06_crop_farmer/package",
+  "package_manifest_sha256": "98afb78284e3091be38874638473cf1b362960b849caad0bf138e75f11f401a2",
+  "derived": {
+    "mask.png": "HDRP R=metallic G=1 B=1 A=1-roughness; source maps unchanged"
+  },
+  "files": [
+    {
+      "path": "character.fbx",
+      "sha256": "bb3211ac10ae86dbcb5df545bfdc08e3af2c74c9fb4fd96e80a677c3528935f6"
+    },
+    {
+      "path": "diffuse.png",
+      "sha256": "9b5b69f9587d02829618bde03b9dc701fd5790ff2780d196a76f797f5040cc43"
+    },
+    {
+      "path": "manifest.json",
+      "sha256": "98afb78284e3091be38874638473cf1b362960b849caad0bf138e75f11f401a2"
+    },
+    {
+      "path": "mask.png",
+      "sha256": "0e164c504802b9abb5410d90c7e47c660df165a52c35150cf847db2048265064"
+    },
+    {
+      "path": "normal.png",
+      "sha256": "085f36a4c823e0600e420ea40ef0534f77bb244b00a92de2503cc6d49552f4a9"
+    },
+    {
+      "path": "spec.json",
+      "sha256": "c478f38c069a5a9e5acee265a6ab9fa3fedfe8848f0ce3382e33de22b3bb573e"
+    },
+    {
+      "path": "validation.json",
+      "sha256": "0f6d48b1fc68b9db89ac944ade2d5a4072c1aa2688eeeb7269f80d355f0cc9f1"
+    }
+  ]
+}

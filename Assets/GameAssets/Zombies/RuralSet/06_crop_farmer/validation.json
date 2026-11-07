@@ -1,0 +1,138 @@
+{
+  "passed": true,
+  "source_fbx": "/Users/alessandrocastellani/zombie-test/assets/generated/rural_zombies_user/06_crop_farmer/rig/base.fbx",
+  "source_sha256": "6ab4e0718b1bb4ccd7e20e36375c0128cd9c3f3259b0c11dd760db19167112f7",
+  "bones": 52,
+  "bone_names": [
+    "Hips",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "Neck",
+    "Head",
+    "LeftShoulder",
+    "LeftArm",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftHandThumb1",
+    "LeftHandThumb2",
+    "LeftHandThumb3",
+    "LeftHandIndex1",
+    "LeftHandIndex2",
+    "LeftHandIndex3",
+    "LeftHandMiddle1",
+    "LeftHandMiddle2",
+    "LeftHandMiddle3",
+    "LeftHandRing1",
+    "LeftHandRing2",
+    "LeftHandRing3",
+    "LeftHandPinky1",
+    "LeftHandPinky2",
+    "LeftHandPinky3",
+    "RightShoulder",
+    "RightArm",
+    "RightForeArm",
+    "RightHand",
+    "RightHandThumb1",
+    "RightHandThumb2",
+    "RightHandThumb3",
+    "RightHandIndex1",
+    "RightHandIndex2",
+    "RightHandIndex3",
+    "RightHandMiddle1",
+    "RightHandMiddle2",
+    "RightHandMiddle3",
+    "RightHandRing1",
+    "RightHandRing2",
+    "RightHandRing3",
+    "RightHandPinky1",
+    "RightHandPinky2",
+    "RightHandPinky3",
+    "LeftUpLeg",
+    "LeftLeg",
+    "LeftFoot",
+    "LeftToeBase",
+    "RightUpLeg",
+    "RightLeg",
+    "RightFoot",
+    "RightToeBase"
+  ],
+  "before": [
+    {
+      "name": "model",
+      "vertices": 9792,
+      "triangles": 19584,
+      "uv_layers": 1,
+      "max_weights": 8,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    }
+  ],
+  "after": [
+    {
+      "name": "06_crop_farmer_LOD0",
+      "vertices": 9792,
+      "triangles": 19584,
+      "uv_layers": 1,
+      "max_weights": 4,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    },
+    {
+      "name": "06_crop_farmer_LOD1",
+      "vertices": 4896,
+      "triangles": 9792,
+      "uv_layers": 1,
+      "max_weights": 4,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    },
+    {
+      "name": "06_crop_farmer_LOD2",
+      "vertices": 1958,
+      "triangles": 3916,
+      "uv_layers": 1,
+      "max_weights": 4,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    }
+  ],
+  "dimensions_m": [
+    0.712874710559845,
+    0.3409474492073059,
+    1.7000000476837158
+  ],
+  "min_z_m": 2.7117414980182275e-09,
+  "textures": {
+    "diffuse": {
+      "width": 2048,
+      "height": 2048
+    },
+    "metallic": {
+      "width": 2048,
+      "height": 2048
+    },
+    "roughness": {
+      "width": 2048,
+      "height": 2048
+    },
+    "normal": {
+      "width": 2048,
+      "height": 2048
+    }
+  },
+  "operations": [
+    "Skin influences limited to four and renormalized",
+    "Uniform height normalization; feet at z=0",
+    "LOD1 50%, LOD2 20% decimation preserving skeleton and UVs",
+    "PBR materials reconstructed from provider maps"
+  ],
+  "limitations": [
+    "Back geometry inferred from one front image",
+    "Unity Humanoid retarget and visual review are separate checks"
+  ]
+}

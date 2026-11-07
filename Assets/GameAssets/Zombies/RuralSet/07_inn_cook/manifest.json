@@ -1,0 +1,52 @@
+{
+  "name": "07_inn_cook",
+  "version": "1.0.0",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "source_image_sha256": "3e5a97701c2f5b76993b4847830c6fb5859f25fde1d1df343815d23e6ba6769e",
+  "model_task": "856e80ac-2181-496b-b72c-cf0be37e589b",
+  "rig_task": "03c2d716-8419-4894-94be-073379938db9",
+  "credits": 1.0,
+  "files": [
+    {
+      "path": "character.fbx",
+      "bytes": 1511948,
+      "sha256": "1deed78026226848b1ba806d0c7e7945c824427fa0d04d8fd2ac489c2486df50"
+    },
+    {
+      "path": "model.glb",
+      "bytes": 10383084,
+      "sha256": "4ab4c4c9cad98d8adb8d6203c1613bb2bc96b3e4cecc458ac2211421454f8c92"
+    },
+    {
+      "path": "spec.json",
+      "bytes": 823,
+      "sha256": "6e342313ed23c2673ae68dbc11ae3b1506743d91452c286d9616d63acd8400e6"
+    },
+    {
+      "path": "textures/texture_diffuse.png",
+      "bytes": 4292513,
+      "sha256": "76a235107ef94c0159a8fdbabe7a8b8c919352d36f4afcea6884877d6cab4b4d"
+    },
+    {
+      "path": "textures/texture_metallic.png",
+      "bytes": 417607,
+      "sha256": "9fb8fb1b7e196692067e8cbad43898c9126cde480108b8217a254e5f55a09c3c"
+    },
+    {
+      "path": "textures/texture_normal.png",
+      "bytes": 3216992,
+      "sha256": "f3f30d4a8cab20467c0df4ca3c897920d8d4ccc13744dc28612f31d08d794dc2"
+    },
+    {
+      "path": "textures/texture_roughness.png",
+      "bytes": 1051179,
+      "sha256": "e1a326e5288b8f9394793bdc44daa4354cc5d9c728072c10eaa0b0b4f5b73020"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 3053,
+      "sha256": "e8c833bc841de51cd223e5c16a6641995944615494e9641703fda7b8a2967411"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "name": "04_sawmill_worker",
+  "version": "1.0.0",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms",
+  "source_image_sha256": "208cc59d5428d3d5a05048194d229000328518430fe7c1e4cecaa0ec2759b923",
+  "model_task": "8b2d8e3d-6c99-473c-a040-bf136163a56a",
+  "rig_task": "56b1d4b7-51bf-491d-a1df-a23fd206b5f5",
+  "credits": 1.0,
+  "files": [
+    {
+      "path": "character.fbx",
+      "bytes": 1436780,
+      "sha256": "8b478b7ee524fcbff5cc7c09a46f597492e0729936d8e3d54283a51619143560"
+    },
+    {
+      "path": "model.glb",
+      "bytes": 9668636,
+      "sha256": "fd25cc5174bd918aa132234541847ae45ff6eb32426ebd0c71fdfff96fffc1f4"
+    },
+    {
+      "path": "spec.json",
+      "bytes": 836,
+      "sha256": "c28a5e565c971b4083d1b5f945e6d38a5de8690a3e558c9e5b11b4c71af0906b"
+    },
+    {
+      "path": "textures/texture_diffuse.png",
+      "bytes": 3859122,
+      "sha256": "ef828ff789ee849a4c6be48b6dd3de8e57c755a0fa201e7ee3597f7cbee070b4"
+    },
+    {
+      "path": "textures/texture_metallic.png",
+      "bytes": 594806,
+      "sha256": "97320668f129418b71fbb2fb034feaaad2f5620f403f9fc54a2046dcf004f75b"
+    },
+    {
+      "path": "textures/texture_normal.png",
+      "bytes": 2960076,
+      "sha256": "5438a29880f25858944da07903913d322acf87f4cb99316982750f736773faa1"
+    },
+    {
+      "path": "textures/texture_roughness.png",
+      "bytes": 883125,
+      "sha256": "b7b66a9c1fbff426cc6ee8b271f7071242e03ae02ecf35586f796d714cf9a88b"
+    },
+    {
+      "path": "validation.json",
+      "bytes": 3075,
+      "sha256": "cdac33beae044221d3249b3145f7530a6770a61e0dd91b8cc01eb6a6a2371790"
+    }
+  ]
+}

@@ -1071,7 +1071,7 @@ public sealed class ElderboomLan : MonoBehaviour
             w.Write(id); Write(w, z.transform.position); w.Write((short)Mathf.RoundToInt(z.transform.eulerAngles.y * 10f));
             w.Write(hash); w.Write((byte)Mathf.Clamp(Mathf.RoundToInt(speed * 50f), 0, 255));
             int variant = Mathf.Max(0, Array.IndexOf(Variants, z.Variant));
-            w.Write((byte)((z.IsAlive ? 0 : 1) | (z.NetFemale ? 2 : 0) | (variant << 2)));
+            w.Write((byte)((z.IsAlive ? 0 : 1) | (z.NetFemale ? 2 : 0) | ((variant & 3) << 2) | ((z.NetModel & 15) << 4)));
             written++;
         }
         WritePickupsAndGates(w);
@@ -1119,13 +1119,13 @@ public sealed class ElderboomLan : MonoBehaviour
         {
             ushort id = r.ReadUInt16(); var pos = ReadV(r); float yaw = r.ReadInt16() / 10f;
             int hash = r.ReadInt32(); float speed = r.ReadByte() / 50f; int flags = r.ReadByte();
-            bool dead = (flags & 1) != 0, female = (flags & 2) != 0; int variant = Mathf.Clamp(flags >> 2, 0, Variants.Length - 1);
+            bool dead = (flags & 1) != 0, female = (flags & 2) != 0; int variant = Mathf.Clamp((flags >> 2) & 3, 0, Variants.Length - 1), model = flags >> 4;
             seenIds.Add(id);
             if (deadIds.Contains(id)) continue;
             if (!proxies.TryGetValue(id, out var proxy) || proxy.zombie == null)
             {
                 if (dead) continue;
-                proxy = SpawnProxy(id, pos, yaw, female, variant, game);
+                proxy = SpawnProxy(id, pos, yaw, female, variant, model, game);
                 if (proxy == null) continue;
                 proxies[id] = proxy;
             }
@@ -1154,9 +1154,10 @@ public sealed class ElderboomLan : MonoBehaviour
         ElderboomAltarUpgrader.Instance?.ApplyNetworkState(altarOwner, altarTime);
     }
 
-    Proxy SpawnProxy(ushort id, Vector3 pos, float yaw, bool female, int variant, ElderboomGame game)
+    Proxy SpawnProxy(ushort id, Vector3 pos, float yaw, bool female, int variant, int model, ElderboomGame game)
     {
-        var prefab = Resources.Load<GameObject>(female ? "Elderboom/ZombieFemale" : "Elderboom/Zombie");
+        var prefab = ElderboomZombieModels.ByNet(model);
+        if (prefab == null) prefab = Resources.Load<GameObject>(female ? "Elderboom/ZombieFemale" : "Elderboom/Zombie");
         if (prefab == null) prefab = Resources.Load<GameObject>("Elderboom/Zombie");
         if (prefab == null) return null;
         var go = Instantiate(prefab, pos, Quaternion.Euler(0f, yaw, 0f));

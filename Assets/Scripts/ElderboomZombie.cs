@@ -54,6 +54,7 @@ public sealed class ElderboomZombie : MonoBehaviour
     public bool NetProxy { get; set; }
     public ushort NetId { get; set; }
     public bool NetFemale { get; set; }
+    public int NetModel { get; set; } // ElderboomZombieModels id, 0 = legacy prefab
     ElderboomLanAvatar chaseAvatar;
     float retargetAt;
     public void NetDie()

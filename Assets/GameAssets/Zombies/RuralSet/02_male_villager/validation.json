@@ -1,0 +1,138 @@
+{
+  "passed": true,
+  "source_fbx": "/Users/alessandrocastellani/zombie-test/assets/generated/rural_zombies_user/02_male_villager/rig/base.fbx",
+  "source_sha256": "8ec7e2fa8f0e9a1406c200ffeb8892d9693a5cd1704dbb31b4ae01e92c5d2803",
+  "bones": 52,
+  "bone_names": [
+    "Hips",
+    "Spine",
+    "Spine1",
+    "Spine2",
+    "Neck",
+    "Head",
+    "LeftShoulder",
+    "LeftArm",
+    "LeftForeArm",
+    "LeftHand",
+    "LeftHandThumb1",
+    "LeftHandThumb2",
+    "LeftHandThumb3",
+    "LeftHandIndex1",
+    "LeftHandIndex2",
+    "LeftHandIndex3",
+    "LeftHandMiddle1",
+    "LeftHandMiddle2",
+    "LeftHandMiddle3",
+    "LeftHandRing1",
+    "LeftHandRing2",
+    "LeftHandRing3",
+    "LeftHandPinky1",
+    "LeftHandPinky2",
+    "LeftHandPinky3",
+    "RightShoulder",
+    "RightArm",
+    "RightForeArm",
+    "RightHand",
+    "RightHandThumb1",
+    "RightHandThumb2",
+    "RightHandThumb3",
+    "RightHandIndex1",
+    "RightHandIndex2",
+    "RightHandIndex3",
+    "RightHandMiddle1",
+    "RightHandMiddle2",
+    "RightHandMiddle3",
+    "RightHandRing1",
+    "RightHandRing2",
+    "RightHandRing3",
+    "RightHandPinky1",
+    "RightHandPinky2",
+    "RightHandPinky3",
+    "LeftUpLeg",
+    "LeftLeg",
+    "LeftFoot",
+    "LeftToeBase",
+    "RightUpLeg",
+    "RightLeg",
+    "RightFoot",
+    "RightToeBase"
+  ],
+  "before": [
+    {
+      "name": "model",
+      "vertices": 9382,
+      "triangles": 18754,
+      "uv_layers": 1,
+      "max_weights": 8,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    }
+  ],
+  "after": [
+    {
+      "name": "02_male_villager_LOD0",
+      "vertices": 9382,
+      "triangles": 18754,
+      "uv_layers": 1,
+      "max_weights": 4,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    },
+    {
+      "name": "02_male_villager_LOD1",
+      "vertices": 4693,
+      "triangles": 9376,
+      "uv_layers": 1,
+      "max_weights": 4,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    },
+    {
+      "name": "02_male_villager_LOD2",
+      "vertices": 1880,
+      "triangles": 3750,
+      "uv_layers": 1,
+      "max_weights": 4,
+      "unweighted_vertices": 0,
+      "nonfinite_vertices": 0,
+      "nonfinite_uvs": 0
+    }
+  ],
+  "dimensions_m": [
+    1.2784044742584229,
+    0.3491690158843994,
+    1.7599999904632568
+  ],
+  "min_z_m": 5.344777953553148e-09,
+  "textures": {
+    "diffuse": {
+      "width": 2048,
+      "height": 2048
+    },
+    "metallic": {
+      "width": 2048,
+      "height": 2048
+    },
+    "roughness": {
+      "width": 2048,
+      "height": 2048
+    },
+    "normal": {
+      "width": 2048,
+      "height": 2048
+    }
+  },
+  "operations": [
+    "Skin influences limited to four and renormalized",
+    "Uniform height normalization; feet at z=0",
+    "LOD1 50%, LOD2 20% decimation preserving skeleton and UVs",
+    "PBR materials reconstructed from provider maps"
+  ],
+  "limitations": [
+    "Back geometry inferred from one front image",
+    "Unity Humanoid retarget and visual review are separate checks"
+  ]
+}
