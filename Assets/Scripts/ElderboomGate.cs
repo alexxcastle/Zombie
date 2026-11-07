@@ -34,6 +34,7 @@ public sealed class ElderboomGate : MonoBehaviour
         var leaves=GetComponent<ElderboomGateLeaves>();
         if(leaves!=null)yield return leaves.Open();
         if(blocker!=null)blocker.enabled=false;if(obstacle!=null)obstacle.enabled=false;
+        ElderboomAudio.PlayAny(name.ToLowerInvariant().Contains("iron") || name.ToLowerInvariant().Contains("churchyard") ? "world/gate_iron_open" : "world/gate_wood_open", 1, transform.position, 1f, true, .03f);
         ElderboomArea.Unlock(areaName);
         ElderboomArea.Unlock(otherAreaName);
         // Both sides of the passage open, whichever side it was bought from.

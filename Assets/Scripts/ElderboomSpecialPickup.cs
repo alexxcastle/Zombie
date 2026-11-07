@@ -47,6 +47,7 @@ public sealed class ElderboomSpecialPickup : MonoBehaviour
         if(NetProxy){collected=true;ElderboomLan.Collect(NetId);gameObject.SetActive(false);Destroy(gameObject);return true;}
         var arsenal=target.GetComponent<ElderboomArsenal>();
         if(arsenal==null || !arsenal.ReceiveTemporary(definition,30))return false;
+        ElderboomAudio.PlayAny("world/pickup_item",1,transform.position,.8f,false);
         collected=true;gameObject.SetActive(false);Destroy(gameObject);return true;
     }
     void BuildVisual()

@@ -163,6 +163,8 @@ public sealed partial class ElderboomGame : MonoBehaviour
         Cursor.lockState=CursorLockMode.None;Cursor.visible=true;
         // Operator and difficulty are chosen in the main menu (PLAY). Opening this scene
         // directly (Editor) starts at once with the last choice instead of a second menu.
+        ElderboomAmbientSounds.Ensure();
+        ElderboomPowerGrid.Ensure();
         ElderboomMenu.LaunchRequested=false;
         BeginSession(ElderboomMenu.Operator,ElderboomMenu.Difficulty);
     }

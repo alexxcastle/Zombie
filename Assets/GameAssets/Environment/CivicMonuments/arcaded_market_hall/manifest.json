@@ -1,0 +1,46 @@
+{
+  "asset": "arcaded_market_hall",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "6460cdfda4591bbcb76ec0a18f7f67705b7116e1bc955a9c138460dc8f45caa6",
+      "bytes": 9905724
+    },
+    {
+      "path": "model.glb",
+      "sha256": "885232ab51b6bb6f8f8d9e982e2ca8da69a30bea2326c6af975cc7c2b74317b8",
+      "bytes": 19547760
+    },
+    {
+      "path": "preview.png",
+      "sha256": "212ea36e72118f3e996c5dd6b7f67586a22459830e3f32432c299f565a592ffe",
+      "bytes": 905056
+    },
+    {
+      "path": "spec.json",
+      "sha256": "18b019bdb66da918f86cbffeba76e714a9d8cfbcf5e9197b7b08cbdac6772472",
+      "bytes": 3194
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "12b3f8609a0e7360e663e5e159bdb197687ffa1239dc9aea9c07c018291fe14e",
+      "bytes": 5758765
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "e8d035b781d56dec7831566e7296cde9e75f362273bdfe762efaafa219842916",
+      "bytes": 3357493
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "04a6261be0ba38fdc8edb84caf2c4088c1b2a7c29a16ea03598c70872c2d0c91",
+      "bytes": 5512998
+    },
+    {
+      "path": "validation.json",
+      "sha256": "a37216b30bee33f0877a0954038be915e4b4291f0f08d265aa1d945080b0de54",
+      "bytes": 1053
+    }
+  ]
+}

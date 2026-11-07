@@ -1,0 +1,36 @@
+{
+  "asset": "civic_palisade_corner",
+  "license": "CC0-1.0 materials; original procedural geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "0513946f9f1d74b1eba15cefdd89842ee0f6e1a9095eff18d2aa503a6f5090f2",
+      "bytes": 851276
+    },
+    {
+      "path": "model.glb",
+      "sha256": "4cc3d8d7eb7f4020fd18473c444e36aa4d242e2ba70cc354b82aa18bfff7bf7a",
+      "bytes": 17305664
+    },
+    {
+      "path": "preview.png",
+      "sha256": "3ad9cf00e9fbb2ceed65729338bf6f9f417baeee3b5af8a6ec6494fbd37abf77",
+      "bytes": 660525
+    },
+    {
+      "path": "spec.json",
+      "sha256": "51746972542ff2f17a601b124c8f242609fa77a2d61b6f2e381a548622c94dc5",
+      "bytes": 681
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "validation.json",
+      "sha256": "5946f5aac0bba923bc64c289b29017eab5e23134115684d2b92d0ee349c26e6f",
+      "bytes": 965
+    }
+  ]
+}

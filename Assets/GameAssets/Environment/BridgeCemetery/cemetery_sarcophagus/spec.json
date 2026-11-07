@@ -1,0 +1,16 @@
+{
+  "name": "cemetery_sarcophagus",
+  "role": "Independent stone sarcophagus",
+  "dimensions_xyz_m": [
+    1.059999942779541,
+    0.9749999642372131,
+    2.200000047683716
+  ],
+  "procedural": true,
+  "license": "CC0-1.0 textures; original geometry",
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 60000
+  },
+  "source": "Metric Blender geometry and Poly Haven stone_wall_05"
+}

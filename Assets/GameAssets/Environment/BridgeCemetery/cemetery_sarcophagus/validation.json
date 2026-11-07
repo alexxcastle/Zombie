@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    1.059999942779541,
+    0.9749999642372131,
+    2.200000047683716
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    324,
+    144,
+    51
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "cemetery_sarcophagus_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.800000011920929,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "30f7f46af2c3057dd8aed34d95b956dcf9a03f763b5252b4e45dc844a4a0c0f2"
+}

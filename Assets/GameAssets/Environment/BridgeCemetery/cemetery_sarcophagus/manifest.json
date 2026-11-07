@@ -1,0 +1,36 @@
+{
+  "asset": "cemetery_sarcophagus",
+  "license": "CC0-1.0 textures; original geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "f29a60cc3bf6f6ae6155830960c8310787c49d4bb9b65501701f27c060afd897",
+      "bytes": 57692
+    },
+    {
+      "path": "model.glb",
+      "sha256": "0c0a23391e87246fe73c18bd40e26269ff457abbfaa75dbdfe5ee8da1d1ceaff",
+      "bytes": 7303712
+    },
+    {
+      "path": "preview.png",
+      "sha256": "5fe7d3ddce81fa67a2ca92d1347838c050499ffc4af30eb301a4210515885555",
+      "bytes": 697169
+    },
+    {
+      "path": "spec.json",
+      "sha256": "f636862f50e467029baea23b15dcc9e6d3764764a75220513c5d91e28d861563",
+      "bytes": 396
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "06032347fc93c53927cd24c4f2fea1a8bae1a42bcce9ca5a364564bb3ec6e09e",
+      "bytes": 7279517
+    },
+    {
+      "path": "validation.json",
+      "sha256": "3ac9e8857d14ab7afef97ad5cd2f8bd890a32a654378515960428b2f4456f357",
+      "bytes": 784
+    }
+  ]
+}

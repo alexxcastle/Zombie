@@ -57,7 +57,7 @@ public sealed class ElderboomHorseAssembly : MonoBehaviour
         bool recovered = mask != CollectedMask;
         CollectedMask = mask; Built = built; Revision = revision;
         RefreshVisuals();
-        if (completed) ElderboomGame.Active?.ShowNotice("MECHANICAL HORSE ASSEMBLED", 4f);
+        if (completed) { ElderboomGame.Active?.ShowNotice("MECHANICAL HORSE ASSEMBLED", 4f); ElderboomAudio.PlayAny("horse/assemble", 1, transform.position, 1f, true, 0f); }
         else if (recovered && mask != 0) ElderboomGame.Active?.ShowNotice($"HORSE COMPONENTS {CollectedCount}/{parts.Length}" + (Ready ? " · RETURN TO THE WORKSHOP" : ""), 4f);
     }
 
@@ -69,8 +69,8 @@ public sealed class ElderboomHorseAssembly : MonoBehaviour
         if (item != Assemble && (CollectedMask & (1 << item)) != 0) return false;
         if (item == Assemble && !Ready) return false;
         if (!Reachable(item, actorPosition)) return false;
-        if (item == Assemble) Built = true;
-        else CollectedMask |= 1 << item;
+        if (item == Assemble) { Built = true; ElderboomAudio.PlayAny("horse/assemble", 1, transform.position, 1f, true, 0f); }
+        else { CollectedMask |= 1 << item; ElderboomAudio.PlayAny("horse/part_pickup", 1, InteractionPoint(item), .9f); }
         Revision++;
         RefreshVisuals();
         ElderboomGame.Active.ShowNotice(Built ? "MECHANICAL HORSE ASSEMBLED" : $"HORSE COMPONENTS {CollectedCount}/{parts.Length}" + (Ready ? " · RETURN TO THE WORKSHOP" : ""), 4f);

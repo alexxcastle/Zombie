@@ -15,7 +15,7 @@ public sealed class ElderboomPauseMenu : MonoBehaviour
 {
     const string SensitivityKey = "hdrp.settings.mouse_sensitivity";
     const string BrightnessKey = "hdrp.settings.brightness";
-    const string FieldOfViewKey = "hdrp.settings.field_of_view";
+    const string FieldOfViewKey = "hdrp.settings.horizontal_fov"; // horizontal degrees (the old key held a vertical value)
     const string MasterVolumeKey = "hdrp.settings.master_volume";
     const string FullscreenKey = ElderboomDisplaySettings.FullscreenKey;
     const string MusicKey = "hdrp.settings.music_volume";
@@ -26,7 +26,7 @@ public sealed class ElderboomPauseMenu : MonoBehaviour
     const string HudScaleKey = "hdrp.settings.hud_scale";
     const string PerfKey = "hdrp.settings.performance";
     const float DefaultBrightness = 1f;
-    const float DefaultFieldOfView = 72f;
+    const float DefaultFieldOfView = 90f; // horizontal, the usual shooter default
     const float DefaultMasterVolume = 1f;
     string pausePage = "pause";
     string pauseStatus = "";
@@ -56,7 +56,13 @@ public sealed class ElderboomPauseMenu : MonoBehaviour
     bool isOpen;
     public bool IsOpen => isOpen;
     public float Sensitivity => sensitivity;
-    public float FieldOfView => fieldOfView;
+    // The setting is the horizontal angle players expect; the camera takes the vertical one for the screen's aspect.
+    public float FieldOfView => VerticalFov(fieldOfView);
+    public static float VerticalFov(float horizontal)
+    {
+        float aspect = Screen.height > 0 ? (float)Screen.width / Screen.height : 16f / 9f;
+        return 2f * Mathf.Atan(Mathf.Tan(horizontal * .5f * Mathf.Deg2Rad) / aspect) * Mathf.Rad2Deg;
+    }
 
     public void Initialize(HDRPSlicePlayer owner, float defaultSensitivity)
     {
@@ -84,7 +90,7 @@ public sealed class ElderboomPauseMenu : MonoBehaviour
     {
         sensitivity = Mathf.Clamp(PlayerPrefs.GetFloat(SensitivityKey, sensitivity), .25f, 6f);
         brightness = Mathf.Clamp(PlayerPrefs.GetFloat(BrightnessKey, DefaultBrightness), .5f, 1.5f);
-        fieldOfView = Mathf.Clamp(PlayerPrefs.GetFloat(FieldOfViewKey, DefaultFieldOfView), 60f, 100f);
+        fieldOfView = Mathf.Clamp(PlayerPrefs.GetFloat(FieldOfViewKey, DefaultFieldOfView), 70f, 110f);
         masterVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(MasterVolumeKey, DefaultMasterVolume));
         musicVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(MusicKey, 0.8f));
         effectsVolume = Mathf.Clamp01(PlayerPrefs.GetFloat(EffectsKey, 0.85f));
@@ -129,7 +135,7 @@ public sealed class ElderboomPauseMenu : MonoBehaviour
 
     void ApplySettings(bool save)
     {
-        if (player.ViewCamera != null) player.ViewCamera.fieldOfView = fieldOfView;
+        if (player.ViewCamera != null) player.ViewCamera.fieldOfView = FieldOfView;
         AudioListener.volume = masterVolume;
         ElderboomAudio.Effects = effectsVolume;
         QualitySettings.vSyncCount = vsync ? 1 : 0;
@@ -413,7 +419,7 @@ public sealed class ElderboomPauseMenu : MonoBehaviour
         c = ElderboomUi.Setting(pageBody, "Brightness", "Overall exposure of the night scenes.", Describe);
         ElderboomUi.SliderControl(c, brightness, .5f, 1.5f, v => Mathf.RoundToInt(v * 100f) + "%", v => { brightness = v; ApplySettings(false); });
         c = ElderboomUi.Setting(pageBody, "Field of view", "Horizontal view angle. Wider shows more, narrower magnifies.", Describe);
-        ElderboomUi.SliderControl(c, fieldOfView, 60f, 100f, v => Mathf.RoundToInt(v) + "°", v => { fieldOfView = v; ApplySettings(false); });
+        ElderboomUi.SliderControl(c, fieldOfView, 70f, 110f, v => Mathf.RoundToInt(v) + "°", v => { fieldOfView = v; ApplySettings(false); });
         c = ElderboomUi.Setting(pageBody, "HUD size", "Scale of the in-game HUD.", Describe);
         ElderboomUi.SliderControl(c, hudScale, .75f, 1.25f, v => Mathf.RoundToInt(v * 100f) + "%", v => { hudScale = v; PlayerPrefs.SetFloat(HudScaleKey, v); });
         var apply = ElderboomUi.Button(pageBody, "APPLY DISPLAY SETTINGS", () => { ApplyVideo(); pauseStatus = "DISPLAY SETTINGS APPLIED"; }, true);

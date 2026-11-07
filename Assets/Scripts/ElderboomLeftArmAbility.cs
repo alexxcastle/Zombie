@@ -19,6 +19,19 @@ public sealed class ElderboomLeftArmAbility : MonoBehaviour
 
     public bool Active => active;
 
+    // A prop the ability holds in the left hand (Soph's plasma pistol): it lives in the hidden operator viewmodel,
+    // stays visible and is carried each frame by the copied left hand, keeping its pose relative to the source hand.
+    Transform prop, propSourceHand, propTargetHand;
+    Vector3 propRestPos; Quaternion propRestRot;
+    public void CarryProp(Transform item, string handBone)
+    {
+        prop = null; propSourceHand = null; propTargetHand = null;
+        if (item == null) return;
+        foreach (var p in pairs) if (p.source.name == handBone) { propSourceHand = p.source; propTargetHand = p.target; break; }
+        if (propSourceHand == null) return;
+        prop = item; propRestPos = item.localPosition; propRestRot = item.localRotation;
+    }
+
     // Left-arm bones of a viewmodel rig (same side rules as ElderboomArmIK).
     static bool IsRight(string name)
     {
@@ -84,6 +97,7 @@ public sealed class ElderboomLeftArmAbility : MonoBehaviour
     }
     public void Stop()
     {
+        if (prop != null) { prop.localPosition = propRestPos; prop.localRotation = propRestRot; }
         if (active && holder != null && wrist != null) { holder.localPosition = holderLocalPos; holder.localRotation = holderLocalRot; }
         active = false;
     }
@@ -101,6 +115,12 @@ public sealed class ElderboomLeftArmAbility : MonoBehaviour
             Vector3 pos = worldSpace ? source.position : transform.TransformPoint(sourceRoot.InverseTransformPoint(source.position));
             Quaternion rot = worldSpace ? source.rotation : transform.rotation * (inv * source.rotation);
             target.SetPositionAndRotation(Vector3.Lerp(target.position, pos, w), Quaternion.Slerp(target.rotation, rot, w));
+        }
+        if (prop != null && propSourceHand != null && propTargetHand != null)
+        {
+            Vector3 lp = propSourceHand.InverseTransformPoint(prop.position);
+            Quaternion lr = Quaternion.Inverse(propSourceHand.rotation) * prop.rotation;
+            prop.SetPositionAndRotation(propTargetHand.TransformPoint(lp), propTargetHand.rotation * lr);
         }
         if (holder != null && wrist != null)
         {

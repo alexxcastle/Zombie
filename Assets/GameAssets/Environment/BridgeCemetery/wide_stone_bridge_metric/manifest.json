@@ -1,0 +1,36 @@
+{
+  "asset": "wide_stone_bridge_metric",
+  "license": "CC0-1.0 textures; original geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "65d688f74c901db060c2e78fbe6353143aa2165a1fe1888f6987ea1d0ab9ae51",
+      "bytes": 2838572
+    },
+    {
+      "path": "model.glb",
+      "sha256": "474d65242b44692d653b1bc5eaca9550c87f09514fd184e5c678167e901087cb",
+      "bytes": 8868072
+    },
+    {
+      "path": "preview.png",
+      "sha256": "e4232f000b5d3666ff9411d6c0770717a820bd8c30e3aae9d0fb6a414b1a331e",
+      "bytes": 623310
+    },
+    {
+      "path": "spec.json",
+      "sha256": "e86853fc4c4d2e6c9b2d307f89d74292e7019b1fb1646101da4c2c3492d1df30",
+      "bytes": 429
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "06032347fc93c53927cd24c4f2fea1a8bae1a42bcce9ca5a364564bb3ec6e09e",
+      "bytes": 7279517
+    },
+    {
+      "path": "validation.json",
+      "sha256": "9591a8a950c48cba1196ea1c377d55af36c6474e9ee213bfd38052c719e20a2f",
+      "bytes": 791
+    }
+  ]
+}

@@ -1187,6 +1187,7 @@ public sealed class ElderboomLan : MonoBehaviour
         if (prefab == null) return null;
         var go = Instantiate(prefab, pos, Quaternion.Euler(0f, yaw, 0f));
         go.name = "LanZombie_" + id;
+        var profile = go.GetComponent<ElderboomZombieProfile>(); if (profile != null && profile.scale > .01f) go.transform.localScale *= profile.scale;
         foreach (var agent in go.GetComponentsInChildren<NavMeshAgent>(true)) agent.enabled = false;
         var zombie = go.GetComponent<ElderboomZombie>() ?? go.GetComponentInChildren<ElderboomZombie>();
         if (zombie == null) { Destroy(go); return null; }

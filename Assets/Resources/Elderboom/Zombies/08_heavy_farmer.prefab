@@ -2200,6 +2200,7 @@ MonoBehaviour:
   reach: 0.1
   noRunner: 1
   noBrute: 0
+  scale: 1.18
 --- !u!1 &8369229749317268241
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,4 +9,5 @@ public sealed class ElderboomZombieProfile : MonoBehaviour
     [Tooltip("Push / shockwave strength taken (1 = normal, lower resists)")] public float pushTaken = 1f;
     [Tooltip("Extra melee reach in metres")] public float reach = 0f;
     [Tooltip("Never rolled as a runner (too heavy) / brute (too frail)")] public bool noRunner, noBrute;
+    [Tooltip("Body size multiplier at spawn (the obese farmer is bigger)")] public float scale = 1f;
 }

@@ -1,0 +1,46 @@
+{
+  "asset": "cemetery_mausoleum_empty",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "aecb07e5a70d97ae1e31bca8b54767bd8b4b3deb562598405eb58f7f0cef1c7c",
+      "bytes": 9461004
+    },
+    {
+      "path": "model.glb",
+      "sha256": "5ba52ffb0eb5d7faaeacb6e23e5f95724d59dfbdfba37e24391594e208d05db5",
+      "bytes": 18068080
+    },
+    {
+      "path": "preview.png",
+      "sha256": "86db844ccedef0db7c8e93ee6c8ffe89042d753b2402cd2ce242006e52edf931",
+      "bytes": 872799
+    },
+    {
+      "path": "spec.json",
+      "sha256": "6bf8b950f85d84e3d4e6a5089403a1636555248fff22cbdcc716680c2e25fd94",
+      "bytes": 3044
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "5bf191b48d7a23450bddcadbdcc8101653de5d5a99ab0057d2a09fda79b8a5de",
+      "bytes": 5129188
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "577f34123171713ef13ffedcc07973054469d1484e4f3e8f9fda29dd8b4a16a8",
+      "bytes": 2930227
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "e84bfb6eaf0c4bd6ab744568bc20417daf99fbdcb31f0beeb739f9de28e988d4",
+      "bytes": 5310835
+    },
+    {
+      "path": "validation.json",
+      "sha256": "12ad7f5b6b615a48fc15fff08ef4bc92e1e56bb6ab3b44d4c630ef001ccffbe9",
+      "bytes": 1067
+    }
+  ]
+}

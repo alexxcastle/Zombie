@@ -1,0 +1,16 @@
+{
+  "name": "cemetery_glazing",
+  "role": "Independent smoked glass pane; fit to verified aperture",
+  "dimensions_xyz_m": [
+    0.5,
+    1.2999999523162842,
+    0.012000000104308128
+  ],
+  "procedural": true,
+  "license": "CC0-1.0 textures; original geometry",
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 60000
+  },
+  "source": "Metric Blender geometry and Poly Haven stone_wall_05"
+}

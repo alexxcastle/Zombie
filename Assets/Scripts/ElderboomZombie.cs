@@ -64,6 +64,7 @@ public sealed partial class ElderboomZombie : MonoBehaviour
         foreach (var collider in GetComponentsInChildren<Collider>()) collider.enabled = false;
         SetMotion("DeathA");
         int death = -1; ElderboomAudio.Zombie("death", ref death, transform.position);
+        ElderboomGore.Pool(transform.position, 1f);
         Destroy(gameObject, 3f);
     }
     void Retarget()
@@ -215,7 +216,7 @@ public sealed partial class ElderboomZombie : MonoBehaviour
         bool reacting=Time.time<reactionUntil;
         bool pushing=Time.time<pushUntil || pushVelocity.sqrMagnitude>0.04f;
         if(pushVelocity.sqrMagnitude>0.04f)pushVelocity=Vector3.MoveTowards(pushVelocity,Vector3.zero,28f*Time.deltaTime);
-        if(Time.time>=voiceAt && !melee && !stunned && !lifted && distance<=23f){ElderboomAudio.Zombie("ambient", ref ambientVariant, transform.position);voiceAt=Time.time+Random.Range(9f,16f);}
+        if(Time.time>=voiceAt && !melee && !stunned && !lifted && distance<=23f){if(!ProfileVoice())ElderboomAudio.Zombie("ambient", ref ambientVariant, transform.position);voiceAt=Time.time+Random.Range(9f,16f);}
         if(animator!=null)
         {
             bool waking=Time.time<animationWakeUntil;
@@ -376,11 +377,13 @@ public sealed partial class ElderboomZombie : MonoBehaviour
         if(health>0)
         {
             if(Time.time>=bloodAt){ElderboomImportedVfx.Blood(hitPoint,hitNormal,false);bloodAt=Time.time+.065f;}
+            ElderboomGore.OnHit(this,animator,hitPoint,origin,amount);
             ReactToShot();
             if(Time.time>=hitSoundAt){int hit=-1;ElderboomAudio.Zombie("hit", ref hit, transform.position);hitSoundAt=Time.time+.48f;}
             return false;
         }
         dead=true;CancelMelee();ClearShotReaction();ElderboomImportedVfx.Blood(hitPoint,hitNormal,true);game?.RegisterKill(this);
+        ElderboomGore.OnKill(this,animator,hitPoint,origin,amount,ElderboomCombat.BlastDamage);
         if(agent!=null && agent.isOnNavMesh)agent.isStopped=true;
         foreach(var collider in GetComponentsInChildren<Collider>())collider.enabled=false;
         SetMotion("DeathA");int death=-1;ElderboomAudio.Zombie("death", ref death, transform.position);

@@ -23,21 +23,27 @@ static partial class ElderboomFill
 
     struct Piece { public string kit, line; public GameObject go; }
 
+    static string planFile = "plan.txt";
     static List<Piece> Build(Transform root, Terrain terrain, StringBuilder sb)
     {
         var list = new List<Piece>();
         float H(float x, float z) => terrain.SampleHeight(new Vector3(x, 0, z)) + terrain.transform.position.y;
-        foreach (var raw in File.ReadAllLines(Dir + "/plan.txt"))
+        foreach (var raw in File.ReadAllLines(Dir + "/" + planFile))
         {
             var line = raw.Split('#')[0].Trim(); if (line.Length == 0) continue;
             var a = line.Split((char[])null, System.StringSplitOptions.RemoveEmptyEntries);
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(Kit + a[1] + "/" + a[1] + ".prefab");
+            // Codex kits outside ArchitectureKit (CivicMonuments, BridgeCemetery, ...): any folder named like the piece.
+            foreach (var other in new[] { "Assets/GameAssets/Environment/CivicMonuments/", "Assets/GameAssets/Environment/BridgeCemetery/" })
+                if (prefab == null) prefab = AssetDatabase.LoadAssetAtPath<GameObject>(other + a[1] + "/" + a[1] + ".prefab");
             if (prefab == null) { sb.AppendLine("MISSING " + a[1]); continue; }
             if (a[0] == "obj")
             {
                 float x = P(a[2]), z = P(a[3]); var look = new Vector3(P(a[4]) - x, 0, P(a[5]) - z);
-                float sink = a.Length > 6 ? P(a[6]) : .15f;
+                float scale = 1f; var nums = a.Where(w => !w.StartsWith("s=")).ToArray(); foreach (var w in a) if (w.StartsWith("s=")) scale = P(w.Substring(2));
+                float sink = nums.Length > 6 ? P(nums[6]) : .15f;
                 var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, root);
+                go.transform.localScale *= scale;
                 go.transform.rotation = Quaternion.LookRotation(look.sqrMagnitude > .01f ? look.normalized : Vector3.forward);
                 go.transform.position = new Vector3(x, 0, z); Physics.SyncTransforms();
                 var b = Bounds(go); float lo = float.MaxValue, hi = float.MinValue;
@@ -93,7 +99,8 @@ static partial class ElderboomFill
     static Vector3 LocalSize(GameObject go)
     {
         var c = Corners(go).Select(p => go.transform.InverseTransformPoint(p)).ToList();
-        return new Vector3(c.Max(p => p.x) - c.Min(p => p.x), Bounds(go).size.y, c.Max(p => p.z) - c.Min(p => p.z));
+        var ls = go.transform.lossyScale; // corners are in the object's (unscaled) frame
+        return new Vector3((c.Max(p => p.x) - c.Min(p => p.x)) * ls.x, Bounds(go).size.y, (c.Max(p => p.z) - c.Min(p => p.z)) * ls.z);
     }
 
     static string Check(List<Piece> pieces, Transform root, StringBuilder sb)
@@ -144,6 +151,9 @@ static partial class ElderboomFill
     {
         var terrain = Valley(); var sb = new StringBuilder();
         bool apply = mode.Contains("apply");
+        // "place codex ...": the Codex civic/cemetery pieces, own plan and own root (the main fill stays as it is).
+        bool codex = mode.Contains("codex"); planFile = codex ? "plan_codex.txt" : "plan.txt";
+        string RootName = codex ? "Elderboom_Fill_Codex" : ElderboomFill.RootName;
         var before = apply ? Reach() : null;
         var old = GameObject.Find(RootName); if (old) old.SetActive(false); Physics.SyncTransforms();
         var root = new GameObject(RootName + (apply ? "" : "_Check")).transform;

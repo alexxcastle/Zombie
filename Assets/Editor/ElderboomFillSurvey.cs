@@ -39,6 +39,9 @@ static partial class ElderboomFill
         if (mode.StartsWith("fixmats")) return FixMaterials();
         if (mode.StartsWith("darken")) return Darken();
         if (mode.StartsWith("network")) return Network();
+        if (mode.StartsWith("prune")) return Prune();
+        if (mode.StartsWith("buildings")) return ScaleBuildings(mode);
+        if (mode.StartsWith("mounds")) return Mounds(mode);
         return "FAIL unknown " + mode;
     }
 

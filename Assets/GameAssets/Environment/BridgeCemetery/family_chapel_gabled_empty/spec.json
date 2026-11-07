@@ -1,0 +1,43 @@
+{
+  "name": "family_chapel_gabled_empty",
+  "role": "Small gabled family chapel empty shell",
+  "dimensions_xyz_m": [
+    3.8,
+    4.6,
+    5.0
+  ],
+  "landmark_scale": 1.0,
+  "source_description": "Small intimate family funerary chapel, under four metres wide, five metres deep, low steep slate gable roof. Pointed open doorway, tiny simple cross finial, narrow empty lancet openings at sides. Genuine empty hollow chamber visible through the open entrance. Dark damp stone with restrained worn masonry trim. No glass, doors, altar, coffin, statue or furniture; these are separate assets.",
+  "image_request": {
+    "prompt": "One complete isolated building centred on a plain light grey studio background. Whole silhouette visible with margin, three-quarter front view from a modest elevated camera showing roof and depth. Neutral broad daylight. Photorealistic abandoned rural European cemetery architecture for Elderboom. Very dark charcoal weathered fieldstone, damp mortar, dark slate, aged black wrought iron. Credible load-bearing masonry and human-scale openings. Restrained moss in sheltered joints, water stains and erosion. No bright limestone, no white marble, no clean polished surfaces. Neutral daylight that reveals the actual dark materials, not underexposure. Small intimate family funerary chapel, under four metres wide, five metres deep, low steep slate gable roof. Pointed open doorway, tiny simple cross finial, narrow empty lancet openings at sides. Genuine empty hollow chamber visible through the open entrance. Dark damp stone with restrained worn masonry trim. No glass, doors, altar, coffin, statue or furniture; these are separate assets. No people, no text, no white stone, no gold, no fantasy spikes, no cartoon, no miniature, no pedestal, no surroundings, no baked lighting. Do not fill door or window openings with stone. No vegetation fused into the architecture: ivy and roots will be separate modules.",
+    "size": "1536x1536"
+  },
+  "negative_prompt": "No people, no text, no white stone, no gold, no fantasy spikes, no cartoon, no miniature, no pedestal, no surroundings, no baked lighting. Do not fill door or window openings with stone. No vegetation fused into the architecture: ivy and roots will be separate modules.",
+  "input_image": "front.png",
+  "model_request": {
+    "tier": "Gen-2.5-Extreme-High",
+    "mesh_mode": "Raw",
+    "quality_override": 140000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "texture_mode": "high",
+    "quad_normal": true,
+    "preview_render": true,
+    "image_label": [
+      "FL"
+    ],
+    "is_symmetric": "balanced"
+  },
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 70000,
+    "front_axis": "+Z",
+    "up_axis": "+Y",
+    "pivot": "base centre",
+    "scale": "metres",
+    "collision": "separate proxy",
+    "lod_count": 3
+  },
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms"
+}

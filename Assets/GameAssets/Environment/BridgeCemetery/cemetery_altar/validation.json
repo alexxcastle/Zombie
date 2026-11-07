@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    1.399999976158142,
+    1.0299999713897705,
+    0.6499999761581421
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    324,
+    144,
+    51
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "cemetery_altar_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.800000011920929,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "074bb5824f5d5c5723af456e3426cde879cf19ccdf93bfa60b924a989e58727e"
+}

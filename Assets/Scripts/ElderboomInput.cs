@@ -29,7 +29,11 @@ public static class ElderboomInput
     static Dictionary<string, KeyCode> bindings;
     static readonly Dictionary<KeyCode, ElderboomButtonState> buttons = new Dictionary<KeyCode, ElderboomButtonState>();
     static int ignoreThroughFrame = -1;
-    public static bool AcceptsInput => Application.isFocused && Time.frameCount > ignoreThroughFrame;
+    public static bool AcceptsInput => (Application.isFocused
+#if UNITY_EDITOR
+        || HeldOverride != null // audit tools drive the player while the editor is in the background
+#endif
+        ) && Time.frameCount > ignoreThroughFrame;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics()

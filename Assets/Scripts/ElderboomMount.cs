@@ -96,11 +96,12 @@ public sealed class ElderboomMount : MonoBehaviour
         player.transform.SetParent(transform, true);
         player.transform.SetLocalPositionAndRotation(PassengerSeat, Quaternion.identity);
         player.Seated = true;
-        ElderboomAudio.Play("menu/single_mouse_click", transform.position, .5f);
+        ElderboomAudio.PlayAny("horse/mount", 1, transform.position, .9f);
     }
 
     void DismountPassenger()
     {
+        ElderboomAudio.PlayAny("horse/dismount", 1, transform.position, .9f);
         passenger = false;
         player.Seated = false;
         Vector3 facing = player.transform.forward; facing.y = 0f;
@@ -357,8 +358,25 @@ public sealed class ElderboomMount : MonoBehaviour
         body.Move((transform.forward * speed + Vector3.up * verticalSpeed) * Time.deltaTime);
     }
 
+    // Mechanical horse sounds: an engine loop whose pitch follows the speed, and piston footsteps (no hooves).
+    AudioSource engine; float stepAt; int stepIndex;
+    void HorseSounds()
+    {
+        if (!Assembled) { if (engine != null) engine.Stop(); return; }
+        if (engine == null) { engine = ElderboomAudio.Loop("horse/engine_loop", transform.position + Vector3.up, .35f, 2f, 22f, transform); if (engine == null) return; }
+        if (!engine.isPlaying) engine.Play();
+        float a = Mathf.Abs(speed), k = Mathf.InverseLerp(0f, gallopSpeed, a);
+        engine.pitch = Mathf.Lerp(.85f, 1.35f, k); engine.volume = Mathf.Lerp(.28f, .6f, k) * ElderboomAudio.Effects;
+        if (a < .3f) { stepAt = Time.time + .1f; return; }
+        if (Time.time < stepAt) return;
+        stepAt = Time.time + Mathf.Lerp(.55f, .2f, k);
+        stepIndex = (stepIndex + 1 + Random.Range(0, 3)) % 4;
+        ElderboomAudio.PlayAny("horse/step_" + stepIndex, 1, transform.position, Mathf.Lerp(.55f, .9f, k), true, .06f);
+    }
+
     void Animate()
     {
+        HorseSounds();
         if (anim == null) return;
         float a = Mathf.Abs(speed);
         if (a < .15f || gallopClip == null) { PlayClip(idleClip, .3f); return; }
@@ -395,11 +413,12 @@ public sealed class ElderboomMount : MonoBehaviour
         cam.SetParent(riderCamera, false);
         cam.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
         SetRiderArms(true);
-        ElderboomAudio.Play("menu/single_mouse_click", transform.position, .5f);
+        ElderboomAudio.PlayAny("horse/mount", 1, transform.position, .9f);
     }
 
     void Dismount()
     {
+        ElderboomAudio.PlayAny("horse/dismount", 1, transform.position, .9f);
         SetThirdPerson(false);
         mounted = false;
         SetRiderArms(false);

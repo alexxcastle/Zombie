@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    0.27000004053115845,
+    2.4000000953674316,
+    0.27000004053115845
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    384,
+    172,
+    61
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "civic_palisade_end_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "20a82c2fc5c975cd0e1795be4ab7ad9b784a94af9e8bfc2c3f912a9006704b6b"
+}

@@ -1,0 +1,46 @@
+{
+  "asset": "municipal_council_hall",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "1b09dfd493619e50bf9536a31231b1bdbcbb7101f1e718f41f96baabced368da",
+      "bytes": 10125260
+    },
+    {
+      "path": "model.glb",
+      "sha256": "fb7e18c6cfeda611c54386f148ef0dadb6fd240eecc90a370d9f92104c47f85b",
+      "bytes": 20463300
+    },
+    {
+      "path": "preview.png",
+      "sha256": "aaff180e371863078ce3f807b4616697dd8b66f7154727853cc241044d225b6d",
+      "bytes": 865466
+    },
+    {
+      "path": "spec.json",
+      "sha256": "9c0e2a45b30001c6930f0891abb7d0e285286591fb1fc228b8c86b895877fb1b",
+      "bytes": 3487
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "3b8d99c12d4cfc704b3ed9a3e7f057062382bce35c6b452c201dd3d216bddf06",
+      "bytes": 5895226
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "2e161c5b24efc96a0f87a35dc3cd553fee72dffc5918ff58306adc7b1dc2c8e8",
+      "bytes": 3943499
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "537b8024b991d372be77e32d555868ffc1c895c51e8e9286ac8aa822393b664a",
+      "bytes": 5762423
+    },
+    {
+      "path": "validation.json",
+      "sha256": "7b0641254a3abdc6018ebff6439a96fb0dc01495e4bbb6ebbd4c7d182158a2c4",
+      "bytes": 1054
+    }
+  ]
+}

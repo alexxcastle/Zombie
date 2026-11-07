@@ -1,0 +1,36 @@
+{
+  "asset": "civic_palisade_end",
+  "license": "CC0-1.0 materials; original procedural geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "07f52ab0fff0faad24dd09708860fbed57328ead96e5038efe638b878990c1d4",
+      "bytes": 59324
+    },
+    {
+      "path": "model.glb",
+      "sha256": "528bae93024884b5f2fa4ac9eb7d4333feaacf5dd58e13380c9008a7dab330ef",
+      "bytes": 16827840
+    },
+    {
+      "path": "preview.png",
+      "sha256": "a1b16b4f720f5428a63ad854357147bbfa08c48ad01086f4edb18994ca18c54d",
+      "bytes": 567138
+    },
+    {
+      "path": "spec.json",
+      "sha256": "318f83d14974e19fc07ac36382b1a0954ac19ecb2d9221a41c5cef9b5fe1924a",
+      "bytes": 677
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "fd893555a1777cd52f5ed10e7deb8867262980e53ab277d4f3a01b3f5da0b27a",
+      "bytes": 7143955
+    },
+    {
+      "path": "validation.json",
+      "sha256": "636ee79efc023766e28e4e415193d93cf6b0a957a4d502d8609d7856e240bfaf",
+      "bytes": 962
+    }
+  ]
+}

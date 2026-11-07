@@ -83,6 +83,8 @@ public static class ElderboomCombat
         owner?.ConfirmHit(); return true;
     }
 
+    // True while AreaDamage deals its damage (explosions): kills then take limbs off (ElderboomGore).
+    public static bool BlastDamage { get; private set; }
     public static int AreaDamage(Vector3 center, float radius, float damage, HDRPSlicePlayer owner, bool falloff = true)
     {
         var seen = new HashSet<ElderboomZombie>();
@@ -97,7 +99,9 @@ public static class ElderboomCombat
                 && obstruction.collider.GetComponentInParent<ElderboomZombie>() != zombie) continue;
             seen.Add(zombie);
             float scale = falloff ? Mathf.Lerp(1f,.35f,Mathf.Clamp01(delta.magnitude/radius)) : 1f;
-            zombie.TakeDamage(damage*scale,center,point,delta.sqrMagnitude>.0001f?-delta.normalized:Vector3.up);
+            BlastDamage = true;
+            try { zombie.TakeDamage(damage*scale,center,point,delta.sqrMagnitude>.0001f?-delta.normalized:Vector3.up); }
+            finally { BlastDamage = false; }
             owner?.ConfirmHit(); damaged++;
         }
         return damaged;

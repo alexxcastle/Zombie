@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    1.7709636688232422,
+    3.8543941974639893,
+    0.0639902651309967
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    5840,
+    2566,
+    1319
+  ],
+  "textures": [],
+  "materials": [
+    {
+      "name": "cemetery_ivy_PBR_0",
+      "textures": {},
+      "index": 0,
+      "base_color": [
+        0.02500000037252903,
+        0.07999999821186066,
+        0.027000000700354576,
+        1.0
+      ],
+      "roughness": 0.800000011920929,
+      "metallic": 0.0,
+      "transmission": 0.0
+    },
+    {
+      "name": "cemetery_ivy_PBR_1",
+      "textures": {},
+      "index": 1,
+      "base_color": [
+        0.054999999701976776,
+        0.03999999910593033,
+        0.02199999988079071,
+        1.0
+      ],
+      "roughness": 0.800000011920929,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "1e0949081cc1314a198ac7fa73587af40bc3d534bcd5347d62c5e9deadc7c997"
+}

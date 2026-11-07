@@ -308,6 +308,7 @@ public sealed partial class ElderboomGame
         string kind = "walker"; float roll = UnityEngine.Random.value;
         var profile = root.GetComponent<ElderboomZombieProfile>();
         if (profile != null) { health *= profile.health; hit *= profile.damage; speed *= profile.speed; interval *= profile.attackInterval; }
+        if (profile != null && profile.scale > .01f && Mathf.Abs(profile.scale - 1f) > .001f) root.transform.localScale *= profile.scale;
         if (number >= 5 && !(profile != null && profile.noBrute) && roll < Mathf.Min(.12f, .02f * (number - 3))) { kind = "brute"; health *= 3.2f; hit *= 1.7f; speed *= .72f; interval *= 1.25f; }
         else if (number >= 3 && !(profile != null && profile.noRunner) && roll < Mathf.Min(.35f, .08f * (number - 1))) { kind = "runner"; health *= .65f; speed *= 1.85f; interval *= .9f; }
         zombie.Initialize(this, player, health, hit, speed, interval);

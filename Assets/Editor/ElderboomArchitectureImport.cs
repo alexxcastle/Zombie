@@ -11,6 +11,12 @@ using Object=UnityEngine.Object;
 public static class ElderboomArchitectureImport
 {
     const string Root="Assets/GameAssets/Environment/ArchitectureKit";
+    // Civil landmarks and the precise palisade share the same verified PBR/LOD
+    // contract as the original village kit, but remain in a separate library so
+    // designers can distinguish landmark pieces from ordinary village dressing.
+    const string CivicRoot="Assets/GameAssets/Environment/CivicMonuments";
+    const string CemeteryRoot="Assets/GameAssets/Environment/BridgeCemetery";
+    static readonly string[] ImportRoots={Root,CivicRoot,CemeteryRoot};
     [Serializable] class GateSpec {public string scene_name,area,other_area;public int cost;public float clear_width_m,open_angle;}
     [Serializable] class Spec {public string name;public float[] dimensions_xyz_m;public GateSpec gate;}
     [Serializable] class MaterialSpec {public string name;public int index;public float[] base_color;public float roughness,metallic,transmission;}
@@ -23,19 +29,25 @@ public static class ElderboomArchitectureImport
         const string request="Logs/ArchitectureKit/import.request";
         if(!File.Exists(request))return;
         if(EditorApplication.isUpdating||EditorApplication.isCompiling||EditorApplication.isPlayingOrWillChangePlaymode)return;
-        File.Delete(request);
-        try{Run();File.WriteAllText("Logs/ArchitectureKit/import.complete",DateTime.UtcNow.ToString("O"));}
+        var library=File.ReadAllText(request).Trim();File.Delete(request);
+        try{RunLibrary(library);File.WriteAllText("Logs/ArchitectureKit/import.complete",DateTime.UtcNow.ToString("O"));}
         catch(Exception e){File.WriteAllText("Logs/ArchitectureKit/import-error.txt",e.ToString());Debug.LogException(e);}
     }
     [MenuItem("Tools/Elderboom/Architecture Kit/Import Verified Packages")]
     public static void Run()
+    {RunLibrary("");}
+    static void RunLibrary(string library)
     {
         var checks=new List<string>();
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         // Remove only abandoned temporary roots from the initial failed import.
         foreach(var obj in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include).Where(t=>t.parent==null&&t.name=="bakers_house").ToArray())
             if(obj.Cast<Transform>().Any(c=>PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(c.gameObject)==Root+"/bakers_house/model.fbx"))Object.DestroyImmediate(obj.gameObject);
-        foreach(var folder in Directory.GetDirectories(Root).OrderBy(p=>p))
+        foreach(var assetRoot in ImportRoots)
+        {
+        if(!string.IsNullOrEmpty(library)&&Path.GetFileName(assetRoot)!=library)continue;
+        if(!Directory.Exists(assetRoot))continue;
+        foreach(var folder in Directory.GetDirectories(assetRoot).OrderBy(p=>p))
         {
             if(!File.Exists(folder+"/model.fbx"))continue;
             var spec=JsonUtility.FromJson<Spec>(File.ReadAllText(folder+"/spec.json"));
@@ -55,7 +67,10 @@ public static class ElderboomArchitectureImport
                 }
                 string mp=folder+"/PBR_"+index+".mat";var mat=AssetDatabase.LoadAssetAtPath<Material>(mp);
                 if(mat==null){mat=new Material(Shader.Find("HDRP/Lit"));AssetDatabase.CreateAsset(mat,mp);}
-                mat.SetColor("_BaseColor",Color.white);mat.SetTexture("_BaseColorMap",AssetDatabase.LoadAssetAtPath<Texture2D>(diffuse));
+                // The civic landmarks are damp, soot-dark fieldstone; the provider's
+                // studio albedo must not turn them into freshly cleaned white masonry.
+                var civicMasonry=(assetRoot==CivicRoot&&!spec.name.Contains("palisade"))||assetRoot==CemeteryRoot;
+                mat.SetColor("_BaseColor",civicMasonry?new Color(.48f,.52f,.50f):Color.white);mat.SetTexture("_BaseColorMap",AssetDatabase.LoadAssetAtPath<Texture2D>(diffuse));
                 mat.SetTexture("_NormalMap",AssetDatabase.LoadAssetAtPath<Texture2D>(folder+"/"+prefix+"_normal.png"));mat.SetTexture("_MaskMap",AssetDatabase.LoadAssetAtPath<Texture2D>(folder+"/"+prefix+"_mask.png"));
                 HDMaterial.ValidateMaterial(mat);EditorUtility.SetDirty(mat);materials[index]=mat;
             }
@@ -77,7 +92,8 @@ public static class ElderboomArchitectureImport
             foreach(var r in renderers){var match=System.Text.RegularExpressions.Regex.Match(r.name,@"_MAT(\d+)");int mi=match.Success?int.Parse(match.Groups[1].Value):0;r.sharedMaterials=r.sharedMaterials.Select((_,i)=>materials.ContainsKey(mi)?materials[mi]:materials.Values.First()).ToArray();}
             AddLODs(model,renderers);
             if(spec.gate!=null&&!string.IsNullOrEmpty(spec.gate.scene_name))BuildGate(root,model,spec);
-            else foreach(var mf in model.GetComponentsInChildren<MeshFilter>().Where(x=>x.name.Contains("LOD0")))mf.gameObject.AddComponent<MeshCollider>().sharedMesh=mf.sharedMesh;
+            else if(spec.name!="cemetery_ivy"&&spec.name!="cemetery_roots"&&spec.name!="cemetery_glazing")
+                foreach(var mf in model.GetComponentsInChildren<MeshFilter>().Where(x=>x.name.Contains("LOD0")))mf.gameObject.AddComponent<MeshCollider>().sharedMesh=mf.sharedMesh;
             foreach(var renderer in root.GetComponentsInChildren<Renderer>())foreach(var mat in renderer.sharedMaterials)
                 foreach(var property in new[]{"_BaseColorMap","_NormalMap","_MaskMap"})
                 {var texture=mat.GetTexture(property);if(texture!=null&&(texture.width>2048||texture.height>2048))throw new Exception(spec.name+" texture exceeds 2K");}
@@ -95,6 +111,7 @@ public static class ElderboomArchitectureImport
             else checks.Add(spec.name+" texturesMax=2048 LODs=3");
             PrefabUtility.SaveAsPrefabAsset(root,folder+"/"+spec.name+".prefab");Object.DestroyImmediate(root);
             }finally{UnityEditor.SceneManagement.EditorSceneManager.ClosePreviewScene(previewScene);}
+        }
         }
         AssetDatabase.SaveAssets();File.WriteAllLines("Logs/ArchitectureKit/prefab-validation.txt",checks);Debug.Log("ARCHITECTURE_KIT_IMPORTED");
     }

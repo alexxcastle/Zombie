@@ -1,0 +1,31 @@
+{
+  "asset": "cemetery_glazing",
+  "license": "CC0-1.0 textures; original geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "458e7ab7a6a602e3c12e53cf2ed93973078cd440662dc0925fca24585896cee4",
+      "bytes": 26620
+    },
+    {
+      "path": "model.glb",
+      "sha256": "5c57ba62f5a7935e4a996545ddc75737ee1cf23f0de2f8be3d3854a49670ca8b",
+      "bytes": 8920
+    },
+    {
+      "path": "preview.png",
+      "sha256": "008defcb1690da058275188ba4d0fd7b36b422f11766116445d851cd6b1e2eaf",
+      "bytes": 536163
+    },
+    {
+      "path": "spec.json",
+      "sha256": "cadc2bc02de1becb5acfcf6dc90fc5f6851092a4ef1015655bd9316b4ad12e80",
+      "bytes": 407
+    },
+    {
+      "path": "validation.json",
+      "sha256": "aeac052430240421afb75042da72197cdf02c9c85ee9bd64c3c41a5f2a1ddafc",
+      "bytes": 641
+    }
+  ]
+}

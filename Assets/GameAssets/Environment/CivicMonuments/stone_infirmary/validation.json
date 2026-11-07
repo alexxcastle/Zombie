@@ -1,0 +1,52 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    30.96630096435547,
+    27.109634399414062,
+    21.118453979492188
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    70000,
+    31500,
+    11200
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "width": 2048,
+      "height": 2048
+    },
+    {
+      "path": "textures/0_normal.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "stone_infirmary_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png",
+        "metalrough": "textures/0_metalrough.png",
+        "normal": "textures/0_normal.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.47999998927116394,
+        0.5199999809265137,
+        0.5,
+        1.0
+      ],
+      "roughness": 0.5,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "0871ab9fb4b3a5cb3e67d4291cc7d56f8c2efd3ffa7e48bfbfe698518cecceda"
+}

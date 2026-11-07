@@ -1,0 +1,31 @@
+{
+  "asset": "cemetery_roots",
+  "license": "CC0-1.0 textures; original geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "1cd625b44655401c162e397df0e439386e45d28ddd70b222004ed053533ec4d1",
+      "bytes": 163084
+    },
+    {
+      "path": "model.glb",
+      "sha256": "21a600e163c1db33bac06b88e60b1322e06354ca7cb45999b6aea4451abdf492",
+      "bytes": 43300
+    },
+    {
+      "path": "preview.png",
+      "sha256": "6618583e0a9ff44e5eb09d1347717f20bedec1e615a7ae968cf5e6630426820f",
+      "bytes": 559627
+    },
+    {
+      "path": "spec.json",
+      "sha256": "a9d3d35702beef7df4e8ea8c6542990ed7263ba5c4debdfe495e6efe413d7025",
+      "bytes": 394
+    },
+    {
+      "path": "validation.json",
+      "sha256": "e3f5e0761b454c1dbc1ae5735ffd10c2ee39601e8f8f3bc15265630d40fb2d35",
+      "bytes": 640
+    }
+  ]
+}

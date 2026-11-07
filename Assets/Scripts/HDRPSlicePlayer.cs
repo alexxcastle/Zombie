@@ -91,25 +91,27 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
     public float Health => health;
     public bool IsDead => dead;
     public const float ReviveWindow = 20f;
+    float hurtVoiceAt;
     public bool Downed { get; private set; }
     float downedUntil;
     public float DownedLeft => Downed ? Mathf.Max(0f, downedUntil - Time.time) : 0f;
     public void Revive()
     {
         if (!Downed) return;
+        ElderboomAudio.PlayAny("player/revived", 1, transform.position, .9f, false);
         Downed = false; dead = false; health = 40f; stamina = 100f; damagePulse = 0f; ResetMovement();
     }
     void TickDowned()
     {
         if (!Downed || Time.time < downedUntil) return;
-        Downed = false; ElderboomGame.Active?.PlayerDied();
+        Downed = false; ElderboomAudio.PlayAny("player/death", 1, transform.position, .9f, false); ElderboomGame.Active?.PlayerDied();
     }
     public int Score => ElderboomGame.Active != null ? ElderboomGame.Active.TotalScore : score;
     public bool HitMarkerVisible => hitMarker.IsVisible(Time.time);
     public Camera ViewCamera => viewCamera;
     public Transform MainMuzzle => rifleMuzzle;
     public bool WeaponDeposited { get; internal set; }
-    public Transform AbilityMuzzle => ElderboomWeaponFraming.FindNamed(weaponRoot,"Soph_Plasma_Muzzle");
+    public Transform AbilityMuzzle => GetComponent<ElderboomArsenal>()?.AbilityMuzzle ?? ElderboomWeaponFraming.FindNamed(weaponRoot,"Soph_Plasma_Muzzle");
     public void ConfirmHit(){hitMarker.Notify(Time.time);ElderboomGame.Active?.ReportHit();}
     public void AddLegacyScore(int amount){score+=amount;}
     public void CancelGameplayActions()
@@ -202,6 +204,7 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
 #endif
         if (dead || amount<=0) return;
         health = Mathf.Max(0f, health - amount);
+        if (health > 0f && Time.time >= hurtVoiceAt) { hurtVoiceAt = Time.time + .45f; ElderboomAudio.PlayAny("player/hurt", 3, transform.position, .7f, false); }
         ElderboomGame.Active?.ReportPlayerDamage(amount);
         ElderboomEvents.RaisePlayerDamaged(amount, source);
         // Hit feedback: flinch, trauma, red pulse and a direction marker.
@@ -214,8 +217,8 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
         {
             dead=true;CancelGameplayActions();
             // Co-op: down, not out. Teammates have 20 s to revive (ElderboomGame.TickRevive); then the death is final.
-            if (ElderboomLan.CoopActive) { Downed=true; downedUntil=Time.time+ReviveWindow; viewKick.AddTrauma(.6f); }
-            else ElderboomGame.Active?.PlayerDied();
+            if (ElderboomLan.CoopActive) { Downed=true; downedUntil=Time.time+ReviveWindow; viewKick.AddTrauma(.6f); ElderboomAudio.PlayAny("player/downed", 1, transform.position, .9f, false); }
+            else { ElderboomAudio.PlayAny("player/death", 1, transform.position, .9f, false); ElderboomGame.Active?.PlayerDied(); }
         }
     }
 

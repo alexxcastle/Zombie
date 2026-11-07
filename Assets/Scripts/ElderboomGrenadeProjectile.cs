@@ -32,6 +32,7 @@ public sealed class ElderboomGrenadeProjectile : MonoBehaviour
     public static void Explode(Vector3 point,float damage,HDRPSlicePlayer owner)
     {
         if(owner == null || owner.IsDead)return;
+        ElderboomAudio.PlayAny("world/grenade_explosion",1,point,1f,true,.06f);
         ElderboomCombat.AreaDamage(point,4f,damage,owner);
         ElderboomGame.Active?.ReportNoise(point,35f);
         owner.AddTrauma(Mathf.Clamp01(1f-Vector3.Distance(owner.transform.position,point)/16f)*.85f);

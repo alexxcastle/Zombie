@@ -1,0 +1,16 @@
+{
+  "name": "cemetery_altar",
+  "role": "Independent small chapel altar",
+  "dimensions_xyz_m": [
+    1.399999976158142,
+    1.0299999713897705,
+    0.6499999761581421
+  ],
+  "procedural": true,
+  "license": "CC0-1.0 textures; original geometry",
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 60000
+  },
+  "source": "Metric Blender geometry and Poly Haven stone_wall_05"
+}

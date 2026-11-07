@@ -87,7 +87,19 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
         // Every weapon is held in the operator's own right hand; the pack's arms are
         // only a fallback when the operator rig cannot be resolved.
         var op=ElderboomOperators.Find(player.OperatorDisplayName);
-        var root=operatorRoot!=null?ElderboomAuthoredGrip.Build(operatorRoot,op,definition,player.ViewmodelParent):null;
+        // Soph's authored holds stretch her flat-rigged sleeves across the screen and miss the sights: she uses the
+        // packs with their own arms and calibrated aim, and the other operators' own viewmodels for their primaries.
+        bool authored=!(op!=null && op.id==ElderboomIds.Soph);
+        var root=operatorRoot!=null && authored?ElderboomAuthoredGrip.Build(operatorRoot,op,definition,player.ViewmodelParent):null;
+        if(root==null && op!=null && op.id==ElderboomIds.Soph && definition.IsOperatorPrimary)
+        {
+            // Soph with Eli's or Tactical's own weapon: that operator's whole viewmodel (arms, hold and aim as authored).
+            var src=ElderboomOperators.Find(definition.operatorId);
+            string pivotName=src!=null?char.ToUpperInvariant(src.id[0])+src.id.Substring(1).ToLowerInvariant()+"_Viewmodel_Pivot":null;
+            Transform pivot=null;
+            if(pivotName!=null)foreach(Transform c in player.ViewmodelParent)if(c.name==pivotName){pivot=c;break;}
+            if(pivot!=null){root=Instantiate(pivot.gameObject,player.ViewmodelParent,false).transform;root.name=pivotName+"_"+definition.id;root.gameObject.SetActive(false);}
+        }
         if(root==null && UseOperatorGrip && operatorRoot!=null)root=ElderboomOperatorGrip.Build(operatorRoot,op,definition,player.ViewmodelParent);
         if(root==null && prefab==null)return null;
         if(root==null){root=Instantiate(prefab,player.ViewmodelParent,false).transform;root.gameObject.SetActive(false);}
@@ -219,12 +231,18 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
         if(left.Bind(operatorRoot,bothArms)<8)return false;
         showingAbility=true;leftArmAbility=left;
         operatorRoot.localPosition=active.root.localPosition;operatorRoot.localRotation=active.root.localRotation;
+        abilityProp=ElderboomWeaponFraming.FindNamed(operatorRoot,"Soph_Plasma_Muzzle")?.parent;
+        if(abilityProp==operatorRoot)abilityProp=null;
+        left.CarryProp(abilityProp,"DEF-hand.L");
         operatorRoot.gameObject.SetActive(true);HideOperatorRoot(true);
         view.PlayAbility();left.Begin(duration);
         StartCoroutine(RestoreWeapon(duration));
         return true;
     }
     ElderboomLeftArmAbility leftArmAbility;
+    Transform abilityProp;
+    // Muzzle of the prop the ability shows in the left hand (Soph's plasma pistol), while it plays over a weapon.
+    public Transform AbilityMuzzle=>showingAbility && leftArmAbility!=null && abilityProp!=null?ElderboomWeaponFraming.FindNamed(abilityProp,"Soph_Plasma_Muzzle"):null;
     // The ability took the weapon out of the right hand (old whole-viewmodel path): no firing until it ends.
     public bool AbilityHidesWeapon=>showingAbility && leftArmAbility==null;
     readonly System.Collections.Generic.List<Renderer> hiddenRenderers=new System.Collections.Generic.List<Renderer>();
@@ -235,7 +253,7 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
         if(hide)
         {
             hiddenRenderers.Clear();hiddenLights.Clear();
-            foreach(var r in operatorRoot.GetComponentsInChildren<Renderer>(true))if(!r.forceRenderingOff){r.forceRenderingOff=true;hiddenRenderers.Add(r);}
+            foreach(var r in operatorRoot.GetComponentsInChildren<Renderer>(true))if(!r.forceRenderingOff && (abilityProp==null || !r.transform.IsChildOf(abilityProp))){r.forceRenderingOff=true;hiddenRenderers.Add(r);}
             foreach(var l in operatorRoot.GetComponentsInChildren<Light>(true))if(l.enabled){l.enabled=false;hiddenLights.Add(l);}
         }
         else

@@ -1,0 +1,36 @@
+{
+  "asset": "cemetery_altar",
+  "license": "CC0-1.0 textures; original geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "aab0460982d409b8579ffb664988071cdcac1fadca050c2c3ce78a85b22a584f",
+      "bytes": 57804
+    },
+    {
+      "path": "model.glb",
+      "sha256": "5416537ae9d215209bfc2ef81af6470b7a0244438022f7f85acf46c406e0ed59",
+      "bytes": 7303684
+    },
+    {
+      "path": "preview.png",
+      "sha256": "d7461cbb8bd4dfbc53bd0cc4869b4be830c5f99463c67f3835841ee098e25364",
+      "bytes": 706380
+    },
+    {
+      "path": "spec.json",
+      "sha256": "75e2f500ad96b5772c201ce8035e1513498d4b369ecef983acdb19a8de2cbc85",
+      "bytes": 392
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "06032347fc93c53927cd24c4f2fea1a8bae1a42bcce9ca5a364564bb3ec6e09e",
+      "bytes": 7279517
+    },
+    {
+      "path": "validation.json",
+      "sha256": "bf2cae789a709e5a875916bb4660effd9305641f47f8c44d3fb831a0331f8521",
+      "bytes": 779
+    }
+  ]
+}

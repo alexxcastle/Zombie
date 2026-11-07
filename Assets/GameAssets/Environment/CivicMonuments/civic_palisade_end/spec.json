@@ -1,0 +1,26 @@
+{
+  "name": "civic_palisade_end",
+  "role": "High visibility-through modular stake fence end",
+  "dimensions_xyz_m": [
+    0.27,
+    2.4,
+    0.27
+  ],
+  "license": "CC0-1.0 materials; original procedural geometry",
+  "license_url": "https://polyhaven.com/license",
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 18000
+  },
+  "source": "Original Blender construction using Poly Haven Weathered Brown Planks CC0",
+  "procedural": true,
+  "module_contract": {
+    "height_m": 2.4,
+    "straight_length_m": 4.0,
+    "post_centres_m": 4.0,
+    "origin": "base centre",
+    "join": "end posts overlap by 0.13m",
+    "stake_count": 7,
+    "clear_gap_m": 0.38
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    7.59999942779541,
+    5.592216491699219,
+    18.44999885559082
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    21600,
+    9600,
+    3400
+  ],
+  "textures": [
+    {
+      "path": "textures/0_diffuse.png",
+      "width": 2048,
+      "height": 2048
+    }
+  ],
+  "materials": [
+    {
+      "name": "wide_stone_bridge_metric_PBR_0",
+      "textures": {
+        "diffuse": "textures/0_diffuse.png"
+      },
+      "index": 0,
+      "base_color": [
+        0.800000011920929,
+        0.800000011920929,
+        0.800000011920929,
+        1.0
+      ],
+      "roughness": 0.800000011920929,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "7044b894505efb341d39f7fd1dff3827e35199195206e2c615f6ac0262086b41"
+}

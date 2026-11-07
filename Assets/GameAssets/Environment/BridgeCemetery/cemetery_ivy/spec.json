@@ -1,0 +1,16 @@
+{
+  "name": "cemetery_ivy",
+  "role": "Separate climbing ivy patch",
+  "dimensions_xyz_m": [
+    2.103794515132904,
+    3.854394169524312,
+    1.9999998807907104
+  ],
+  "procedural": true,
+  "license": "CC0-1.0 textures; original geometry",
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 60000
+  },
+  "source": "Metric Blender geometry and Poly Haven stone_wall_05"
+}

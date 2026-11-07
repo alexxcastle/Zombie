@@ -102,7 +102,16 @@ public sealed class ElderboomHud : MonoBehaviour
         prompt.style.display = DisplayStyle.None;
         hint = Text(root, 12, false, HudMuted); Place(hint, left: 24, bottom: 14, width: 900, height: 22); hint.style.display = DisplayStyle.None;
         banner = Text(root, 68, true, new Color(.92f, .06f, .04f), TextAnchor.MiddleCenter); Place(banner, left: 0, right: 0, height: 90);
-        for (int i = 0; i < MaxPopups; i++) { var p = Text(root, 20, true, new Color(1f, .85f, .3f), TextAnchor.MiddleCenter); p.style.width = 120; p.style.height = 28; p.style.display = DisplayStyle.None; popups.Add(p); }
+        // Score popups: dripping horror lettering (Creepster, OFL), always blood red with a dark outline.
+        var horror = Resources.Load<Font>("Elderboom/UI/Creepster-Regular");
+        for (int i = 0; i < MaxPopups; i++)
+        {
+            var p = Text(root, 26, true, PopupRed, TextAnchor.MiddleCenter); p.style.width = 140; p.style.height = 36; p.style.display = DisplayStyle.None;
+            if (horror != null) p.style.unityFontDefinition = new StyleFontDefinition(FontDefinition.FromFont(horror));
+            p.style.unityTextOutlineColor = new Color(.08f, 0f, 0f, .9f); p.style.unityTextOutlineWidth = .6f;
+            p.style.textShadow = new TextShadow { offset = new Vector2(1.5f, 2f), blurRadius = 3f, color = new Color(0f, 0f, 0f, .85f) };
+            popups.Add(p);
+        }
 
         abilityName = Text(root, 16, true, HudText); Place(abilityName, left: 28, bottom: 142, width: 500, height: 28);
         abilityStatus = Text(root, 13, false, HudMuted); Place(abilityStatus, left: 28, bottom: 121, width: 500, height: 24);
@@ -297,6 +306,7 @@ public sealed class ElderboomHud : MonoBehaviour
     }
 
     // "+100" rising from each kill.
+    static readonly Color PopupRed = new Color(.86f, .04f, .04f);
     void UpdatePopups(ElderboomGame game, float scale)
     {
         int used = 0;
@@ -311,8 +321,9 @@ public sealed class ElderboomHud : MonoBehaviour
                 var label = popups[used++];
                 Show(label, true);
                 SetText(label, "+" + popup.amount);
-                label.style.left = screen.x / scale - 60;
-                label.style.top = (Screen.height - screen.y) / scale - age * 40f - 14;
+                label.style.color = PopupRed;
+                label.style.left = screen.x / scale - 70;
+                label.style.top = (Screen.height - screen.y) / scale - age * 40f - 18;
                 label.style.opacity = Mathf.Clamp01(1f - age / 1.2f);
             }
         for (int i = used; i < popups.Count; i++) Show(popups[i], false);

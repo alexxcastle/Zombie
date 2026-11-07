@@ -77,7 +77,7 @@ public sealed class ElderboomImportedVfx : ScriptableObject
     static Material bloodMaterial;
     // Pooled: each hit reuses one of a fixed set of two-layer emitters instead of
     // building a new GameObject with two particle systems per impact.
-    const int BloodPoolSize = 24;
+    const int BloodPoolSize = 40;
     static readonly List<ParticleSystem> bloodPool = new List<ParticleSystem>();
     static int nextBlood;
     public static GameObject Blood(Vector3 position, Vector3 normal, bool death)
@@ -95,11 +95,11 @@ public sealed class ElderboomImportedVfx : ScriptableObject
         particles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         particles.transform.SetPositionAndRotation(position + normal * .025f, Quaternion.LookRotation(normal));
         var main = particles.main;
-        main.startSpeed = new ParticleSystem.MinMaxCurve(1.1f, death ? 4f : 3.1f);
-        main.startSize = new ParticleSystem.MinMaxCurve(.13f, death ? .46f : .34f);
-        particles.emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)(death ? 72 : 48)) });
+        main.startSpeed = new ParticleSystem.MinMaxCurve(1.3f, death ? 5f : 3.6f);
+        main.startSize = new ParticleSystem.MinMaxCurve(.15f, death ? .55f : .4f);
+        particles.emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)(death ? 130 : 75)) });
         var mist = particles.transform.GetChild(0).GetComponent<ParticleSystem>();
-        mist.emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)(death ? 18 : 12)) });
+        mist.emission.SetBursts(new[] { new ParticleSystem.Burst(0f, (short)(death ? 22 : 16)) });
         particles.gameObject.SetActive(true);
         particles.Play(true);
         return particles.gameObject;
@@ -117,7 +117,7 @@ public sealed class ElderboomImportedVfx : ScriptableObject
         main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
         main.startColor = new Color(.50f, .012f, .019f, .98f);
         main.gravityModifier = .65f; main.simulationSpace = ParticleSystemSimulationSpace.World;
-        main.maxParticles = 96;
+        main.maxParticles = 160;
         var emission = particles.emission;
         emission.rateOverTime = 0f;
         var shape = particles.shape;
@@ -145,7 +145,7 @@ public sealed class ElderboomImportedVfx : ScriptableObject
         var mm = mist.main; mm.loop = false; mm.playOnAwake = false; mm.duration = .4f;
         mm.startLifetime = new ParticleSystem.MinMaxCurve(.32f, .6f); mm.startSpeed = new ParticleSystem.MinMaxCurve(.2f, .65f);
         mm.startSize = new ParticleSystem.MinMaxCurve(.26f, .44f); mm.startColor = new Color(.42f, .009f, .015f, .72f);
-        mm.simulationSpace = ParticleSystemSimulationSpace.World; mm.maxParticles = 20;
+        mm.simulationSpace = ParticleSystemSimulationSpace.World; mm.maxParticles = 24;
         var me = mist.emission; me.rateOverTime = 0;
         var ms = mist.shape; ms.shapeType = ParticleSystemShapeType.Cone; ms.angle = 30; ms.radius = .025f;
         var mf = mist.colorOverLifetime; mf.enabled = true; mf.color = gradient;

@@ -1,0 +1,16 @@
+# Civic (Codex CivicMonuments, scaled toward their spec size): council hall by the creek landing, covered market and
+# infirmary at the woods' edge on the road from the cemetery (the widest open ground left)
+obj municipal_council_hall 19 -91 24 -72 s=0.48
+obj arcaded_market_hall 51 40 39 40 s=0.65
+obj stone_infirmary 65 61 65 40 s=0.6
+# Cemetery (Codex BridgeCemetery): mausoleum, two family chapels, sarcophagi rows, roots and ivy
+obj cemetery_mausoleum_empty 81 3 81 -12
+obj family_chapel_gabled_empty 59 -9 72 -14
+obj family_chapel_hipped_empty 66 -2 72 -12
+obj cemetery_sarcophagus 86 -4 86 -20
+obj cemetery_sarcophagus 89 -4 89 -20
+obj cemetery_sarcophagus 76 -4 76 -20
+obj cemetery_roots 77 6 70 6
+obj cemetery_ivy 84.2 4 95 4
+# Palisade along the creek civic yard
+run civic_palisade_4m -1 -108 23 -108

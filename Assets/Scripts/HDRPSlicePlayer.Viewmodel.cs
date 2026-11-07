@@ -8,6 +8,7 @@ public sealed partial class HDRPSlicePlayer
     // Weapon framing was calibrated at this field of view.
     const float ViewmodelReferenceFov = 72f;
     const float EquipDuration = .42f;
+    const float ViewmodelDepth = 1f;
     Transform viewmodelFov;
     float lookDeltaX, lookDeltaY, equipT = 1f, obstruct, strafeTilt;
     Vector2 sway;
@@ -49,8 +50,8 @@ public sealed partial class HDRPSlicePlayer
         EnsureViewmodelRoot();
         if (viewmodelFov != null)
         {
-            float k = Mathf.Tan(ViewmodelReferenceFov * .5f * Mathf.Deg2Rad) / Mathf.Tan(Mathf.Clamp(pause != null ? pause.FieldOfView : 72f, 30f, 120f) * .5f * Mathf.Deg2Rad);
-            viewmodelFov.localScale = new Vector3(1f, 1f, k);
+            const float k = 1f; // the weapon is drawn with the world FOV: changing the FOV setting changes its size, as it should
+            viewmodelFov.localScale = new Vector3(1f, 1f, k * ViewmodelDepth);
         }
         // Look sway: the weapon lags slightly behind fast mouse movement.
         float ads = aiming ? .3f : 1f;
@@ -65,6 +66,19 @@ public sealed partial class HDRPSlicePlayer
             && hit.collider.GetComponentInParent<ElderboomZombie>() == null && !ElderboomCombat.IsOwner(hit.collider, transform))
             target01 = Mathf.Clamp01((.75f - hit.distance) / .45f);
         obstruct = Mathf.MoveTowards(obstruct, target01, dt * 5f);
+        if (Time.unscaledTime >= shadowSweepAt) { shadowSweepAt = Time.unscaledTime + .5f; RemoveOwnShadows(); }
+    }
+
+    // The player casts no shadow: first-person arms, weapons and anything else under the player (weapons are
+    // swapped and built at runtime, so this sweeps twice a second; it only touches renderers still casting).
+    float shadowSweepAt;
+    readonly List<Renderer> ownRenderers = new List<Renderer>();
+    void RemoveOwnShadows()
+    {
+        GetComponentsInChildren(true, ownRenderers);
+        foreach (var r in ownRenderers)
+            if (r != null && r.shadowCastingMode != UnityEngine.Rendering.ShadowCastingMode.Off)
+                r.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
     }
 
     Vector3 ViewmodelOffset()

@@ -1,0 +1,31 @@
+{
+  "asset": "cemetery_ivy",
+  "license": "CC0-1.0 textures; original geometry",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "d80f64f8ede6f8461bec9d4718dc8f200ba2e713f2e770e2ab73c492e166ce21",
+      "bytes": 1106556
+    },
+    {
+      "path": "model.glb",
+      "sha256": "f955181e51a3d9f26fb3d256619be61dbb0ec53ab6b243aa6853cdc8904f6437",
+      "bytes": 421396
+    },
+    {
+      "path": "preview.png",
+      "sha256": "aa3bc26b6cb5311192416774d843d36e3eab77b58ac87e83e57b499b1d0590e0",
+      "bytes": 592641
+    },
+    {
+      "path": "spec.json",
+      "sha256": "83a5a35d509770e9a112ef9cd9997003e235e24e6234c31e757d49a591e2db0e",
+      "bytes": 386
+    },
+    {
+      "path": "validation.json",
+      "sha256": "294238e47448eb8d199a9f2bd9e0db36f544ebf7db31fe0f2cd80a424b0c805d",
+      "bytes": 948
+    }
+  ]
+}

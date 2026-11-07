@@ -1,0 +1,43 @@
+{
+  "name": "municipal_council_hall",
+  "role": "Monumental municipal council hall",
+  "dimensions_xyz_m": [
+    25.0,
+    18.0,
+    15.0
+  ],
+  "landmark_scale": 2.0,
+  "source_description": "A monumental secular municipal council hall for the centre of Elderboom: a broad, three-storey dark fieldstone civic building with a shallow U-shaped forecourt, five massive ground-level public arches, two recessed oak doors, tall rhythmically spaced upper windows, robust corner buttresses, a restrained central stone balcony, a high charcoal slate roof and paired chimney stacks. It must read immediately as the village seat of government, distinctly larger than every house but clearly not a church: no tower, no clock, no cross, no stained glass, no bell, no religious geometry. Damp soot-dark stone, moss only along the base, strong realistic silhouette.",
+  "image_request": {
+    "prompt": "One complete isolated building centred on a plain light grey studio background. Whole silhouette visible with margin, three-quarter front view from a modest elevated camera showing roof and depth. Neutral broad daylight. Photorealistic landmark architecture for Elderboom, an abandoned damp rural European village. Cool dark grey dressed fieldstone and ashlar, deep pointed but non-religious arched masonry openings, dark slate roofs, iron hardware, restrained moss at ground contact. Human scale doors and windows, believable structural buttresses and roof drainage, physically based neutral albedo, restrained age and damage. A monumental secular municipal council hall for the centre of Elderboom: a broad, three-storey dark fieldstone civic building with a shallow U-shaped forecourt, five massive ground-level public arches, two recessed oak doors, tall rhythmically spaced upper windows, robust corner buttresses, a restrained central stone balcony, a high charcoal slate roof and paired chimney stacks. It must read immediately as the village seat of government, distinctly larger than every house but clearly not a church: no tower, no clock, no cross, no stained glass, no bell, no religious geometry. Damp soot-dark stone, moss only along the base, strong realistic silhouette. No church, no chapel, no cross, no bell tower, no stained glass, no religious symbol, no graveyard, no people, no text or signs, no surrounding terrain or village, no trees, no display pedestal, no snow, no red roof tiles, no modern details, no fantasy ornament, no background scenery.",
+    "size": "1536x1536"
+  },
+  "negative_prompt": "No church, no chapel, no cross, no bell tower, no stained glass, no religious symbol, no graveyard, no people, no text or signs, no surrounding terrain or village, no trees, no display pedestal, no snow, no red roof tiles, no modern details, no fantasy ornament, no background scenery.",
+  "input_image": "front.png",
+  "model_request": {
+    "tier": "Gen-2.5-Extreme-High",
+    "mesh_mode": "Raw",
+    "quality_override": 180000,
+    "geometry_file_format": "glb",
+    "material": "PBR",
+    "texture_mode": "high",
+    "quad_normal": true,
+    "preview_render": true,
+    "image_label": [
+      "FL"
+    ],
+    "is_symmetric": "balanced"
+  },
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 70000,
+    "front_axis": "+Z",
+    "up_axis": "+Y",
+    "pivot": "base centre",
+    "scale": "metres",
+    "collision": "separate proxy",
+    "lod_count": 3
+  },
+  "license": "LicenseRef-Hyper3D-Generated",
+  "license_url": "https://hyper3d.ai/legal/terms"
+}

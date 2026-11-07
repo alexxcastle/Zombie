@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    0.5,
+    1.2999999523162842,
+    0.012000000104308128
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    108,
+    48,
+    17
+  ],
+  "textures": [],
+  "materials": [
+    {
+      "name": "cemetery_glazing_PBR_0",
+      "textures": {},
+      "index": 0,
+      "base_color": [
+        0.12999999523162842,
+        0.18000000715255737,
+        0.15000000596046448,
+        1.0
+      ],
+      "roughness": 0.2199999988079071,
+      "metallic": 0.0,
+      "transmission": 0.949999988079071
+    }
+  ],
+  "source_sha256": "9a91031801f0467bec71cdf84340455b29ba74e4ae671c090ea7e01c5f734b04"
+}

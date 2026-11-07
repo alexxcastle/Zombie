@@ -49,6 +49,7 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
         var arsenal = player.GetComponent<ElderboomArsenal>();
         if (arsenal == null || !arsenal.CanUpgradeActive)
         { game.ShowNotice(arsenal != null && arsenal.ActiveUpgraded ? "WEAPON ALREADY UPGRADED" : "EQUIP A PERMANENT FIREARM"); return false; }
+        if (!ElderboomPowerGrid.RequirePower(transform.position)) return false;
         if (game.Credits < cost) { game.ShowNotice("NEED " + cost + " CREDITS"); return false; }
         if (ElderboomLan.IsClient)
         {
@@ -70,7 +71,8 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
         customer = player; inventory = arsenal; display = visual; transactionGame = game;
         session = game.Session; paid = cost; elapsed = 0; tinted = false;
         game.ShowNotice("ALTAR // WEAPON DEPOSITED", 2f);
-        ElderboomAudio.Play("kenney/impactPlate_light_000", transform.position, .4f);
+        ElderboomAudio.PlayAny("power/upgrader_deposit", 1, transform.position, .9f);
+        ElderboomAudio.PlayAny("power/upgrader_cycle", 1, transform.position, .85f, true, 0f);
         return true;
     }
     void Update()
@@ -83,12 +85,13 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
             {
                 tinted = true;
                 ElderboomUpgradedWeapon.Apply(display.transform, null, "", true);
-                ElderboomAudio.Play("kenney/impactMetal_medium_000", transform.position, .35f);
+                ElderboomAudio.Play("kenney/impactMetal_light_000", transform.position, .35f);
             }
             if (elapsed >= Duration)
             {
                 if (inventory.CompleteAltarUpgrade())
                 {
+                    ElderboomAudio.PlayAny("power/upgrader_complete", 1, transform.position, 1f);
                     paid = 0; transactionGame.ShowNotice("CRIMSON UPGRADE // DAMAGE x2 · AMMO +50%", 5f);
                     ClearVisual(); customer = null; inventory = null; Release();
                 }
@@ -157,6 +160,7 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
         var arsenal = player.GetComponent<ElderboomArsenal>();
         string text = Busy ? "ALTAR // " + Mathf.RoundToInt(Progress * 100) + "%"
             : arsenal != null && arsenal.ActiveUpgraded ? "CRIMSON WEAPON // UPGRADED"
+            : !ElderboomPowerGrid.Powered ? "WEAPON UPGRADER // NO POWER\nSTART THE GENERATOR"
             : player.ActionLabel("interact") + " · UPGRADE WEAPON\n" + cost + " CREDITS";
         ElderboomPrompt.Offer(player.transform.position, transform.position, text);
     }

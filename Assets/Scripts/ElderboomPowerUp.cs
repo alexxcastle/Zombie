@@ -72,6 +72,7 @@ public sealed class ElderboomPowerUp : MonoBehaviour
         if (glow != null) glow.enabled = visible;
         if (player != null && !player.IsDead && (player.transform.position - ground).sqrMagnitude < 1.6f * 1.6f)
         {
+            ElderboomAudio.PlayAny("world/pickup_powerup", 1, transform.position, .8f, false);
             if (NetProxy) ElderboomLan.Collect(NetId); else ElderboomGame.Active.ActivatePowerUp(kind);
             gameObject.SetActive(false); Destroy(gameObject);
         }

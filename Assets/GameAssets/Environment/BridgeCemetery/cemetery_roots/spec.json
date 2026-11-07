@@ -1,0 +1,16 @@
+{
+  "name": "cemetery_roots",
+  "role": "Separate spreading root cluster",
+  "dimensions_xyz_m": [
+    3.112276280298829,
+    0.30781339295208454,
+    1.4407802522182465
+  ],
+  "procedural": true,
+  "license": "CC0-1.0 textures; original geometry",
+  "policy": {
+    "max_texture": 2048,
+    "lod0_triangle_limit": 60000
+  },
+  "source": "Metric Blender geometry and Poly Haven stone_wall_05"
+}

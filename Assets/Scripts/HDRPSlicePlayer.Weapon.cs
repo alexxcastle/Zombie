@@ -101,7 +101,7 @@ public sealed partial class HDRPSlicePlayer
         if(audioCategory!=ElderboomIds.Category.Melee)ammo--;
         var director=ElderboomGame.Active;
         if(director!=null){director.ReportShot();director.ReportNoise(transform.position,audioCategory==ElderboomIds.Category.Melee?6f:audioCategory==ElderboomIds.Category.Handgun?22f:30f);}
-        ElderboomAudio.FireWeapon(audioCategory, transform.position);
+        ElderboomAudio.FireWeapon(audioCategory, transform.position, definition != null && definition.upgraded);
         if (muzzleFlash != null) StartCoroutine(Flash());
         recoil.Kick(weaponDisplayName == "RHINO 60DS" ? 1f : 0.65f);
         var profile=definition ?? new ElderboomWeaponDefinition { category=audioCategory,damage=damage,range=78,falloffStart=25,minimumDamage=.52f,spread=.85f,pellets=1,pierce=1,fireInterval=fireInterval };
@@ -261,12 +261,15 @@ public sealed partial class HDRPSlicePlayer
     {
         definition=data;ConfigurePortedLoadout(operatorDisplayName,data.name,data.capacity,carried,data.damage,data.fireInterval);
         ammo=loaded;reserveAmmo=carried;audioCategory=data.category;
+        if(weaponRoot!=null)ApplyWeaponPose(weaponRoot); // aim distance depends on the category (handgun or long gun)
     }
 
     public void BindWeaponRoot(Transform selected)
     {
         weaponRoot = selected;
         poseReady = false;
+        ElderboomShoulderTrim.Ensure(selected, operatorDisplayName);
+        ScaleStriker(selected);
         BeginEquip();
         recoil.Reset();spreadBloom=0;
         portViewmodel = selected.GetComponent<ElderboomViewmodel>();
@@ -282,7 +285,80 @@ public sealed partial class HDRPSlicePlayer
         selected.localRotation = hipRotation;
     }
 
+    // STRIKER-12 a little smaller (10%), in the Tactical's own viewmodel and in every other hold of it.
+    const float StrikerScale = .9f;
+    void ScaleStriker(Transform selected)
+    {
+        if (selected == null) return;
+        Transform holder = null;
+        foreach (var t in selected.GetComponentsInChildren<Transform>(true)) if (t.name == "OperatorWeapon_striker") { holder = t; break; }
+        if (holder != null) { if (holder.localScale.x > StrikerScale + .001f || holder.localScale.x < StrikerScale - .001f) holder.localScale = Vector3.one * StrikerScale; return; }
+        bool tacticalOwn = selected.name.StartsWith("Tactical_Viewmodel_Pivot") && (selected.name == "Tactical_Viewmodel_Pivot" || selected.name.EndsWith("_striker"));
+        if (!tacticalOwn) return;
+        var mesh = ElderboomWeaponFraming.FindNamed(selected, "output_unwrapped.003");
+        var hand = ElderboomWeaponFraming.FindNamed(selected, "Hand.R");
+        if (mesh == null || hand == null) return;
+        ElderboomScaleAbout.Apply(selected, mesh, hand, StrikerScale);
+        foreach (var t in selected.GetComponentsInChildren<Transform>(true))
+            if (t.name.StartsWith("MainWeapon_") && !t.IsChildOf(mesh) && (t.parent == null || !t.parent.name.StartsWith("MainWeapon_")))
+                ElderboomScaleAbout.Apply(selected, t, hand, StrikerScale);
+    }
+
     void ApplyWeaponPose(Transform selected)
+    {
+        ApplyWeaponPoseBase(selected);
+        TightenAds(selected);
+    }
+
+    // Hip pose, framed like a modern military shooter's idle: the gun big in the lower right, its back end very
+    // close to the eye, the body of the weapon centred low-right on screen. Measured on the weapon's own meshes
+    // (sight markers are not reliable on every pack); keeps the authored hold's orientation, arms come along.
+    const float HipViewportX = .64f, HipViewportY = .27f;
+    void FrameHip(Transform selected)
+    {
+        if (selected == null || selected.parent == null || audioCategory == ElderboomIds.Category.Melee) return;
+        Vector3 keepP = selected.localPosition; Quaternion keepR = selected.localRotation;
+        selected.localPosition = hipPosition; selected.localRotation = hipRotation;
+        var parent = selected.parent; bool any = false; Bounds b = default;
+        Transform holder = null;
+        foreach (var tr in selected.GetComponentsInChildren<Transform>(true)) if (tr.name.StartsWith("OperatorWeapon_")) { holder = tr; break; }
+        foreach (var r in (holder != null ? holder : selected).GetComponentsInChildren<Renderer>(false))
+        {
+            if (!r.enabled || r.forceRenderingOff || r is ParticleSystemRenderer || r is LineRenderer || r is SkinnedMeshRenderer && holder == null) continue;
+            string n = r.name.ToLowerInvariant();
+            if (n.Contains("arm") || n.Contains("hand") || n.Contains("sleeve") || n.Contains("glove") || n.StartsWith("p_") || n.Contains("body")) continue;
+            var c = parent.InverseTransformPoint(r.bounds.center);
+            var e = parent.InverseTransformVector(r.bounds.extents); e = new Vector3(Mathf.Abs(e.x), Mathf.Abs(e.y), Mathf.Abs(e.z));
+            var lb = new Bounds(c, e * 2f);
+            if (!any) { b = lb; any = true; } else b.Encapsulate(lb);
+        }
+        selected.localPosition = keepP; selected.localRotation = keepR;
+        if (!any || b.size.z < .05f) return;
+        float near = (audioCategory == ElderboomIds.Category.Handgun ? .16f : .05f) / ViewmodelDepth; // back of the gun, as seen
+        float shiftZ = near - b.min.z;
+        float centreZ = (b.center.z + shiftZ) * ViewmodelDepth;
+        float t = Mathf.Tan(ViewmodelReferenceFov * .5f * Mathf.Deg2Rad), aspect = viewCamera != null ? viewCamera.aspect : 16f / 9f;
+        var want = new Vector3((HipViewportX - .5f) * 2f * t * aspect * centreZ, (HipViewportY - .5f) * 2f * t * centreZ, b.center.z + shiftZ);
+        hipPosition += want - b.center;
+    }
+
+    // Aiming puts the eye right behind the rear sight (rifles ~8 cm, handguns ~19 cm): less stock and arm in view.
+    // Works on every pose source (authored grips, packs' stored framing, solved sights) by sliding the aim pose along
+    // the view axis until the rear sight sits at that distance.
+    void TightenAds(Transform selected)
+    {
+        if (!hasAdsReference || selected == null || selected.parent == null) return;
+        var rear = adsRearSight != null ? adsRearSight : ElderboomWeaponFraming.FindNamed(selected, "Soph_ADS_Rear", "MainWeapon_ADS_Rear");
+        if (rear == null || !rear.IsChildOf(selected)) return;
+        Vector3 keepP = selected.localPosition; Quaternion keepR = selected.localRotation;
+        selected.localPosition = adsPosition; selected.localRotation = adsRotation;
+        Vector3 rearInParent = selected.parent.InverseTransformPoint(rear.position);
+        selected.localPosition = keepP; selected.localRotation = keepR;
+        float want = audioCategory == ElderboomIds.Category.Handgun ? .19f : .12f;
+        if (rearInParent.z > want) adsPosition.z -= rearInParent.z - want;
+    }
+
+    void ApplyWeaponPoseBase(Transform selected)
     {
         var pose = ElderboomWeaponFraming.FromViewmodel(portViewmodel, selected);
         hipPosition = pose.hipPosition;

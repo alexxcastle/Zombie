@@ -1,0 +1,32 @@
+{
+  "passed": true,
+  "actual_dimensions_xyz_m": [
+    3.112276077270508,
+    0.3078133463859558,
+    1.4407801628112793
+  ],
+  "pivot": "base centre",
+  "lod_triangles": [
+    1904,
+    852,
+    299
+  ],
+  "textures": [],
+  "materials": [
+    {
+      "name": "cemetery_roots_PBR_0",
+      "textures": {},
+      "index": 0,
+      "base_color": [
+        0.06499999761581421,
+        0.04500000178813934,
+        0.026000000536441803,
+        1.0
+      ],
+      "roughness": 0.800000011920929,
+      "metallic": 0.0,
+      "transmission": 0.0
+    }
+  ],
+  "source_sha256": "9e1b320b2e1fe4d62fde6c9928e8b41b92f24dc3b2902a9abebfbb5c65c86854"
+}

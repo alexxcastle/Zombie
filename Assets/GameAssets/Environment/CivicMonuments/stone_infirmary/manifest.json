@@ -1,0 +1,46 @@
+{
+  "asset": "stone_infirmary",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "445d306378bcf602b34911562ae28a3acdeea76354afa9052ea1a3e700c8b976",
+      "bytes": 10188796
+    },
+    {
+      "path": "model.glb",
+      "sha256": "0ebc5abff3a76222535fd789c130d92e96684f3edd92ab07087b464e6633f495",
+      "bytes": 20507724
+    },
+    {
+      "path": "preview.png",
+      "sha256": "5d0d7c0468f5d2b818b9f665beb60d771d17a673e5b59f4dcffb11265720a120",
+      "bytes": 872725
+    },
+    {
+      "path": "spec.json",
+      "sha256": "c5706f697c568d2e311a909f729de4edbf40538545fb38d7569705a5a6627886",
+      "bytes": 3225
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "87b29dd995a0dff4cb00aea55360c87b1e4b705fb61aa22e81ced47edf635c80",
+      "bytes": 6037309
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "bbae8467d7f21e2e54e6654f95c8b281b4ea7ee44520d1b81099f0c9b1010cab",
+      "bytes": 3405031
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "d106f3463770aee517d57e226632c346dc5942bd79366bbbf4e0493d946478a5",
+      "bytes": 5864491
+    },
+    {
+      "path": "validation.json",
+      "sha256": "cc0c01588bb3e2d8e714a772dc7573cf0101b966bda2695c8a671f4665aa2883",
+      "bytes": 1048
+    }
+  ]
+}

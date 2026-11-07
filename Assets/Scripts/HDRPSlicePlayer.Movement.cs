@@ -138,6 +138,11 @@ public sealed partial class HDRPSlicePlayer
             && far.point.y < top.point.y - .3f)
             destination = far.point; // thin obstacle: drop down on the far side
         if (Physics.CheckCapsule(destination + Vector3.up * (r + .06f), destination + Vector3.up * (standHeight - r), r * .95f, mask, QueryTriggerInteraction.Ignore)) return false;
+        // Never into a block that is still locked: block borders open only through their gates, whatever the terrain
+        // or rocks next to the fence allow to reach.
+        var into = ElderboomArea.At(destination);
+        if (into != null && !into.Unlocked) return false;
+        if (wall.collider.transform.root.name.StartsWith("Elderboom_Access")) return false;
         if (Physics.CheckSphere(top.point + Vector3.up * (r + .2f), r * .8f, mask, QueryTriggerInteraction.Ignore)) return false;
         vaultFrom = feet; vaultTo = destination; vaultApex = top.point.y + .22f; vaultT = 0f;
         if (sliding) EndSlide();
@@ -211,6 +216,7 @@ public sealed partial class HDRPSlicePlayer
     // ---- Look, locomotion and camera ---------------------------------------------------
     void Look()
     {
+        if (!Application.isFocused) { lookDeltaX = lookDeltaY = 0f; return; } // tools driving a background editor: no stray mouse
         float yaw = Input.GetAxisRaw("Mouse X") * pause.Sensitivity;
         float mouseY = Input.GetAxisRaw("Mouse Y") * pause.Sensitivity;
         transform.Rotate(0f, yaw, 0f, Space.Self);

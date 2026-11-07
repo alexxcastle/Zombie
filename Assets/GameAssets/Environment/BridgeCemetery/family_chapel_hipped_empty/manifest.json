@@ -1,0 +1,46 @@
+{
+  "asset": "family_chapel_hipped_empty",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "eb7b4130ea59c04473e7cee720f8b7a3091157471aa4c58451f3963fed21d980",
+      "bytes": 7110332
+    },
+    {
+      "path": "model.glb",
+      "sha256": "f33df8ab89e48776dde899388e13e966e16d2ccf43972e4234cd0b3218be1b47",
+      "bytes": 16190812
+    },
+    {
+      "path": "preview.png",
+      "sha256": "22acd793840b7f695015901e15dfe6ec9f58623fb938bd8e7ea6ba0b86523580",
+      "bytes": 793825
+    },
+    {
+      "path": "spec.json",
+      "sha256": "129df37023568a469d2ea4cddaf2ca791388d12dd1f5415bb00d6f833340bf94",
+      "bytes": 2928
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "a0a1664880f5bbedcea6be5202f9dcaf602fca590ef6ea553cb8f3d957caf8dc",
+      "bytes": 4976777
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "7662c62d5eec04d64a1f8f952a6637fcfe883e8475ba011a8facb0655fa4c58b",
+      "bytes": 3228340
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "9810c739aacb33cb3877a199545ca08606fcf23998b5e2083801a7eab76d0113",
+      "bytes": 4201969
+    },
+    {
+      "path": "validation.json",
+      "sha256": "aff76c2364fe1e978c2a41eb886f70ea0f73afc4610fae78efa243a163a2abcd",
+      "bytes": 1069
+    }
+  ]
+}

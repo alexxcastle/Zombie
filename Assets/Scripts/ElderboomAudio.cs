@@ -24,6 +24,22 @@ public static class ElderboomAudio
         foreach(var source in tails)if(source!=null)source.Stop();
         System.Array.Clear(tailFades,0,tailFades.Length);
     }
+    // Generated ElevenLabs effects (tools/audio/sfx_list.json): "<folder>/<name>_" + random variant; silent if absent.
+    public static void PlayAny(string prefix,int variants,Vector3 position,float volume=1f,bool spatial=true,float pitchJitter=.05f)
+    {
+        var clip=Clip(variants>1?prefix+"_"+Random.Range(0,variants):prefix);
+        if(clip==null && variants>1)clip=Clip(prefix+"_0");
+        PlayClip(clip,position,volume,spatial,Random.Range(1f-pitchJitter,1f+pitchJitter));
+    }
+    // A looping 3D emitter (fountains, generator, wind); null when the clip is missing.
+    public static AudioSource Loop(string path,Vector3 position,float volume,float minDistance,float maxDistance,Transform parent=null)
+    {
+        var clip=Clip(path); if(clip==null)return null;
+        var go=new GameObject("Elderboom_Loop_"+path.Replace('/','_')); if(parent!=null)go.transform.SetParent(parent,true); go.transform.position=position;
+        var s=go.AddComponent<AudioSource>(); s.clip=clip; s.loop=true; s.volume=volume*Effects; s.spatialBlend=maxDistance>0?1f:0f;
+        s.rolloffMode=AudioRolloffMode.Logarithmic; s.minDistance=minDistance; s.maxDistance=Mathf.Max(maxDistance,minDistance+1f); s.dopplerLevel=0; s.time=Random.Range(0f,clip.length); s.Play();
+        return s;
+    }
     public static void Play(string path,Vector3 position,float volume=1f,bool spatial=false,float pitch=1f,float time=0f)
         =>PlayClip(Clip(path),position,volume,spatial,pitch,time);
     public static void PlayClip(AudioClip clip,Vector3 position,float volume=1f,bool spatial=false,float pitch=1f,float time=0f)
@@ -74,11 +90,19 @@ public static class ElderboomAudio
         Play(ClipPath(category, stage), position, Db(-3f), false, Random.Range(.985f, 1.015f));
     }
 
-    public static void FireWeapon(string category, Vector3 position)
+    // upgraded: the CRIMSON (altar) version of the weapon fires the "laser" variants made from the same gunshot and
+    // tail (ring-modulated crack, falling zap, flanger), falling back to the plain ones.
+    public static void FireWeapon(string category, Vector3 position, bool upgraded = false)
     {
         float pitch = Random.Range(0.985f, 1.015f);
-        Play(ClipPath(category, "gunshot_01"), position, Db(-1.5f), false, pitch);
-        var clip = Clip(ClipPath(category, "tail_01"));
+        string shot = ClipPath(category, "gunshot_01"), tail = ClipPath(category, "tail_01");
+        if (upgraded)
+        {
+            if (Clip(ClipPath(category, "gunshot_laser")) != null) shot = ClipPath(category, "gunshot_laser");
+            if (Clip(ClipPath(category, "tail_laser")) != null) tail = ClipPath(category, "tail_laser");
+        }
+        Play(shot, position, Db(upgraded ? -2.5f : -1.5f), false, pitch);
+        var clip = Clip(tail);
         if (clip == null) return;
         int slot = NextTail();
         for (int i = 0; i < tails.Length; i++)

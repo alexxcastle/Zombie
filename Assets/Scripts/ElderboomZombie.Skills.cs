@@ -23,6 +23,14 @@ public sealed partial class ElderboomZombie
     }
     ElderboomZombieProfile profile;
     void InitSkills() { weapon = GetComponent<ElderboomZombieWeapon>(); profile = GetComponent<ElderboomZombieProfile>(); if (profile != null) pushResist *= profile.pushTaken; }
+    // Build-specific voice (heavy / female), falling back to the common groans.
+    bool ProfileVoice()
+    {
+        if (profile == null) return false;
+        string set = profile.build == "heavy" ? "zombies/heavy_zombie_groan" : profile.build == "tall gaunt" ? "zombies/female_zombie_moan" : null;
+        if (set == null || ElderboomAudio.Clip(set + "_0") == null) return false;
+        ElderboomAudio.PlayAny(set, 2, transform.position + Vector3.up * 1.5f, .75f); return true;
+    }
     float AttackReach => (weapon != null ? weapon.reach : 1.45f) + (profile != null ? profile.reach : 0f);
     bool Sprinter;
 
@@ -53,7 +61,7 @@ public sealed partial class ElderboomZombie
                 {
                     ambushPhase = AmbushPhase.Hide; ambushPhaseAt = Time.time;
                     agent.isStopped = true; agent.ResetPath(); agent.velocity = Vector3.zero;
-                    SetMotion("AmbushCover");
+                    SetMotion("AmbushCover"); ElderboomAudio.PlayAny("zombie_skills/ambush_crouch", 1, transform.position, .5f);
                 }
                 return true;
             case AmbushPhase.Hide:
@@ -84,7 +92,8 @@ public sealed partial class ElderboomZombie
     void BeginPounce()
     {
         ambushPhase = AmbushPhase.Pounce; ambushPhaseAt = Time.time; pounceHit = false;
-        SetMotion("AmbushPounce"); ElderboomAudio.Zombie("attack", ref attackVariant, transform.position);
+        SetMotion("AmbushPounce");
+        if (ElderboomAudio.Clip("zombie_skills/ambush_pounce") != null) ElderboomAudio.PlayAny("zombie_skills/ambush_pounce", 1, transform.position + Vector3.up * 1.4f, 1f); else ElderboomAudio.Zombie("attack", ref attackVariant, transform.position);
         nextAttack = Time.time + 1.4f;
     }
 
@@ -144,7 +153,8 @@ public sealed partial class ElderboomZombie
     {
         int token = attackToken;
         melee = true; meleeAnimSpeed = 1.5f; nextAttack = Time.time + attackInterval + 1f;
-        SetMotion("GrabLunge"); ElderboomAudio.Zombie("attack", ref attackVariant, transform.position);
+        SetMotion("GrabLunge");
+        if (ElderboomAudio.Clip("zombie_skills/grab_lunge") != null) ElderboomAudio.PlayAny("zombie_skills/grab_lunge", 1, transform.position + Vector3.up * 1.5f, .9f); else ElderboomAudio.Zombie("attack", ref attackVariant, transform.position);
         yield return new WaitForSeconds(.5f);
         bool held = token == attackToken && !dead && !IsFrozen && !lifted && !TargetDown && Vector3.Distance(transform.position, TargetPos) <= 1.75f && HasLineOfSight();
         if (held)
@@ -154,11 +164,11 @@ public sealed partial class ElderboomZombie
             while (Time.time < until && token == attackToken && !dead && !IsFrozen && !lifted && !TargetDown && !TargetIgnored)
             {
                 var d = TargetPos - transform.position; d.y = 0;
-                if (d.magnitude > 2.15f) break; // the player tore free
+                if (d.magnitude > 2.15f) { ElderboomAudio.PlayAny("zombie_skills/grab_break_free", 1, TargetPos, .8f, false); break; } // the player tore free
                 Face(TargetPos, 12f);
                 // Keep the bodies apart a little so the camera never ends up inside the zombie.
                 player.ApplyGrab(.32f, .2f, transform.position);
-                if (Time.time >= biteAt) { biteAt = Time.time + .75f; int c = -1; ElderboomAudio.Zombie("contact", ref c, transform.position); player.TakeDamage(damage * .45f, transform.position); }
+                if (Time.time >= biteAt) { biteAt = Time.time + .75f; if (ElderboomAudio.Clip("zombie_skills/grab_bite_0") != null) ElderboomAudio.PlayAny("zombie_skills/grab_bite", 2, TargetPos + Vector3.up * 1.5f, .85f, false); else { int c = -1; ElderboomAudio.Zombie("contact", ref c, transform.position); } player.TakeDamage(damage * .45f, transform.position); }
                 yield return null;
             }
         }
@@ -175,14 +185,14 @@ public sealed partial class ElderboomZombie
         float len = ClipLength(state, 2.3f), speed = weapon.swingSpeed, hitAt = len * weapon.hitFraction[Mathf.Min(pick, weapon.hitFraction.Length - 1)] / speed;
         melee = true; meleeAnimSpeed = speed; nextAttack = Time.time + Mathf.Max(attackInterval, len / speed + .15f);
         SetMotion(state); ElderboomAudio.Zombie("attack", ref attackVariant, transform.position);
-        float start = Time.time;
-        while (Time.time - start < hitAt) { if (token != attackToken) yield break; if (!TargetDown) Face(TargetPos, 6f); yield return null; }
+        float start = Time.time; bool whoosh = false;
+        while (Time.time - start < hitAt) { if (token != attackToken) yield break; if (!TargetDown) Face(TargetPos, 6f); if (!whoosh && Time.time - start > hitAt - .22f) { whoosh = true; ElderboomAudio.PlayAny("zombie_skills/cleaver_whoosh", 2, transform.position + Vector3.up * 1.4f, .8f); } yield return null; }
         if (token == attackToken && !dead && Time.time >= frozenUntil && Time.time >= ignoreUntil && !TargetIgnored && !lifted && !InsideKeepAway() && player != null && !TargetDown
             && Vector3.Distance(transform.position, TargetPos) <= weapon.reach + .15f && HasLineOfSight())
         {
             int contact = -1; ElderboomAudio.Zombie("contact", ref contact, transform.position);
-            ElderboomAudio.Play("kenney/impactMetal_light_00" + Random.Range(0, 5), TargetPos, .7f, false, .8f);
-            ElderboomAudio.Play("kenney/impactPunch_heavy_00" + Random.Range(0, 5), TargetPos, .5f, false, .9f);
+            if (ElderboomAudio.Clip("zombie_skills/cleaver_hit_0") != null) ElderboomAudio.PlayAny("zombie_skills/cleaver_hit", 2, TargetPos + Vector3.up, .9f, false);
+            else { ElderboomAudio.Play("kenney/impactMetal_light_00" + Random.Range(0, 5), TargetPos, .7f, false, .8f); ElderboomAudio.Play("kenney/impactPunch_heavy_00" + Random.Range(0, 5), TargetPos, .5f, false, .9f); }
             if (chaseAvatar != null) ElderboomLan.DamageAvatar(chaseAvatar, damage * weapon.damageMultiplier, transform.position);
             else player.TakeDamage(damage * weapon.damageMultiplier, transform.position);
         }

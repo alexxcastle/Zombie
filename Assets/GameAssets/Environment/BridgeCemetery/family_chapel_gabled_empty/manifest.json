@@ -1,0 +1,46 @@
+{
+  "asset": "family_chapel_gabled_empty",
+  "license": "LicenseRef-Hyper3D-Generated",
+  "files": [
+    {
+      "path": "model.fbx",
+      "sha256": "ac8b84f9e5f7aebc51355178887c84b3c3e4e3bf4bca68955e75708a992b8cac",
+      "bytes": 7515196
+    },
+    {
+      "path": "model.glb",
+      "sha256": "6759de9f6b4063a7a749602b7083e42ad917fe161b05ae8bc2aac6822084f8b8",
+      "bytes": 17390500
+    },
+    {
+      "path": "preview.png",
+      "sha256": "00bddcd1d922fff23c7ed77012afae1c1c20ae82d2e5ce9d5272fa37dda879a5",
+      "bytes": 862630
+    },
+    {
+      "path": "spec.json",
+      "sha256": "6ad622f248d05dcb3f7cff0fbb4ae966aeb565243431928d7a2fa7c00bfbeacd",
+      "bytes": 2945
+    },
+    {
+      "path": "textures/0_diffuse.png",
+      "sha256": "342e6595a3f5bfee3b8e3d6f50ca39473317b823d515fde78a2a035dbe77d2ad",
+      "bytes": 5495214
+    },
+    {
+      "path": "textures/0_metalrough.png",
+      "sha256": "46116840890335524a051b56ee409f3c175660f468eaeb181b3b3d196bb18b3f",
+      "bytes": 2819175
+    },
+    {
+      "path": "textures/0_normal.png",
+      "sha256": "ef551928c045032946ca51da0b500ff1d4da7b835a390f10f383aa0b6182be97",
+      "bytes": 5132585
+    },
+    {
+      "path": "validation.json",
+      "sha256": "7e7d6efaa4cb5e43ef88ee00d424af42b8588e5a5ff2e3ac6c2045a97c362547",
+      "bytes": 1069
+    }
+  ]
+}

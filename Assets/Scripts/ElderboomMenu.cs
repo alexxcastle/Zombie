@@ -271,26 +271,16 @@ public sealed class ElderboomMenu : MonoBehaviour
     void BuildHome()
     {
         homePage = MakePage(uiRoot);
-        var column = Absolute(homePage, Margin, 0, bottom: 0, width: 780);
-        column.style.justifyContent = Justify.Center;
-        // Wordmark: the small logo as an emblem beside large spaced type (the logo
-        // texture is 163 px, too small to be the hero element).
+        // Top bar: the wordmark, then the entries side by side across the top (the video stays clear below).
+        var column = Absolute(homePage, Margin, 40, right: Margin);
         var brand = Enter(new VisualElement { pickingMode = PickingMode.Ignore });
         brand.AddToClassList("eb-row");
-        brand.style.alignItems = Align.Center;
-        if (logo != null)
-        {
-            var emblem = new Image { image = logo, scaleMode = ScaleMode.ScaleToFit, pickingMode = PickingMode.Ignore };
-            emblem.style.width = 112; emblem.style.height = 112; emblem.style.marginRight = 22; emblem.style.marginLeft = -8;
-            brand.Add(emblem);
-        }
-        var words = new VisualElement { pickingMode = PickingMode.Ignore };
-        var wordmark = ElderboomUi.Text(words, "ELDERBOOM", "eb-h1");
-        wordmark.style.fontSize = 92; wordmark.style.letterSpacing = 14; wordmark.style.marginBottom = -6;
-        ElderboomUi.Text(words, "SURVIVE THE NIGHT   ·   ELDERBOOM VILLAGE", "eb-caption").style.marginLeft = 4;
-        brand.Add(words);
+        brand.style.alignItems = Align.FlexEnd;
+        var wordmark = ElderboomUi.Text(brand, "ELDERBOOM", "eb-h1");
+        wordmark.style.fontSize = 64; wordmark.style.letterSpacing = 12; wordmark.style.marginBottom = -4; wordmark.style.marginRight = 26;
+        ElderboomUi.Text(brand, "SURVIVE THE NIGHT   ·   ELDERBOOM VILLAGE", "eb-caption").style.marginBottom = 10;
         column.Add(brand);
-        var bar = Enter(AccentBar()); bar.style.marginTop = 18; bar.style.marginBottom = 44; column.Add(bar);
+        var bar = Enter(AccentBar()); bar.style.marginTop = 14; bar.style.marginBottom = 18; column.Add(bar);
         var entries = new (string label, string tag, string description, Action action)[]
         {
             ("PLAY", null, "Choose an operator and hold the village against the waves.", () => { LeaveLan(); GoTo(Page.Operators); }),
@@ -298,15 +288,19 @@ public sealed class ElderboomMenu : MonoBehaviour
             ("SETTINGS", null, "Controls, sensitivity, display and audio.", () => GoTo(Page.Settings)),
             ("QUIT", null, "Close Elderboom.", () => Application.Quit())
         };
+        var row = new VisualElement { pickingMode = PickingMode.Ignore };
+        row.AddToClassList("eb-row"); row.style.flexDirection = FlexDirection.Row; row.style.flexWrap = Wrap.Wrap;
+        column.Add(row);
         for (int i = 0; i < entries.Length; i++)
         {
             var entry = entries[i];
-            var item = ElderboomUi.MenuItem(column, (i + 1).ToString("00"), entry.label, entry.action, entry.tag, false, () => homeDescription.text = entry.description);
+            var item = ElderboomUi.MenuItem(row, (i + 1).ToString("00"), entry.label, entry.action, entry.tag, false, () => homeDescription.text = entry.description);
+            item.style.marginRight = 22; item.style.marginBottom = 0;
             if (entry.tag == "SOON") item.AddToClassList("eb-menu-item--disabled");
             Enter(item);
         }
         homeDescription = Enter(ElderboomUi.Text(column, entries[0].description, "eb-body", "eb-muted"));
-        homeDescription.style.marginTop = 26; homeDescription.style.height = 26; homeDescription.style.marginLeft = 21;
+        homeDescription.style.marginTop = 14; homeDescription.style.height = 26; homeDescription.style.marginLeft = 21;
         var footer = Absolute(homePage, Margin, bottom: 52, right: Margin);
         footer.AddToClassList("eb-row"); footer.style.justifyContent = Justify.SpaceBetween; footer.style.alignItems = Align.Center;
         ElderboomUi.Text(footer, "ELDERBOOM   ·   UNITY HDRP   ·   BUILD " + Application.version, "eb-caption");

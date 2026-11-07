@@ -103,6 +103,8 @@ public static class ElderboomAuthoredGrip
         old.gameObject.SetActive(false);
         old.SetParent(null, false);
         Object.Destroy(old.gameObject);
+        if (op.id == ElderboomIds.Eli)
+            ElderboomLimbLock.Attach(model, "L", Clip(path, weapon.category == ElderboomIds.Category.Handgun ? "HandGrip_Pistol" : "HandGrip_Rifle"), null);
         ElderboomAnimationSampling.Sample(clip, model.gameObject, 0f);
 
         var gripR = GripFrame(model, weapon.id, "");
@@ -170,6 +172,20 @@ public static class ElderboomAuthoredGrip
             bool left = IsLeftPart(t, pack.transform) && holderL != null;
             Move(t, left ? moveL : moveR);
             t.SetParent(left ? holderL : holderR, true);
+        }
+        // Support hand: where the pack's left hand held this weapon, as a marker on the weapon.
+        if (packL != null && handL != null && holderL == null && weapon.category != ElderboomIds.Category.Melee)
+        {
+            var own = PackFrame(model, LeftJoints);
+            if (own != null)
+            {
+                Matrix4x4 handOffset = own.Value.inverse * handL.localToWorldMatrix;
+                Matrix4x4 want = moveR * packL.Value * handOffset;
+                var marker = new GameObject("LeftSupport").transform;
+                marker.SetParent(holderR, false);
+                marker.SetPositionAndRotation(want.GetColumn(3), want.rotation);
+                ElderboomSupportHand.Attach(model, handL, marker);
+            }
         }
         SetLayer(holderR, model.gameObject.layer);
         if (holderL != null) SetLayer(holderL, model.gameObject.layer);

@@ -195,6 +195,7 @@ static class ElderboomClaudeWeaponAudit
         var player = game != null ? game.Player : null;
         if (game == null || player == null) { nextAt = EditorApplication.timeSinceStartup + 1; return; }
         HDRPSlicePlayer.DevInvulnerable = true;
+        if (!player.IsDead) player.Heal(100f);
         foreach (var z in game.Zombies) if (z != null) Object.Destroy(z.gameObject);
 
         if (jobs == null)
@@ -255,7 +256,7 @@ static class ElderboomClaudeWeaponAudit
         string name = opId.ToLowerInvariant() + "_" + weaponId;
         if (phase == 0)
         {
-            ElderboomInput.HeldOverride = null;
+            ElderboomInput.HeldOverride = a => false;
             if (currentOp != opId)
             {
                 currentOp = opId;
