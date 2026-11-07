@@ -28,7 +28,8 @@ public sealed partial class ElderboomZombie
     // ---- Ambush ------------------------------------------------------------------------
     enum AmbushPhase { None, Find, Seek, Hide, Pounce }
     AmbushPhase ambushPhase;
-    Vector3 ambushSpot; float ambushSince, ambushPhaseAt; bool pounceHit;
+    Vector3 ambushSpot; float ambushSince, ambushPhaseAt, ambushRetryAt; int ambushTries; bool pounceHit;
+    public static string LastCoverReport;
     static readonly Collider[] coverHits = new Collider[16];
 
     // True while the skill drives the zombie this frame (normal chase/attack skipped).
@@ -39,7 +40,8 @@ public sealed partial class ElderboomZombie
         switch (ambushPhase)
         {
             case AmbushPhase.Find:
-                if (!FindCover(out ambushSpot)) { EndAmbush(false); return false; }
+                if (Time.time < ambushRetryAt) return false; // keep chasing meanwhile, look again shortly
+                if (!FindCover(out ambushSpot)) { if (++ambushTries >= 4) EndAmbush(false); else ambushRetryAt = Time.time + 3f; return false; }
                 ambushPhase = AmbushPhase.Seek; ambushPhaseAt = Time.time;
                 agent.isStopped = false; agent.speed = moveSpeed * 1.15f; agent.SetDestination(ambushSpot); SetMotion(Locomotion());
                 return true;
@@ -107,24 +109,29 @@ public sealed partial class ElderboomZombie
         spot = default; if (TargetDown) return false;
         Vector3 target = TargetPos, eye = target + Vector3.up * 1.6f, me = transform.position;
         var path = new NavMeshPath(); float best = float.MinValue; bool found = false;
-        for (int i = 0; i < 40; i++)
+        int sampled = 0, far = 0, open = 0, seen = 0, unreachable = 0;
+        for (int i = 0; i < 72; i++)
         {
-            // Half the samples around the zombie, half between it and the player.
-            Vector3 c = i % 2 == 0 ? me + Random.insideUnitSphere * 18f : Vector3.Lerp(me, target, Random.Range(.25f, .8f)) + Random.insideUnitSphere * 10f;
+            // A third around the zombie, a third on its way to the player, a third in a ring around the player.
+            Vector3 c = i % 3 == 0 ? me + Random.insideUnitSphere * 20f
+                : i % 3 == 1 ? Vector3.Lerp(me, target, Random.Range(.2f, .8f)) + Random.insideUnitSphere * 10f
+                : target + Quaternion.Euler(0, Random.Range(0f, 360f), 0) * Vector3.forward * Random.Range(9f, 26f);
             if (!NavMesh.SamplePosition(c, out var hit, 2f, NavMesh.AllAreas)) continue;
+            sampled++;
             var p = hit.position; float d = Vector3.Distance(p, target);
-            if (d < 9f || d > 28f) continue;
-            int n = Physics.OverlapSphereNonAlloc(p + Vector3.up * .9f, 1.3f, coverHits, ElderboomCombat.WorldMask, QueryTriggerInteraction.Ignore);
+            if (d < 9f || d > 28f) { far++; continue; }
+            int n = Physics.OverlapSphereNonAlloc(p + Vector3.up * .9f, 1.6f, coverHits, ElderboomCombat.WorldMask, QueryTriggerInteraction.Ignore);
             bool cover = false;
-            for (int k = 0; k < n; k++) { var h = coverHits[k]; if (h is TerrainCollider || h.GetComponentInParent<ElderboomZombie>() != null || h.GetComponentInParent<HDRPSlicePlayer>() != null) continue; cover = true; break; }
-            if (!cover) continue;
-            if (!Physics.Linecast(eye, p + Vector3.up * .8f, ElderboomCombat.WorldMask & ~(1 << 2), QueryTriggerInteraction.Ignore)) continue; // visible: no ambush
-            if (!NavMesh.CalculatePath(me, p, NavMesh.AllAreas, path) || path.status != NavMeshPathStatus.PathComplete) continue;
+            for (int k = 0; k < n; k++) { var h = coverHits[k]; if (h is TerrainCollider || h.GetComponentInParent<ElderboomZombie>() != null || h.GetComponentInParent<HDRPSlicePlayer>() != null || h.bounds.size.y < .9f) continue; cover = true; break; }
+            if (!cover) { open++; continue; }
+            if (!Physics.Linecast(eye, p + Vector3.up * .8f, ElderboomCombat.WorldMask & ~(1 << 2), QueryTriggerInteraction.Ignore)) { seen++; continue; } // visible: no ambush
+            if (!NavMesh.CalculatePath(me, p, NavMesh.AllAreas, path) || path.status != NavMeshPathStatus.PathComplete) { unreachable++; continue; }
             float len = 0; for (int k = 1; k < path.corners.Length; k++) len += Vector3.Distance(path.corners[k - 1], path.corners[k]);
-            if (len > 45f) continue;
+            if (len > 50f) { unreachable++; continue; }
             float score = -Mathf.Abs(d - 14f) - len * .15f + Random.value * 2f;
             if (score > best) { best = score; spot = p; found = true; }
         }
+        LastCoverReport = $"cover search: sampled {sampled} distance {far} open {open} visible {seen} unreachable {unreachable} found {found} {spot}";
         return found;
     }
 

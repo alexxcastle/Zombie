@@ -45,8 +45,8 @@ static class ElderboomSkillPlayTest
             if (mode == "grab") z.AssignSkill(ElderboomZombieSkill.Grab);
             if (mode == "ambush") z.AssignSkill(ElderboomZombieSkill.Ambush);
             list.Add(z);
-            var cg = new GameObject("SkillTestCam"); cam = cg.AddComponent<Camera>(); cg.AddComponent<HDAdditionalCameraData>(); cam.fieldOfView = 50; cam.nearClipPlane = .05f;
-            rt = new RenderTexture(960, 540, 24); cam.targetTexture = rt; spot = pl.transform.position;
+            cam = Camera.main; cam.transform.SetParent(null, true); cam.fieldOfView = 50; spot = pl.transform.position;
+            foreach (var r in pl.GetComponentsInChildren<Renderer>()) r.enabled = false;
             File.AppendAllText(Result, $"spawned {go.name} at {h.position} player {pl.transform.position} weapon {(z.GetComponent<ElderboomZombieWeapon>()?.Held != null)}\n");
             shot = 0; nextShot = now + .3; SessionState.SetInt(Key + "_stage", 2); return;
         }
@@ -69,15 +69,13 @@ static class ElderboomSkillPlayTest
                 var zp = z.transform.position; var pp = pl.transform.position; var mid = (zp + pp) * .5f; var dir = (zp - pp); dir.y = 0; var side = Vector3.Cross(Vector3.up, dir.normalized);
                 if (dir.sqrMagnitude < .01f) side = Vector3.right;
                 cam.transform.position = mid + side * (mode == "ambush" && t < 14 ? 9f : 4.2f) + Vector3.up * 1.4f; cam.transform.LookAt(mid + Vector3.up * .9f);
-                cam.Render(); RenderTexture.active = rt; var tex = new Texture2D(960, 540, TextureFormat.RGB24, false); tex.ReadPixels(new Rect(0, 0, 960, 540), 0, 0); tex.Apply(); RenderTexture.active = null;
-                var anim = z.GetComponentInChildren<Animator>(); var st = anim.GetCurrentAnimatorStateInfo(0);
+                                var anim = z.GetComponentInChildren<Animator>(); var st = anim.GetCurrentAnimatorStateInfo(0);
                 string name = new[] { "WalkA", "WalkB", "AttackA", "AttackPunch", "CleaverDown", "CleaverSide", "GrabLunge", "GrabHold", "AmbushCover", "AmbushIdle", "AmbushPounce", "Sprint", "ShotHit", "Turn" }.FirstOrDefault(n => st.IsName(n)) ?? "?";
-                if ((shot % 2 == 0 && t < 26) || name.StartsWith("Ambush") || name.StartsWith("Grab") || name.StartsWith("Cleaver")) File.WriteAllBytes($"{Dir}/{mode}_{shot:00}_{name}.jpg", tex.EncodeToJPG(82));
-                Object.Destroy(tex);
-                File.AppendAllText(Result, $"t {t:F1} state {z.State} anim {name} {st.normalizedTime:F2} speed {anim.speed:F2} dist {Vector3.Distance(zp, pp):F1} grabbed {pl.Grabbed} hp {pl.Health:F0} ts {Time.timeScale} frame {Time.frameCount} agentStopped {z.GetComponent<NavMeshAgent>().isStopped} vel {z.GetComponent<NavMeshAgent>().velocity.magnitude:F2} hasPath {z.GetComponent<NavMeshAgent>().hasPath}\n");
+                if ((shot % 2 == 0 && t < 26) || name.StartsWith("Ambush") || name.StartsWith("Grab") || name.StartsWith("Cleaver")) ScreenCapture.CaptureScreenshot($"{Dir}/{mode}_{shot:00}_{name}.png");
+                File.AppendAllText(Result, $"t {t:F1} state {z.State} anim {name} {st.normalizedTime:F2} speed {anim.speed:F2} dist {Vector3.Distance(zp, pp):F1} grabbed {pl.Grabbed} hp {pl.Health:F0} ts {Time.timeScale} frame {Time.frameCount} agentStopped {z.GetComponent<NavMeshAgent>().isStopped} vel {z.GetComponent<NavMeshAgent>().velocity.magnitude:F2} hasPath {z.GetComponent<NavMeshAgent>().hasPath} {(mode == "ambush" ? ElderboomZombie.LastCoverReport : "")}\n");
                 shot++;
             }
-            if (t > (mode == "ambush" ? 26 : 9)) { SessionState.SetInt(Key + "_stage", 0); SessionState.SetInt(Key + "_walk", 0); HDRPSlicePlayer.DevInvulnerable = false; File.AppendAllText(Result, "DONE\n"); EditorApplication.isPlaying = false; }
+            if (t > (mode == "ambush" ? 30 : 14)) { SessionState.SetInt(Key + "_stage", 0); SessionState.SetInt(Key + "_walk", 0); HDRPSlicePlayer.DevInvulnerable = false; File.AppendAllText(Result, "DONE\n"); EditorApplication.isPlaying = false; }
         }
     }
 }

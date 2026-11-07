@@ -202,14 +202,17 @@ static partial class ElderboomFill
         var light = new GameObject("FillShotSun"); var l = light.AddComponent<Light>(); l.type = LightType.Directional; light.AddComponent<HDAdditionalLightData>(); l.intensity = 6f; light.transform.rotation = Quaternion.Euler(35, 140, 0);
         var terrain = Valley(); int i = 0;
         var done = new HashSet<string>();
-        foreach (Transform t in root.transform)
+        var items = root.transform.Cast<Transform>().ToList();
+        var net = GameObject.Find("Elderboom_Road_Network"); if (net) items.AddRange(net.transform.Cast<Transform>().Where((t, k) => k % 6 == 0));
+        foreach (Transform t in items)
         {
             string group = t.name.Substring(0, t.name.LastIndexOf('_'));
             bool building = !(group.StartsWith("fence") || group.EndsWith("_source"));
-            if (!building && done.Contains(group)) continue; done.Add(group);
-            var b = Bounds(t.gameObject); float dist = Mathf.Max(10f, b.size.magnitude * 1.3f);
+            bool netWall = t.parent != root.transform;
+            if (!building && !netWall && done.Contains(group)) continue; done.Add(group);
+            var b = Bounds(t.gameObject); float dist = netWall ? 9f : Mathf.Max(10f, b.size.magnitude * 1.3f);
             var dir = t.forward; if (!building) dir = t.forward;
-            var eye = b.center + Quaternion.Euler(0, 35, 0) * dir * dist; eye.y = terrain.SampleHeight(eye) + terrain.transform.position.y + 1.8f + b.size.y * .15f;
+            var eye = b.center + Quaternion.Euler(0, netWall ? 60 : 35, 0) * dir * dist; eye.y = terrain.SampleHeight(eye) + terrain.transform.position.y + 1.8f + b.size.y * .15f;
             var go = new GameObject("FillShotCam"); var cam = go.AddComponent<Camera>(); go.AddComponent<HDAdditionalCameraData>();
             cam.fieldOfView = 60; cam.nearClipPlane = .1f; cam.farClipPlane = 600; go.transform.SetPositionAndRotation(eye, Quaternion.LookRotation(b.center - eye));
             var rt = new RenderTexture(1280, 720, 24); cam.targetTexture = rt; for (int k = 0; k < 4; k++) cam.Render();
