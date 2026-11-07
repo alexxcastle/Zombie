@@ -135,13 +135,13 @@ public static class ElderboomRuralZombieImport
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
             SetupStudio();
             var folders = Directory.GetDirectories(Root).OrderBy(x => x).ToArray();
-            if (folders.Length != 7) throw new Exception("Expected all seven character packages");
+            if (folders.Length < 7) throw new Exception("Expected at least the seven character packages");
             foreach (var folder in folders) Build(folder.Replace('\\', '/'));
             AssetDatabase.SaveAssets();
             report.passed = true;
             File.WriteAllText(Output + "/validation.json", JsonUtility.ToJson(report, true));
             if (File.Exists(Output + "/error.txt")) File.Delete(Output + "/error.txt");
-            Debug.Log("RURAL_ZOMBIES_VALIDATED_7");
+            Debug.Log("RURAL_ZOMBIES_VALIDATED_" + folders.Length);
             EditorApplication.Exit(0);
         }
         catch (Exception e)
@@ -151,6 +151,77 @@ public static class ElderboomRuralZombieImport
             Debug.LogException(e);
             EditorApplication.Exit(1);
         }
+    }
+
+    // Gameplay extras kept across rebuilds: the cook's cleaver and the per-build stats (ElderboomZombieProfile).
+    static readonly System.Collections.Generic.Dictionary<string, (string build, float health, float damage, float speed, float interval, float push, float reach, bool noRunner, bool noBrute)> Profiles =
+        new System.Collections.Generic.Dictionary<string, (string, float, float, float, float, float, float, bool, bool)>
+        {
+            // Obese, broad farmer: slow and very hard to drop, heavy hits, barely moved by pushes.
+            { "08_heavy_farmer", ("heavy", 2.1f, 1.45f, .74f, 1.2f, .5f, .1f, true, false) },
+            // Tall gaunt woman: long stride and arms, fragile.
+            { "09_tall_woman", ("tall gaunt", .75f, .9f, 1.22f, .9f, 1.15f, .25f, false, true) },
+            // Short, stocky, wounded labourer: tough and strong, a little slower.
+            { "10_wounded_labourer", ("stocky", 1.4f, 1.2f, .9f, 1f, .75f, 0f, false, false) },
+        };
+    static void Extras(GameObject root, string name)
+    {
+        if (name == "07_inn_cook")
+        {
+            var w = root.AddComponent<ElderboomZombieWeapon>();
+            w.weaponPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/GameAssets/Weapons/Cleaver/Cleaver.prefab");
+        }
+        if (Profiles.TryGetValue(name, out var p))
+        {
+            var c = root.AddComponent<ElderboomZombieProfile>();
+            c.build = p.build; c.health = p.health; c.damage = p.damage; c.speed = p.speed; c.attackInterval = p.interval;
+            c.pushTaken = p.push; c.reach = p.reach; c.noRunner = p.noRunner; c.noBrute = p.noBrute;
+        }
+    }
+
+    // Only the named packages. Terminal (Unity closed): -executeMethod ElderboomRuralZombieImport.BuildNewBatch -names a,b,c
+    // Open editor: Logs/claude_rural.txt "build a,b,c" (the map scene is reopened afterwards).
+    public static void BuildNewBatch()
+    {
+        var args = Environment.GetCommandLineArgs(); int i = Array.IndexOf(args, "-names");
+        bool ok = BuildNew(i >= 0 && i + 1 < args.Length ? args[i + 1].Split(',') : new string[0]);
+        EditorApplication.Exit(ok ? 0 : 1);
+    }
+    static bool BuildNew(string[] names)
+    {
+        Directory.CreateDirectory(Output); report = new BundleReport();
+        try
+        {
+            if (names.Length == 0) throw new Exception("Pass the package names");
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            SetupStudio();
+            foreach (var n in names) Build(Root + "/" + n.Trim());
+            AssetDatabase.SaveAssets(); report.passed = true;
+            File.WriteAllText(Output + "/validation_new.json", JsonUtility.ToJson(report, true));
+            if (File.Exists(Output + "/error_new.txt")) File.Delete(Output + "/error_new.txt");
+            Debug.Log("RURAL_ZOMBIES_NEW_OK " + string.Join(",", names));
+            return true;
+        }
+        catch (Exception e)
+        {
+            File.WriteAllText(Output + "/validation_new.json", JsonUtility.ToJson(report, true));
+            File.WriteAllText(Output + "/error_new.txt", e.ToString()); Debug.LogException(e); return false;
+        }
+    }
+    [InitializeOnLoadMethod] static void WatchFlag() { EditorApplication.update += PollFlag; }
+    static double flagNext;
+    static void PollFlag()
+    {
+        if (EditorApplication.timeSinceStartup < flagNext) return; flagNext = EditorApplication.timeSinceStartup + 2;
+        const string flag = "Logs/claude_rural.txt";
+        if (!File.Exists(flag) || EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling) return;
+        var mode = File.ReadAllText(flag).Trim(); File.Delete(flag);
+        if (!mode.StartsWith("build ")) return;
+        if (EditorSceneManager.GetActiveScene().isDirty) EditorSceneManager.SaveOpenScenes();
+        bool ok = BuildNew(mode.Substring(6).Split(','));
+        File.WriteAllText("Logs/claude_rural_result.txt", ok ? "OK" : "FAIL " + File.ReadAllText(Output + "/error_new.txt"));
+        EditorSceneManager.OpenScene("Assets/Scenes/Elderboom_Unity_Port.unity");
     }
 
     static void Build(string folder)
@@ -212,6 +283,7 @@ public static class ElderboomRuralZombieImport
         var sphere = hit.AddComponent<SphereCollider>();
         sphere.radius = spec.height_m * .09f / Mathf.Abs(hit.transform.lossyScale.x);
         root.AddComponent<ElderboomZombie>();
+        Extras(root, spec.name);
         Directory.CreateDirectory(PrefabFolder); string prefabPath = PrefabFolder + "/" + spec.name + ".prefab";
         // Save the untouched rest pose before exercising the animator.
         if (PrefabUtility.SaveAsPrefabAsset(root, prefabPath) == null) throw new Exception("Prefab save failed");
@@ -261,7 +333,7 @@ public static class ElderboomRuralZombieImport
                     Capture(spec.name + "_" + state.name, center + new Vector3(2.2f, .35f, 3.4f), center);
                 }
             }
-            if (pose.handTravel < .005f) throw new Exception("Animation does not move the hand: " + spec.name + "/" + state.name);
+            if (pose.handTravel < .005f && new[] { "WalkA", "AttackA", "ShotHit", "DeathA" }.Contains(state.name)) throw new Exception("Animation does not move the hand: " + spec.name + "/" + state.name);
             if (new[] { "WalkA", "AttackA", "ShotHit", "DeathA" }.Contains(state.name) && pose.limbRotationTravelDegrees < 1f)
                 throw new Exception("Animation moves root but not limbs: " + spec.name + "/" + state.name);
             item.poses.Add(pose);

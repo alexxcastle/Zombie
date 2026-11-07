@@ -21,8 +21,9 @@ public sealed partial class ElderboomZombie
         Skill = skill;
         if (skill == ElderboomZombieSkill.Ambush) { ambushPhase = AmbushPhase.Find; ambushSince = Time.time; }
     }
-    void InitSkills() { weapon = GetComponent<ElderboomZombieWeapon>(); }
-    float AttackReach => weapon != null ? weapon.reach : 1.45f;
+    ElderboomZombieProfile profile;
+    void InitSkills() { weapon = GetComponent<ElderboomZombieWeapon>(); profile = GetComponent<ElderboomZombieProfile>(); if (profile != null) pushResist *= profile.pushTaken; }
+    float AttackReach => (weapon != null ? weapon.reach : 1.45f) + (profile != null ? profile.reach : 0f);
     bool Sprinter;
 
     // ---- Ambush ------------------------------------------------------------------------

@@ -80,6 +80,25 @@ public sealed class ElderboomMenu : MonoBehaviour
         }
         ApplyAudioPrefs();
         BuildUi();
+        StartMenuVideo();
+    }
+
+    // Animated backdrop: a seamless looping video (StreamingAssets/elderboom_menu_loop.mp4); the old frame
+    // sequence stays as the fallback when the video cannot play.
+    VideoPlayer menuVideo;
+    RenderTexture menuVideoTexture;
+    bool menuVideoLive;
+    void StartMenuVideo()
+    {
+        string path = Path.Combine(Application.streamingAssetsPath, "elderboom_menu_loop.mp4");
+        if (!File.Exists(path) && !path.Contains("://")) return;
+        menuVideo = gameObject.AddComponent<VideoPlayer>();
+        menuVideo.playOnAwake = false; menuVideo.url = path; menuVideo.isLooping = true; menuVideo.skipOnDrop = true;
+        menuVideo.audioOutputMode = VideoAudioOutputMode.None; menuVideo.renderMode = VideoRenderMode.RenderTexture;
+        menuVideoTexture = new RenderTexture(1920, 1080, 0); menuVideo.targetTexture = menuVideoTexture;
+        menuVideo.prepareCompleted += v => { v.Play(); menuVideoLive = true; if (frameLayer != null) frameLayer.style.backgroundImage = new StyleBackground(Background.FromRenderTexture(menuVideoTexture)); };
+        menuVideo.errorReceived += (v, e) => { menuVideoLive = false; Debug.LogWarning("Menu video: " + e); };
+        menuVideo.Prepare();
     }
 
     void Update()
@@ -100,6 +119,7 @@ public sealed class ElderboomMenu : MonoBehaviour
         tip = tips[UnityEngine.Random.Range(0, tips.Length)];
         ShowPage();
         if (music != null) music.Stop();
+        if (menuVideo != null) menuVideo.Stop();
         DontDestroyOnLoad(gameObject);
         loadedAt = Time.realtimeSinceStartup;
         video = gameObject.AddComponent<VideoPlayer>();
@@ -617,7 +637,7 @@ public sealed class ElderboomMenu : MonoBehaviour
     void UpdateUi()
     {
         if (uiRoot == null) return;
-        if (frames != null && frames.Length > 0 && frameIndex != shownFrame)
+        if (!menuVideoLive && frames != null && frames.Length > 0 && frameIndex != shownFrame)
         {
             shownFrame = frameIndex;
             frameLayer.style.backgroundImage = new StyleBackground(frames[frameIndex]);
@@ -629,6 +649,7 @@ public sealed class ElderboomMenu : MonoBehaviour
     void OnDestroy()
     {
         if (panelSettings != null) Destroy(panelSettings);
+        if (menuVideoTexture != null) { menuVideoTexture.Release(); Destroy(menuVideoTexture); }
         DestroyPreviewStage();
     }
 

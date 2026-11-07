@@ -298,7 +298,7 @@ public sealed partial class ElderboomZombie : MonoBehaviour
         ElderboomAudio.Zombie("attack", ref attackVariant, transform.position);
         voiceAt=Mathf.Max(voiceAt, Time.time+2.5f);
         yield return new WaitForSeconds(.42f);
-        if(token==attackToken && !dead && Time.time>=frozenUntil && Time.time>=ignoreUntil && !TargetIgnored && !lifted && !InsideKeepAway() && player!=null && !TargetDown && Vector3.Distance(transform.position,TargetPos)<=1.55f && HasLineOfSight())
+        if(token==attackToken && !dead && Time.time>=frozenUntil && Time.time>=ignoreUntil && !TargetIgnored && !lifted && !InsideKeepAway() && player!=null && !TargetDown && Vector3.Distance(transform.position,TargetPos)<=1.55f+(profile!=null?profile.reach:0f) && HasLineOfSight())
         {
             int contact=-1; ElderboomAudio.Zombie("contact", ref contact, transform.position);
             if(chaseAvatar!=null)ElderboomLan.DamageAvatar(chaseAvatar,damage,transform.position);

@@ -65,9 +65,11 @@ public sealed class ElderboomLanAvatar : MonoBehaviour
     }
 
     public int Seat { get; private set; } // 1 driving the horse, 2 passenger
-    public void Apply(Vector3 position, float feetOffset, float yaw, bool dead, int shotCount, int seat = 0)
+    // Down but revivable (co-op): the player waits up to 20 s for a teammate to hold interact next to them.
+    public bool Downed { get; private set; }
+    public void Apply(Vector3 position, float feetOffset, float yaw, bool dead, int shotCount, int seat = 0, bool downed = false)
     {
-        Seat = seat;
+        Seat = seat; Downed = downed && dead;
         if (!placed) { transform.position = lastPos = position; transform.rotation = Quaternion.Euler(0f, yaw, 0f); placed = true; }
         target = position; targetYaw = yaw; IsDead = dead;
         if (!Mathf.Approximately(feet, feetOffset)) { feet = feetOffset; if (visual != null) visual.localPosition = new Vector3(0f, -feet, 0f); }
@@ -118,11 +120,11 @@ public sealed class ElderboomLanAvatar : MonoBehaviour
         {
             labelStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontStyle = FontStyle.Bold, fontSize = 15 };
         }
-        string text = "P" + (Id + 1) + "  " + (Op ?? "").ToUpperInvariant() + (IsDead ? "  ✖" : "");
+        string text = "P" + (Id + 1) + "  " + (Op ?? "").ToUpperInvariant() + (Downed ? "  DOWN - REVIVE" : IsDead ? "  ✖" : "");
         var rect = new Rect(p.x - 90f, Screen.height - p.y - 12f, 180f, 24f);
         labelStyle.normal.textColor = new Color(0, 0, 0, .8f);
         GUI.Label(new Rect(rect.x + 1, rect.y + 1, rect.width, rect.height), text, labelStyle);
-        labelStyle.normal.textColor = IsDead ? new Color(1f, .35f, .35f) : new Color(.85f, .95f, 1f);
+        labelStyle.normal.textColor = Downed ? new Color(1f, .78f, .25f) : IsDead ? new Color(1f, .35f, .35f) : new Color(.85f, .95f, 1f);
         GUI.Label(rect, text, labelStyle);
     }
 }

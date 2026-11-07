@@ -32,8 +32,8 @@ public sealed class ElderboomLan : MonoBehaviour
     public const int GamePort = 47777, DiscoveryPort = 47778;
     const float SendInterval = .05f, AnnounceInterval = 1f, PeerTimeout = 10f, GameListTimeout = 4f;
     // Bump Version whenever messages change: players on different builds get a clear "update" message.
-    const byte Magic = 0xEB, Version = 5;
-    enum Msg : byte { Announce = 1, Join = 2, Accept = 3, State = 4, World = 5, Hit = 6, Damage = 7, Kill = 8, Leave = 9, Effect = 10, Ignore = 11, Collect = 12, PowerUp = 13, Grant = 14, GateOpen = 15, Reject = 16, HorsePart = 17, Altar = 18 }
+    const byte Magic = 0xEB, Version = 6;
+    enum Msg : byte { Announce = 1, Join = 2, Accept = 3, State = 4, World = 5, Hit = 6, Damage = 7, Kill = 8, Leave = 9, Effect = 10, Ignore = 11, Collect = 12, PowerUp = 13, Grant = 14, GateOpen = 15, Reject = 16, HorsePart = 17, Altar = 18, Revive = 19 }
     static readonly string[] Variants = { "walker", "runner", "brute" };
 
     public static ElderboomLan Instance { get; private set; }
@@ -88,7 +88,7 @@ public sealed class ElderboomLan : MonoBehaviour
     sealed class Peer
     {
         public int id; public Remote ep; public float seen; public string op = "";
-        public bool hasState; public Vector3 pos; public float feet, yaw; public bool dead; public int shots;
+        public bool hasState; public Vector3 pos; public float feet, yaw; public bool dead, downed; public int shots;
         public int seat; public Vector3 horsePos; public float horseYaw, horseSpeed; // 1 driver, 2 passenger
     }
     readonly Dictionary<string, Peer> peers = new Dictionary<string, Peer>();
@@ -389,6 +389,18 @@ public sealed class ElderboomLan : MonoBehaviour
     static int pickupCounter;
 
     // Host: a zombie struck a remote player.
+    // Co-op: there is someone who could revive a downed player.
+    public static bool CoopActive => Instance != null && ((Instance.mode == Mode.Host && Instance.peers.Count > 0) || (Instance.mode == Mode.Client && Instance.Accepted));
+    // A teammate finished reviving the downed player 'targetId' (host relays client to client).
+    public static void SendRevive(int targetId)
+    {
+        var lan = Instance; if (lan == null) return;
+        var w = lan.Begin(Msg.Revive); w.Write((byte)targetId);
+        if (lan.mode == Mode.Client && lan.Accepted) lan.Send(lan.host, true);
+        else if (lan.mode == Mode.Host) { foreach (var pr in lan.peers.Values) if (pr.id == targetId) { lan.Send(pr.ep, true); return; } }
+    }
+    static void ReviveLocal() { var p = ElderboomGame.Active?.Player; if (p != null && p.Downed) { p.Revive(); ElderboomGame.Active.ShowNotice("REVIVED BY A TEAMMATE"); } }
+
     public static void DamageAvatar(ElderboomLanAvatar avatar, float amount, Vector3 from)
     {
         var lan = Instance;
@@ -746,7 +758,7 @@ public sealed class ElderboomLan : MonoBehaviour
                     if (peer.hasState)
                     {
                         var avatar = AvatarFor(peer.id, peer.op);
-                        avatar.Apply(peer.pos, peer.feet, peer.yaw, peer.dead, peer.shots, peer.seat);
+                        avatar.Apply(peer.pos, peer.feet, peer.yaw, peer.dead, peer.shots, peer.seat, peer.downed);
                     }
                 if (now >= sendAt)
                 {
@@ -834,7 +846,7 @@ public sealed class ElderboomLan : MonoBehaviour
                 if (mode != Mode.Host || !peers.TryGetValue(remote.Key, out var peer)) return;
                 peer.seen = now;
                 peer.op = r.ReadString(); peer.pos = ReadV(r); peer.feet = r.ReadSingle(); peer.yaw = r.ReadSingle();
-                byte flags = r.ReadByte(); peer.dead = (flags & 1) != 0; peer.shots = r.ReadUInt16(); peer.hasState = true;
+                byte flags = r.ReadByte(); peer.dead = (flags & 1) != 0; peer.downed = (flags & 8) != 0; peer.shots = r.ReadUInt16(); peer.hasState = true;
                 peer.seat = (flags >> 1) & 3;
                 if (peer.seat == 1) { peer.horsePos = ReadV(r); peer.horseYaw = r.ReadSingle(); peer.horseSpeed = r.ReadSingle(); }
                 return;
@@ -946,6 +958,17 @@ public sealed class ElderboomLan : MonoBehaviour
                 else if (mode == Mode.Client && SameHost(remote) && action == 2) altar?.NetworkGrant(r.ReadBoolean());
                 return;
             }
+            case Msg.Revive:
+            {
+                int target = r.ReadByte();
+                if (mode == Mode.Host && peers.ContainsKey(remote.Key))
+                {
+                    if (target == LocalId) ReviveLocal();
+                    else foreach (var pr in peers.Values) if (pr.id == target) { var w = Begin(Msg.Revive); w.Write((byte)target); Send(pr.ep, true); }
+                }
+                else if (mode == Mode.Client && SameHost(remote) && target == LocalId) ReviveLocal();
+                return;
+            }
             case Msg.Damage:
             {
                 if (mode != Mode.Client || !SameHost(remote)) return;
@@ -1022,7 +1045,7 @@ public sealed class ElderboomLan : MonoBehaviour
         var w = Begin(Msg.State);
         w.Write(game.Operator != null ? game.Operator.id : ElderboomMenu.Operator);
         Write(w, p.transform.position); w.Write(FeetOffset(p)); w.Write(p.transform.eulerAngles.y);
-        w.Write((byte)((p.IsDead ? 1 : 0) | (LocalSeat() << 1))); w.Write((ushort)(game.ShotsFired & 0xFFFF));
+        w.Write((byte)((p.IsDead ? 1 : 0) | (LocalSeat() << 1) | (p.Downed ? 8 : 0))); w.Write((ushort)(game.ShotsFired & 0xFFFF));
         var horse = ElderboomMount.Instance;
         if (LocalSeat() == 1 && horse != null) { Write(w, horse.transform.position); w.Write(horse.transform.eulerAngles.y); w.Write(horse.Speed); }
         Send(host);
@@ -1041,13 +1064,13 @@ public sealed class ElderboomLan : MonoBehaviour
         ResolveSeats();
         w.Write((byte)0); w.Write(game.Operator != null ? game.Operator.id : ElderboomMenu.Operator);
         Write(w, p.transform.position); w.Write(FeetOffset(p)); w.Write(p.transform.eulerAngles.y);
-        w.Write((byte)((p.IsDead ? 1 : 0) | (LocalSeat() << 1))); w.Write((ushort)(game.ShotsFired & 0xFFFF));
+        w.Write((byte)((p.IsDead ? 1 : 0) | (LocalSeat() << 1) | (p.Downed ? 8 : 0))); w.Write((ushort)(game.ShotsFired & 0xFFFF));
         foreach (var peer in peers.Values)
         {
             if (!peer.hasState) continue;
             w.Write((byte)peer.id); w.Write(peer.op ?? "");
             Write(w, peer.pos); w.Write(peer.feet); w.Write(peer.yaw);
-            w.Write((byte)((peer.dead ? 1 : 0) | (peer.seat << 1))); w.Write((ushort)peer.shots);
+            w.Write((byte)((peer.dead ? 1 : 0) | (peer.seat << 1) | (peer.downed ? 8 : 0))); w.Write((ushort)peer.shots);
         }
 
         // Zombies: id, position, yaw, animator state and speed, flags.
@@ -1106,7 +1129,7 @@ public sealed class ElderboomLan : MonoBehaviour
             int flags = r.ReadByte(); bool dead = (flags & 1) != 0; int shots = r.ReadUInt16();
             if (id == LocalId || game == null) continue;
             seenPlayers.Add(id);
-            AvatarFor(id, op).Apply(pos, feet, yaw, dead, shots, (flags >> 1) & 3);
+            AvatarFor(id, op).Apply(pos, feet, yaw, dead, shots, (flags >> 1) & 3, (flags & 8) != 0);
         }
         dropPlayers.Clear();
         foreach (var id in avatars.Keys) if (!seenPlayers.Contains(id)) dropPlayers.Add(id);

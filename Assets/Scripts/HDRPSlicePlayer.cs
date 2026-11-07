@@ -90,6 +90,20 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
 
     public float Health => health;
     public bool IsDead => dead;
+    public const float ReviveWindow = 20f;
+    public bool Downed { get; private set; }
+    float downedUntil;
+    public float DownedLeft => Downed ? Mathf.Max(0f, downedUntil - Time.time) : 0f;
+    public void Revive()
+    {
+        if (!Downed) return;
+        Downed = false; dead = false; health = 40f; stamina = 100f; damagePulse = 0f; ResetMovement();
+    }
+    void TickDowned()
+    {
+        if (!Downed || Time.time < downedUntil) return;
+        Downed = false; ElderboomGame.Active?.PlayerDied();
+    }
     public int Score => ElderboomGame.Active != null ? ElderboomGame.Active.TotalScore : score;
     public bool HitMarkerVisible => hitMarker.IsVisible(Time.time);
     public Camera ViewCamera => viewCamera;
@@ -108,6 +122,7 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
     public void ResetSession()
     {
         ElderboomInput.ReleaseAll(); regenAt=0;
+        Downed=false;
         CancelGameplayActions();walkSpeed-=speedPerk;sprintSpeed-=speedPerk;speedPerk=0;health=100;dead=false;score=0;Syringes=0;stamina=100;nextShotTime=0;
         sprinting=exhausted=false;pause?.ForceClose();Time.timeScale=1;AudioListener.pause=false;hitMarker.Reset();
         viewKick.Reset();recentHits.Clear();damagePulse=0;heartAt=0;ResetMovement();
@@ -140,6 +155,7 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
 
     void Update()
     {
+        TickDowned();
         // Escape and the pause menu are handled by ElderboomPauseMenu, which runs first.
         if (SettingsOpen || !cursorLocked || dead || !ElderboomInput.AcceptsInput) return;
         if(Down("use_syringe") && Syringes>0 && health<100){Syringes--;Heal(40);}
@@ -197,7 +213,9 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
         if (health <= 0f)
         {
             dead=true;CancelGameplayActions();
-            ElderboomGame.Active?.PlayerDied();
+            // Co-op: down, not out. Teammates have 20 s to revive (ElderboomGame.TickRevive); then the death is final.
+            if (ElderboomLan.CoopActive) { Downed=true; downedUntil=Time.time+ReviveWindow; viewKick.AddTrauma(.6f); }
+            else ElderboomGame.Active?.PlayerDied();
         }
     }
 
@@ -217,6 +235,12 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
     void OnGUI()
     {
         if (SettingsOpen) return; // ElderboomPauseMenu draws the menu and the performance overlay.
+        if (Downed)
+        {
+            GUI.color = new Color(.25f, 0f, 0f, .38f); GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture); GUI.color = Color.white;
+            DrawCentered("YOU ARE DOWN  ·  A TEAMMATE CAN REVIVE YOU  ·  " + Mathf.CeilToInt(DownedLeft) + "s", 30, Screen.height * 0.43f);
+            return;
+        }
         if (dead)
         {
             // ElderboomGame draws its own game-over screen at the same height.

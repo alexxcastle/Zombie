@@ -137,6 +137,7 @@ public sealed partial class ElderboomGame : MonoBehaviour
     {
         zombies.RemoveAll(z => z == null || !z.gameObject.activeInHierarchy);
         RetireBlindSurvivors();
+        TickRevive();
         abilityObjects.RemoveAll(go=>go==null);
         UpdateAtmosphere();
         if (state == State.Playing && player != null && TeamDown)

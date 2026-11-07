@@ -306,8 +306,10 @@ public sealed partial class ElderboomGame
         float interval = selectedDifficulty == "EASY" ? 1.35f : selectedDifficulty == "HARD" ? .75f : 1f;
         // Variety: runners from wave 3, brutes from wave 5.
         string kind = "walker"; float roll = UnityEngine.Random.value;
-        if (number >= 5 && roll < Mathf.Min(.12f, .02f * (number - 3))) { kind = "brute"; health *= 3.2f; hit *= 1.7f; speed *= .72f; interval *= 1.25f; }
-        else if (number >= 3 && roll < Mathf.Min(.35f, .08f * (number - 1))) { kind = "runner"; health *= .65f; speed *= 1.85f; interval *= .9f; }
+        var profile = root.GetComponent<ElderboomZombieProfile>();
+        if (profile != null) { health *= profile.health; hit *= profile.damage; speed *= profile.speed; interval *= profile.attackInterval; }
+        if (number >= 5 && !(profile != null && profile.noBrute) && roll < Mathf.Min(.12f, .02f * (number - 3))) { kind = "brute"; health *= 3.2f; hit *= 1.7f; speed *= .72f; interval *= 1.25f; }
+        else if (number >= 3 && !(profile != null && profile.noRunner) && roll < Mathf.Min(.35f, .08f * (number - 1))) { kind = "runner"; health *= .65f; speed *= 1.85f; interval *= .9f; }
         zombie.Initialize(this, player, health, hit, speed, interval);
         zombie.SetVariant(kind);
         zombie.NetFemale = prefab.name.IndexOf("Female", StringComparison.OrdinalIgnoreCase) >= 0;
