@@ -1,0 +1,25 @@
+# Village Square
+obj village_fountain -1 9 -1 20
+obj tall_inn -29 -33 -10 -20
+run fieldstone_wall_source -37 -41 -25 -41
+run plaster_wall_source -38 -25 -38 -40
+obj wall_fountain -37.1 -31 -20 -31 0.05
+# North Timber Yard
+obj watch_house 21 53 7 30
+obj weavers_house -39 47 -20 50
+run fence_planks_3m 10 66 31 66
+# West Farm
+obj bakers_house -78 -28 -60 -28
+obj greenhouse_large -73 7 -60 7
+obj greenhouse_small -65 13 -65 0
+obj greenhouse_small -77 -1 -60 -1
+run fence_farm_rail -82 21 -61 21
+run fence_farm_rail -82 18 -82 3
+# Outer Woods
+obj bakers_house 70 40 76 24
+run fence_farm_rail 60 49 84 49
+# South Creek
+obj weavers_house 43 -73 30 -55
+obj greenhouse_large -31 -69 -20 -55
+# East Cemetery
+
