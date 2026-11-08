@@ -228,14 +228,14 @@ public static class ElderboomReviewRegression
         Check(arsenal.Count==3 && arsenal.MaxSlots==3 && arsenal.Equip("HK53"),"Soph retains all three requested weapons");
         yield return Session("ELI");arsenal=player.GetComponent<ElderboomArsenal>();
         Check(arsenal.Count==2 && arsenal.MaxSlots==2,"other operators start with two regular slots");
-        Check(arsenal.Add(ElderboomWeapons.Find("ar9")) && arsenal.Count==2 && !arsenal.Contains("sig550"),"purchasing with full inventory replaces selected regular weapon");
+        Check(arsenal.Add(ElderboomWeapons.Find("hk53")) && arsenal.Count==2 && !arsenal.Contains("sig550"),"purchasing with full inventory replaces selected regular weapon");
         var station=UnityEngine.Object.FindObjectsByType<ElderboomStation>().First(s=>s.category=="slot");
         int credits=game.Credits;Check(station.TryPurchase(player) && arsenal.MaxSlots==3 && game.Credits==credits-500,"third slot unlock charges exactly 500 credits");
         Check(!station.TryPurchase(player) && game.Credits==credits-500,"duplicate slot purchase is rejected without a charge");
-        Check(arsenal.Add(ElderboomWeapons.Find("carbine")) && arsenal.Count==3,"unlocked third slot accepts an additional weapon");
-        Check(arsenal.Add(ElderboomWeapons.Find("shotgun")) && arsenal.Count==3 && !arsenal.Contains("carbine"),"replacement remains bounded after slot upgrade");
+        Check(arsenal.Add(ElderboomWeapons.Find("akmn")) && arsenal.Count==3,"unlocked third slot accepts an additional weapon");
+        Check(arsenal.Add(ElderboomWeapons.Find("shotgun")) && arsenal.Count==3 && !arsenal.Contains("akmn"),"replacement remains bounded after slot upgrade");
         Check(arsenal.Equip("knife") && arsenal.Count==3,"permanent knife does not consume regular inventory slot");
-        arsenal.Equip("ar9");player.ConfigureWeapon(ElderboomWeapons.Find("ar9"),14,51);
+        arsenal.Equip("hk53");player.ConfigureWeapon(ElderboomWeapons.Find("hk53"),14,51);
         Check(arsenal.ReceiveTemporary(ElderboomWeapons.Find("grenade"),.15f) && arsenal.Count==3 && player.Ammo==6,"temporary weapon preserves regular inventory");
         yield return new WaitForSeconds(.3f);
         Check(!arsenal.HasTemporary && player.WeaponDisplayName=="AR-9" && player.Ammo==14 && player.ReserveAmmo==51,"temporary expiry restores previous weapon and exact ammunition");
