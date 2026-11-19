@@ -6,6 +6,7 @@ using UnityEngine;
 public class ElderboomWeaponDefinition
 {
     public string id,name,category,asset,resource,mode,operatorId;
+    public string gripPose;
     public bool IsOperatorPrimary => !string.IsNullOrEmpty(operatorId);
     public bool upgraded;
     // Out of the game (no station, drop or loadout); the files stay in the project.

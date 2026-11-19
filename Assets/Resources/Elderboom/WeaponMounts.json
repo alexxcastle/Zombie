@@ -1,0 +1,13 @@
+{
+ "mounts": [
+  {"id":"rhino","family":"Deagle","mount":"Elderboom/WeaponMounts/rhino"},
+  {"id":"shotgun","family":"Winchester","mount":"Elderboom/WeaponMounts/shotgun"},
+  {"id":"grenade","family":"AR10","mount":"Elderboom/WeaponMounts/grenade"},
+  {"id":"minigun","family":"AR10","mount":"Elderboom/WeaponMounts/minigun"},
+  {"id":"flame","family":"AR10","mount":"Elderboom/WeaponMounts/flame"},
+  {"id":"glock19","family":"Deagle","mount":"Elderboom/WeaponMounts/glock19"},
+  {"id":"mp133","family":"Winchester","mount":"Elderboom/WeaponMounts/mp133"},
+  {"id":"mp7","family":"XBR9","mount":"Elderboom/WeaponMounts/mp7"},
+  {"id":"m4","family":"AR10","mount":"Elderboom/WeaponMounts/m4"}
+ ]
+}

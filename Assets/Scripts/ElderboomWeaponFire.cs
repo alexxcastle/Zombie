@@ -63,6 +63,7 @@ public static class ElderboomWeaponFire
                 ElderboomFeel.Tracer(origin,end,definition.fireInterval >= .11f || count > 1);
         }
         foreach(var impact in impacts.Values) ElderboomCombat.Damage(impact.hit,impact.amount,owner);
+        if(flame) foreach(var target in impacts.Keys) if(target is ElderboomZombie burning && burning != null) burning.Ignite();
         foreach(var impact in impacts.Values)
         {   // one flesh thud per shot, heavier for melee
             ElderboomAudio.Play((melee?"kenney/impactPunch_heavy_00":"kenney/impactPunch_medium_00")+Random.Range(0,5),impact.hit.point,melee?.6f:.32f,true,Random.Range(.92f,1.06f));

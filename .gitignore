@@ -55,3 +55,6 @@ Assets/TerrainDemoScene_HDRP/Terrain/Data/
 Assets/GameAssets/AltarUpgrader/Runtime/PBR_*.asset
 *.bin
 **/LightingData.asset
+
+# Agent Bridge state
+.bridge/

@@ -321,19 +321,19 @@ public static class HDRPSliceBuilder
         var additional = cameraObject.AddComponent<HDAdditionalCameraData>();
         additional.antialiasing = HDAdditionalCameraData.AntialiasingMode.TemporalAntialiasing;
 
-        // Viewmodels need a consistent soft fill independent of the world lighting.
+        // One flashlight behind the eyes. Runtime (HDRPSlicePlayer.Movement) applies the same numbers.
+        // 600 lumens stays under the village lanterns so the night exposure is not burned.
         var fillObject = new GameObject("Viewmodel_Soft_Fill");
         fillObject.transform.SetParent(cameraObject.transform, false);
-        fillObject.transform.localPosition = new Vector3(0f, 0.06f, 0.52f);
+        fillObject.transform.localPosition = new Vector3(0.03f, 0.05f, -0.35f);
         var viewFill = fillObject.AddComponent<Light>();
         viewFill.type = LightType.Spot;
-        viewFill.color = new Color(0.86f, 0.93f, 1f);
-        viewFill.intensity = 55000f;
-        viewFill.range = 38f;
-        viewFill.spotAngle = 64f;
-        viewFill.innerSpotAngle = 34f;
-        viewFill.useColorTemperature = true;
-        viewFill.colorTemperature = 7800f;
+        viewFill.color = new Color(1f, 0.95f, 0.86f);
+        viewFill.intensity = 600f;
+        viewFill.range = 12f;
+        viewFill.spotAngle = 52f;
+        viewFill.innerSpotAngle = 18f;
+        viewFill.useColorTemperature = false;
         viewFill.shadows = LightShadows.None;
 
         var viewmodelRoot = new GameObject("Soph_Viewmodel_Pivot");

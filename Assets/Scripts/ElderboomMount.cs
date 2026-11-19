@@ -234,16 +234,17 @@ public sealed class ElderboomMount : MonoBehaviour
     {
         var pause = player.GetComponent<ElderboomPauseMenu>();
         float sensitivity = pause != null ? pause.Sensitivity : 1.8f;
-        lookYaw = Mathf.Clamp(lookYaw + Input.GetAxisRaw("Mouse X") * sensitivity, -lookYawLimit, lookYawLimit);
+        Vector2 pad = ElderboomGamepad.Look(sensitivity, false);
+        lookYaw = Mathf.Clamp(lookYaw + (Input.GetAxisRaw("Mouse X") * sensitivity + pad.x), -lookYawLimit, lookYawLimit);
         if (thirdPerson)
         {
             // Free orbit around the horse; pitch kept above the ground and below straight-down.
-            lookYaw = Mathf.Repeat(lookYaw + Input.GetAxisRaw("Mouse X") * sensitivity + 180f, 360f) - 180f;
-            lookPitch = Mathf.Clamp(lookPitch - Input.GetAxisRaw("Mouse Y") * sensitivity, -25f, 70f);
+            lookYaw = Mathf.Repeat(lookYaw + (Input.GetAxisRaw("Mouse X") * sensitivity + pad.x) + 180f, 360f) - 180f;
+            lookPitch = Mathf.Clamp(lookPitch - (Input.GetAxisRaw("Mouse Y") * sensitivity + pad.y), -25f, 70f);
             return; // camera placed in LateUpdate, after the horse has moved
         }
-        lookYaw = Mathf.Clamp(lookYaw + Input.GetAxisRaw("Mouse X") * sensitivity, -lookYawLimit, lookYawLimit);
-        lookPitch = Mathf.Clamp(lookPitch - Input.GetAxisRaw("Mouse Y") * sensitivity, -lookPitchLimit, lookPitchLimit);
+        lookYaw = Mathf.Clamp(lookYaw + (Input.GetAxisRaw("Mouse X") * sensitivity + pad.x), -lookYawLimit, lookYawLimit);
+        lookPitch = Mathf.Clamp(lookPitch - (Input.GetAxisRaw("Mouse Y") * sensitivity + pad.y), -lookPitchLimit, lookPitchLimit);
         if (player.ViewCamera != null) player.ViewCamera.transform.localRotation = Quaternion.Euler(lookPitch, lookYaw, 0f);
     }
 
@@ -363,7 +364,7 @@ public sealed class ElderboomMount : MonoBehaviour
     void HorseSounds()
     {
         if (!Assembled) { if (engine != null) engine.Stop(); return; }
-        if (engine == null) { engine = ElderboomAudio.Loop("horse/engine_loop", transform.position + Vector3.up, .35f, 2f, 22f, transform); if (engine == null) return; }
+        if (engine == null) { engine = ElderboomAudio.Loop("horse/engine_loop", transform.position + Vector3.up, .35f, 2f, 22f, transform, false); if (engine == null) return; }
         if (!engine.isPlaying) engine.Play();
         float a = Mathf.Abs(speed), k = Mathf.InverseLerp(0f, gallopSpeed, a);
         engine.pitch = Mathf.Lerp(.85f, 1.35f, k); engine.volume = Mathf.Lerp(.28f, .6f, k) * ElderboomAudio.Effects;

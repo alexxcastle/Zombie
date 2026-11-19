@@ -16,9 +16,9 @@ MonoBehaviour:
   displayName: Shockwave
   cooldown: 12
   description: A glove blast that throws back, stuns and damages every zombie in front of you.
-  range: 5
+  range: 8
   coneDot: 0.15
-  minForce: 10
+  minForce: 18
   maxForce: 28
   stun: 0.75
   closeDistance: 3

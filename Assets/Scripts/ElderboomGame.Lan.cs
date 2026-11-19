@@ -24,7 +24,7 @@ public sealed partial class ElderboomGame
         }
         if (near == null) { reviving = null; reviveProgress = 0; return; }
         bool holding = ElderboomInput.Held("interact");
-        string label = player.ActionLabel("interact") + " (HOLD) · REVIVE P" + (near.Id + 1);
+        string label = player.ActionLabel("interact") + (ElderboomGamepad.LastUsed ? "" : " (HOLD)") + " · REVIVE P" + (near.Id + 1);
         if (holding) label += "  " + Mathf.RoundToInt(reviveProgress / ReviveHold * 100f) + "%";
         ElderboomPrompt.Offer(player.transform.position, near.transform.position + Vector3.up * .4f, label);
         if (!holding || near != reviving) { reviving = near; reviveProgress = holding ? reviveProgress : 0f; if (!holding) return; }

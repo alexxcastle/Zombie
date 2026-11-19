@@ -83,7 +83,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 4
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: -310772184759074649, guid: bed32626ae3da4bdf91984d5a19b0195, type: 3}
   m_Bones:
   - {fileID: 2662799256470912103}
@@ -227,7 +227,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 4
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: 635723739028598155, guid: bed32626ae3da4bdf91984d5a19b0195, type: 3}
   m_Bones:
   - {fileID: 2662799256470912103}
@@ -371,7 +371,7 @@ SkinnedMeshRenderer:
   serializedVersion: 2
   m_Quality: 4
   m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 0
+  m_SkinnedMotionVectors: 1
   m_Mesh: {fileID: -9201895546267886997, guid: bed32626ae3da4bdf91984d5a19b0195, type: 3}
   m_Bones:
   - {fileID: 2662799256470912103}
@@ -2110,7 +2110,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.04545, y: 1.04545, z: 1.04545}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2471946495824526472}

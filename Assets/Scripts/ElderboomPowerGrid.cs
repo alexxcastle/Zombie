@@ -39,12 +39,13 @@ public sealed class ElderboomPowerGrid : MonoBehaviour
         Apply(false, false);
     }
     void OnDestroy() { ElderboomEvents.SessionStarted -= ResetSession; if (Instance == this) Instance = null; }
-    void ResetSession() => Apply(false, false);
+    void ResetSession() { awaitingHost = false; Apply(false, false); }
 
     // Co-op: the generator state from the host (or a client's start, on the host). Starting it plays the full
     // start-up here too; a running grid is never switched off by a late snapshot.
     public void NetSetPower(bool power)
     {
+        if (power) awaitingHost = false;
         if (!power || on) return;
         Apply(true, true);
     }
@@ -80,8 +81,11 @@ public sealed class ElderboomPowerGrid : MonoBehaviour
         return false;
     }
 
+    // Client that started the generator: repeat the request until the host's snapshot shows it running.
+    bool awaitingHost; float resendAt;
     void Update()
     {
+        if (on && awaitingHost && ElderboomLan.IsClient && Time.unscaledTime >= resendAt) { resendAt = Time.unscaledTime + 1.5f; ElderboomLan.GeneratorStarted(); }
         if (on || generator == null) return;
         var game = ElderboomGame.Active; var player = game != null ? game.Player : null;
         if (player == null || !game.CanInteract || player.IsDead || player.Seated) return;
@@ -92,5 +96,6 @@ public sealed class ElderboomPowerGrid : MonoBehaviour
         if (!game.TrySpend(Cost)) return;
         Apply(true, true);
         ElderboomLan.GeneratorStarted(); // co-op: the host shares it with everyone
+        if (ElderboomLan.IsClient) { awaitingHost = true; resendAt = Time.unscaledTime + 1.5f; }
     }
 }

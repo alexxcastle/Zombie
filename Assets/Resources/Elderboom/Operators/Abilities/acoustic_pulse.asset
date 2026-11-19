@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: acoustic_pulse
   m_EditorClassIdentifier: Assembly-CSharp::ElderboomAcousticPulseAbility
   id: acoustic_pulse
-  displayName: Acoustic pulse
+  displayName: Acoustic device
   cooldown: 15
-  description: Throws a sound decoy where you aim. Zombies near it stop chasing you and go to investigate.
+  description: Sticks the acoustic device to any wall you aim at. Every zombie that hears it stops chasing and is drawn to that spot while it plays.
   windup: 1.11111
   throwRange: 30
   lureRadius: 18

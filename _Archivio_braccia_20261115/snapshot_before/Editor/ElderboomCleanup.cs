@@ -1,0 +1,298 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.Experimental.Rendering;
+
+// Editor automation for the cleanup pass (Logs/claude_cleanup.txt -> Logs/claude_cleanup_result.txt).
+// "deps": every asset the game can reach (build scenes, Resources, StreamingAssets, plus the folders the editor
+// tools load by path), and per top folder how much is reachable and how much is not. Unused paths listed in
+// Logs/cleanup_unused.txt.
+[InitializeOnLoad]
+static class ElderboomCleanup
+{
+    const string Flag = "Logs/claude_cleanup.txt", Result = "Logs/claude_cleanup_result.txt";
+    static double next;
+    static ElderboomCleanup() { EditorApplication.update += Poll; }
+
+    static void Poll()
+    {
+        if (EditorApplication.timeSinceStartup < next) return;
+        next = EditorApplication.timeSinceStartup + 2;
+        if (!File.Exists(Flag) || EditorApplication.isPlayingOrWillChangePlaymode || BuildPipeline.isBuildingPlayer) return;
+        string mode = File.ReadAllText(Flag).Trim(); File.Delete(Flag);
+        try { File.WriteAllText(Result, mode.StartsWith("deps") ? Deps() : mode.StartsWith("missing") ? Missing() : mode.StartsWith("textures") ? Textures() : mode.StartsWith("settings") ? Settings(mode.Contains("apply")) : mode.StartsWith("perf") ? StartPerf(mode) : mode.StartsWith("downscale") ? Downscale(2048) : "FAIL unknown mode " + mode); }
+        catch (System.Exception e) { File.WriteAllText(Result, "FAIL " + e); }
+    }
+
+    static string Deps()
+    {
+        var roots = new List<string>();
+        foreach (var s in EditorBuildSettings.scenes) if (s.enabled) roots.Add(s.path);
+        roots.AddRange(AssetDatabase.FindAssets("", new[] { "Assets/Resources" }).Select(AssetDatabase.GUIDToAssetPath));
+        if (AssetDatabase.IsValidFolder("Assets/StreamingAssets")) roots.AddRange(Directory.GetFiles("Assets/StreamingAssets", "*", SearchOption.AllDirectories).Where(p => !p.EndsWith(".meta")));
+        // Settings assets the build always takes (render pipeline, volume profiles, input, quality).
+        foreach (var p in Directory.GetFiles("ProjectSettings", "*.asset"))
+            foreach (var d in AssetDatabase.GetDependencies(p, true)) roots.Add(d);
+        var gp = UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline; if (gp != null) roots.Add(AssetDatabase.GetAssetPath(gp));
+        for (int i = 0; i < QualitySettings.names.Length; i++) { var rp = QualitySettings.GetRenderPipelineAssetAt(i); if (rp != null) roots.Add(AssetDatabase.GetAssetPath(rp)); }
+        var used = new HashSet<string>(AssetDatabase.GetDependencies(roots.Distinct().ToArray(), true));
+        foreach (var r in roots) used.Add(r);
+
+        var sb = new StringBuilder();
+        var unused = new StringBuilder();
+        var all = AssetDatabase.GetAllAssetPaths().Where(p => p.StartsWith("Assets/") && !AssetDatabase.IsValidFolder(p)).ToList();
+        var groups = new Dictionary<string, (long total, long usedBytes, int files, int usedFiles)>();
+        foreach (var p in all)
+        {
+            var parts = p.Split('/');
+            string key = parts.Length > 2 ? parts[1] + (parts[1] == "GameAssets" && parts.Length > 3 ? "/" + parts[2] : "") : parts[1];
+            long size = 0; try { size = new FileInfo(p).Length; } catch { }
+            bool u = used.Contains(p) || p.EndsWith(".cs") || p.EndsWith(".asmdef") || p.Contains("/Editor/");
+            var g = groups.TryGetValue(key, out var x) ? x : (0, 0, 0, 0);
+            groups[key] = (g.total + size, g.usedBytes + (u ? size : 0), g.files + 1, g.usedFiles + (u ? 1 : 0));
+            if (!u) unused.AppendLine(p);
+        }
+        sb.AppendLine("roots " + roots.Count + ", reachable assets " + used.Count);
+        sb.AppendLine("folder | files used/total | MB used/total");
+        foreach (var kv in groups.OrderByDescending(k => k.Value.total))
+            sb.AppendLine(kv.Key + " | " + kv.Value.usedFiles + "/" + kv.Value.files + " | " + (kv.Value.usedBytes / 1048576) + "/" + (kv.Value.total / 1048576));
+        sb.AppendLine("-- packages reached:");
+        foreach (var pk in used.Where(p => p.StartsWith("Packages/")).Select(p => p.Split('/')[1]).GroupBy(x => x).OrderByDescending(g => g.Count()))
+            sb.AppendLine("  " + pk.Key + " " + pk.Count());
+        File.WriteAllText("Logs/cleanup_unused.txt", unused.ToString());
+        File.WriteAllText("Logs/cleanup_used.txt", string.Join("\n", used.OrderBy(x => x)));
+        sb.AppendLine("DONE");
+        return sb.ToString();
+    }
+    // Scenes in the build and every prefab under Resources: missing scripts, URP-only components, broken material/mesh
+    // references. Nothing is changed.
+    static string Missing()
+    {
+        var sb = new StringBuilder();
+        var active = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().path;
+        foreach (var s in EditorBuildSettings.scenes)
+        {
+            if (!s.enabled) continue;
+            var scene = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(s.path, UnityEditor.SceneManagement.OpenSceneMode.Single);
+            int missing = 0, urp = 0, noMat = 0, noMesh = 0;
+            foreach (var root in scene.GetRootGameObjects())
+                foreach (var t in root.GetComponentsInChildren<Transform>(true))
+                {
+                    int m = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(t.gameObject);
+                    if (m > 0) { missing += m; if (missing < 15) sb.AppendLine("  missing script on " + t.name); }
+                    foreach (var c in t.GetComponents<Component>()) if (c != null && c.GetType().FullName.Contains("Universal")) { urp++; if (urp < 8) sb.AppendLine("  URP component " + c.GetType().Name + " on " + t.name); }
+                    var r = t.GetComponent<Renderer>(); if (r != null && r.sharedMaterials.Any(x => x == null)) { noMat++; if (noMat < 10) sb.AppendLine("  null material on " + t.name); }
+                    var mf = t.GetComponent<MeshFilter>(); if (mf != null && mf.sharedMesh == null) { noMesh++; if (noMesh < 10) sb.AppendLine("  null mesh on " + t.name); }
+                }
+            sb.AppendLine(s.path + ": missing scripts " + missing + ", URP components " + urp + ", renderers with null material " + noMat + ", null meshes " + noMesh);
+        }
+        if (!string.IsNullOrEmpty(active)) UnityEditor.SceneManagement.EditorSceneManager.OpenScene(active);
+        int pm = 0, pu = 0;
+        foreach (var g in AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Resources", "Assets/GameAssets" }))
+        {
+            var path = AssetDatabase.GUIDToAssetPath(g); var go = AssetDatabase.LoadAssetAtPath<GameObject>(path); if (go == null) continue;
+            foreach (var t in go.GetComponentsInChildren<Transform>(true))
+            {
+                int m = GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(t.gameObject); if (m > 0) { pm += m; if (pm < 10) sb.AppendLine("  prefab missing script: " + path + " / " + t.name); }
+                foreach (var c in t.GetComponents<Component>()) if (c != null && c.GetType().FullName.Contains("Universal")) { pu++; if (pu < 10) sb.AppendLine("  prefab URP component: " + path + " / " + t.name); }
+            }
+        }
+        sb.AppendLine("prefabs: missing scripts " + pm + ", URP components " + pu);
+        sb.AppendLine("DONE");
+        return sb.ToString();
+    }
+    // Texture files split out of the .glb models (Logs/texture_roles.json): normal maps as normal maps, data maps
+    // linear, colour maps sRGB; all compressed with a size limit. Then the models are reimported on them.
+    [System.Serializable] class Role { public string role; public int max; }
+    static string Textures()
+    {
+        var text = File.ReadAllText("Logs/texture_roles.json");
+        var sb = new StringBuilder();
+        int changed = 0, missing = 0;
+        var models = new HashSet<string>();
+        AssetDatabase.StartAssetEditing();
+        try
+        {
+            foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(text, "\"([^\"]+)\":\\s*\\{\\s*\"role\":\\s*\"(\\w+)\",\\s*\"max\":\\s*(\\d+)"))
+            {
+                string path = m.Groups[1].Value, role = m.Groups[2].Value; int max = int.Parse(m.Groups[3].Value);
+                var imp = AssetImporter.GetAtPath(path) as TextureImporter;
+                if (imp == null) { missing++; continue; }
+                imp.textureShape = TextureImporterShape.Texture2D;
+                imp.textureType = role == "normal" ? TextureImporterType.NormalMap : TextureImporterType.Default;
+                imp.sRGBTexture = role == "color";
+                imp.maxTextureSize = max;
+                imp.textureCompression = TextureImporterCompression.Compressed;
+                imp.mipmapEnabled = true;
+                imp.isReadable = false;
+                imp.anisoLevel = 4;
+                imp.SaveAndReimport();
+                changed++;
+                var dir = Path.GetDirectoryName(Path.GetDirectoryName(path)).Replace('\\', '/');
+                var stem = Path.GetFileName(Path.GetDirectoryName(path)); if (stem.EndsWith("_Textures")) models.Add(dir + "/" + stem.Substring(0, stem.Length - 9) + ".gltf");
+            }
+        }
+        finally { AssetDatabase.StopAssetEditing(); }
+        foreach (var model in models) if (File.Exists(model)) AssetDatabase.ImportAsset(model, ImportAssetOptions.ForceUpdate);
+        sb.AppendLine("textures set " + changed + ", not found " + missing + ", models reimported " + models.Count);
+        // Report what the models hold now.
+        long total = 0;
+        foreach (var model in models)
+        {
+            long bytes = 0;
+            foreach (var o in AssetDatabase.LoadAllAssetsAtPath(model)) if (o is Material mat)
+                foreach (var name in mat.GetTexturePropertyNames()) { var t = mat.GetTexture(name) as Texture2D; if (t != null) bytes += UnityEngine.Profiling.Profiler.GetRuntimeMemorySizeLong(t); }
+            int nullMats = 0; foreach (var o in AssetDatabase.LoadAllAssetsAtPath(model)) if (o is Renderer r && r.sharedMaterials.Any(x => x == null)) nullMats++;
+            sb.AppendLine("  " + model + " textures in materials " + (bytes / 1048576) + " MB" + (nullMats > 0 ? " null materials " + nullMats : ""));
+            total += bytes;
+        }
+        sb.AppendLine("total texture memory referenced by these models (shared counted per model) " + (total / 1048576) + " MB");
+        sb.AppendLine("DONE");
+        return sb.ToString();
+    }
+    // ---- Rendering settings: GPU skinning and the GPU Resident Drawer (dry run lists what exists) ----
+    static string Settings(bool apply)
+    {
+        var sb = new StringBuilder();
+        var ps = typeof(PlayerSettings);
+        foreach (var name in new[] { "gpuSkinning", "meshDeformation" })
+        {
+            var prop = ps.GetProperty(name, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public);
+            if (prop == null) continue;
+            sb.AppendLine("PlayerSettings." + name + " = " + prop.GetValue(null));
+            if (apply && prop.CanWrite)
+            {
+                if (prop.PropertyType == typeof(bool)) prop.SetValue(null, true);
+                else if (prop.PropertyType.IsEnum) { var v = System.Enum.GetNames(prop.PropertyType).FirstOrDefault(n => n == "GPU"); if (v != null) prop.SetValue(null, System.Enum.Parse(prop.PropertyType, v)); }
+                sb.AppendLine("  -> " + prop.GetValue(null));
+            }
+        }
+        var assets = new HashSet<UnityEngine.Rendering.RenderPipelineAsset>();
+        if (UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline != null) assets.Add(UnityEngine.Rendering.GraphicsSettings.defaultRenderPipeline);
+        for (int i = 0; i < QualitySettings.names.Length; i++) { var a = QualitySettings.GetRenderPipelineAssetAt(i); if (a != null) assets.Add(a); }
+        foreach (var a in assets)
+        {
+            var so = new SerializedObject(a);
+            var it = so.GetIterator(); bool enter = true;
+            while (it.Next(enter))
+            {
+                enter = true;
+                if (it.propertyPath.IndexOf("ResidentDrawer", System.StringComparison.OrdinalIgnoreCase) < 0) continue;
+                sb.AppendLine(a.name + ": " + it.propertyPath + " (" + it.propertyType + ") = " + (it.propertyType == SerializedPropertyType.Enum ? it.enumNames[it.enumValueIndex] : it.propertyType == SerializedPropertyType.Boolean ? it.boolValue.ToString() : ""));
+                if (apply && it.propertyType == SerializedPropertyType.Enum && it.name == "mode")
+                {
+                    // Left off: no draw-call change measured in this project, and the build strips the BRG variants it needs.
+                    int idx = System.Array.FindIndex(it.enumNames, n => n.Contains("Disabled"));
+                    if (idx >= 0) { it.enumValueIndex = idx; sb.AppendLine("  -> " + it.enumNames[idx]); }
+                }
+            }
+            if (apply) { so.ApplyModifiedProperties(); EditorUtility.SetDirty(a); }
+        }
+        var egs = System.Type.GetType("UnityEditor.Rendering.EditorGraphicsSettings, UnityEditor");
+        var strip = egs?.GetProperty("batchRendererGroupShaderStrippingMode");
+        if (strip != null)
+        {
+            sb.AppendLine("BRG stripping = " + strip.GetValue(null));
+            sb.AppendLine("  values: " + string.Join(",", System.Enum.GetNames(strip.PropertyType)));
+        }
+        if (apply) AssetDatabase.SaveAssets();
+        sb.AppendLine("DONE");
+        return sb.ToString();
+    }
+
+    // ---- Frame rate in the game scene (Play Mode, 30 s after start): frames per real second and draw stats ----
+    const string PerfPending = "claude_cleanup_perf";
+    static double perfStart; static int perfFrames; static bool promptShot, shotTaken;
+    [InitializeOnLoadMethod] static void InitPerf() { EditorApplication.update += PerfPoll; }
+    static string StartPerf(string mode)
+    {
+        if (UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().isDirty) return "FAIL unsaved scene";
+        UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Scenes/Elderboom_Unity_Port.unity");
+        SessionState.SetBool(PerfPending, true); perfStart = 0; { int h = 0; var parts = mode.Split(' '); if (parts.Length > 2 && parts[1] == "horde") int.TryParse(parts[2], out h); SessionState.SetInt("claude_cleanup_horde", h); } promptShot = mode.Contains("prompt"); SessionState.SetBool("claude_cleanup_prompt", promptShot);
+        EditorApplication.isPlaying = true;
+        return "perf started\n";
+    }
+    static void PerfPoll()
+    {
+        if (!SessionState.GetBool(PerfPending, false) || !EditorApplication.isPlaying) return;
+        promptShot = SessionState.GetBool("claude_cleanup_prompt", false);
+        double now = EditorApplication.timeSinceStartup;
+        if (perfStart <= 0) { perfStart = now; return; }
+        if (promptShot && now - perfStart > 8 && now - perfStart < 9.5)
+        {
+            var st = GameObject.Find("Station_PISTOLS"); var pl = ElderboomGame.Active != null ? ElderboomGame.Active.Player : null;
+            if (st != null && pl != null) { var d = st.transform.forward; pl.transform.position = st.transform.position - Vector3.up * (st.transform.position.y - pl.transform.position.y) + new Vector3(1.6f, 0, 0); pl.transform.rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(st.transform.position - pl.transform.position, Vector3.up)); }
+            return;
+        }
+        if (promptShot && now - perfStart > 11 && !shotTaken) { shotTaken = true; ScreenCapture.CaptureScreenshot("Logs/prompt_shot.png"); File.AppendAllText(Result, "prompt shot " + (ElderboomPrompt.Current ?? "none") + "\n"); return; }
+        if (promptShot && now - perfStart > 14) { File.AppendAllText(Result, "DONE\n"); SessionState.SetBool(PerfPending, false); shotTaken = false; EditorApplication.isPlaying = false; return; }
+        if (promptShot) return;
+        if (now - perfStart < 12) { perfFrames = Time.frameCount; return; }
+        int horde = SessionState.GetInt("claude_cleanup_horde", 0);
+        if (horde > 0 && ElderboomGame.Active != null && ElderboomGame.Active.Player != null)
+        {
+            // Stress test: N zombies on the NavMesh 15-40 m around the player, spawned through the game's own SpawnZombie.
+            SessionState.SetInt("claude_cleanup_horde", 0); HDRPSlicePlayer.DevInvulnerable = true;
+            ScreenCapture.CaptureScreenshot("Logs/start_view.png"); File.AppendAllText(Result, "player at " + ElderboomGame.Active.Player.transform.position + " area " + ElderboomArea.At(ElderboomGame.Active.Player.transform.position)?.areaName + "\n");
+            var game0 = ElderboomGame.Active; var spawn = typeof(ElderboomGame).GetMethod("SpawnZombie", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+            var marker = new GameObject("Perf_Horde_Marker").transform; int made = 0;
+            for (int i = 0; i < horde * 6 && made < horde; i++)
+            {
+                var c = Random.insideUnitCircle.normalized * Random.Range(15f, 40f);
+                if (!UnityEngine.AI.NavMesh.SamplePosition(game0.Player.transform.position + new Vector3(c.x, 0, c.y), out var hit, 2f, UnityEngine.AI.NavMesh.AllAreas)) continue;
+                marker.position = hit.position; if ((bool)spawn.Invoke(game0, new object[] { marker, 8 })) made++;
+            }
+            File.AppendAllText(Result, "horde spawned " + made + "\n"); perfFrames = Time.frameCount; perfStart = now - 12; return;
+        }
+        if (now - perfStart < 42) return;
+        double fps = (Time.frameCount - perfFrames) / 30.0;
+        var game = ElderboomGame.Active;
+        string line = "fps " + fps.ToString("F1") + " | drawcalls " + UnityStats.drawCalls + " setpass " + UnityStats.setPassCalls + " tris " + (UnityStats.triangles / 1000) + "k | zombies " + (game != null ? game.Zombies.Count : -1) + " near20m " + (game != null && game.Player != null ? game.Zombies.Count(z => z != null && z.IsAlive && Vector3.Distance(z.transform.position, game.Player.transform.position) < 20f) : -1) + " dead " + (game != null && game.Player != null && game.Player.IsDead)
+            + " | memory " + (UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong() / 1048576) + " MB, gfx " + (UnityEngine.Profiling.Profiler.GetAllocatedMemoryForGraphicsDriver() / 1048576) + " MB";
+        File.AppendAllText(Result, line + "\nDONE\n");
+        SessionState.SetBool(PerfPending, false); HDRPSlicePlayer.DevInvulnerable = false;
+        EditorApplication.isPlaying = false;
+    }
+
+    // Generated Texture2D assets (BC7 4096) in the art-reconstruction folders: halve to 2048 and re-encode BC7 in place.
+    // The asset keeps its GUID and fileID, so materials keep pointing at it. Terminal: -executeMethod ElderboomCleanup.DownscaleBatch
+    static readonly string[] DownscaleFolders = { "Assets/GameAssets/Elderboom/ArtDirectionGenerated/RuntimeMaterials", "Assets/GameAssets/AltarUpgrader/Runtime" };
+    public static void DownscaleBatch() { File.WriteAllText(Result, Downscale(2048)); EditorApplication.Exit(0); }
+
+    static string Downscale(int size)
+    {
+        var sb = new StringBuilder(); int done = 0; long before = 0, after = 0;
+        foreach (var g in AssetDatabase.FindAssets("t:Texture2D", DownscaleFolders))
+        {
+            string path = AssetDatabase.GUIDToAssetPath(g);
+            if (!path.EndsWith(".asset")) continue;
+            var src = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (src == null || src.width <= size) continue;
+            bool linear = !GraphicsFormatUtility.IsSRGBFormat(src.graphicsFormat);
+            int w = size, h = Mathf.Max(4, src.height * size / src.width);
+            var rt = RenderTexture.GetTemporary(w, h, 0, RenderTextureFormat.ARGB32, linear ? RenderTextureReadWrite.Linear : RenderTextureReadWrite.sRGB);
+            Graphics.Blit(src, rt);
+            var prev = RenderTexture.active; RenderTexture.active = rt;
+            var dst = new Texture2D(w, h, TextureFormat.RGBA32, true, linear) { name = src.name, wrapMode = src.wrapMode, filterMode = src.filterMode, anisoLevel = src.anisoLevel };
+            dst.ReadPixels(new Rect(0, 0, w, h), 0, 0); dst.Apply(true);
+            RenderTexture.active = prev; RenderTexture.ReleaseTemporary(rt);
+            EditorUtility.CompressTexture(dst, src.format == TextureFormat.BC7 ? TextureFormat.BC7 : src.format, UnityEditor.TextureCompressionQuality.Normal);
+            dst.Apply(false, true);
+            long b = new FileInfo(path).Length;
+            EditorUtility.CopySerialized(dst, src);
+            EditorUtility.SetDirty(src);
+            AssetDatabase.SaveAssetIfDirty(src);
+            Object.DestroyImmediate(dst);
+            before += b; after += new FileInfo(path).Length; done++;
+            sb.AppendLine(path + " " + (linear ? "linear" : "srgb") + " -> " + w + "x" + h);
+            if (done % 6 == 0) { Resources.UnloadUnusedAssets(); System.GC.Collect(); }
+        }
+        AssetDatabase.SaveAssets();
+        sb.AppendLine("downscaled " + done + ", files " + (before >> 20) + " MB -> " + (after >> 20) + " MB");
+        sb.AppendLine("DONE");
+        return sb.ToString();
+    }
+}

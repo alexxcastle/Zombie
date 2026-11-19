@@ -1,0 +1,9 @@
+{
+  "note": "Watch cosmetics for the operators' left wrist (customisation, not wired yet). Eli wears the Digital Watch, Soph the SetWatch Black dial; these are the other dials of the same watch, kept for the loadout screen.",
+  "watches": [
+    { "id": "set_black", "name": "CHRONO · BLACK", "asset": "Elderboom/Cosmetics/Watches/SetWatch_Black", "default_for": "SOPH" },
+    { "id": "set_silver", "name": "CHRONO · SILVER", "asset": "Elderboom/Cosmetics/Watches/SetWatch_Silver" },
+    { "id": "set_champagne", "name": "CHRONO · CHAMPAGNE", "asset": "Elderboom/Cosmetics/Watches/SetWatch_Champagne" },
+    { "id": "set_blue", "name": "CHRONO · BLUE", "asset": "Elderboom/Cosmetics/Watches/SetWatch_Blue" }
+  ]
+}

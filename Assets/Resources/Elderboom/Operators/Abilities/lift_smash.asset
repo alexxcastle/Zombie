@@ -16,8 +16,8 @@ MonoBehaviour:
   displayName: Lift & smash
   cooldown: 9
   description: Lifts the zombies ahead into the air, then slams them into the ground.
-  range: 5
-  coneDot: 0.42
+  range: 7
+  coneDot: 0.15
   liftHeight: 1.7
   impactDamage: 3
   recovery: 0.65

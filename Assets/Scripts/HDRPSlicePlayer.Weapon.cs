@@ -40,6 +40,8 @@ public sealed partial class HDRPSlicePlayer
     void UpdateWeaponPose(ElderboomTacticalArms arms, bool abilityBusy)
     {
         aiming = !WeaponDeposited && hasAdsReference && Held("aim") && !reloading && !abilityBusy && (arms == null || !arms.LocksAim);
+        portViewmodel?.SetAiming(aiming);
+        portViewmodel?.SetLocomotion(bobWeight, sprinting);
         if (aiming != wasAiming && audioCategory != ElderboomIds.Category.Melee) ElderboomAudio.AimFoley(audioCategory, transform.position);
         wasAiming = aiming;
         if (weaponRoot != null && (arms == null || !arms.Playing || arms.Mode == "shock"))
@@ -50,28 +52,90 @@ public sealed partial class HDRPSlicePlayer
                 poseRotation = weaponRoot.localRotation;
                 poseReady = true;
             }
-            float blend = 1f - Mathf.Exp(-14f * Time.deltaTime);
+            // Aim time per weapon (pistols fast, long guns slower) and slower with heavy attachments (ElderboomWeaponMods).
+            float blend = 1f - Mathf.Exp(-(3f / Mathf.Max(.05f, ElderboomWeaponMods.AimTime(definition))) * Time.deltaTime);
             posePosition = Vector3.Lerp(posePosition, aiming ? adsPosition : hipPosition, blend);
             poseRotation = Quaternion.Slerp(poseRotation, aiming ? adsRotation : hipRotation, blend);
             float sprintTarget = sprinting && !reloading ? 1f : 0f;
-            sprintPose = Mathf.Lerp(sprintPose, sprintTarget, 1f - Mathf.Exp(-9f * Time.deltaTime));
+            sprintPose = Mathf.Lerp(sprintPose, sprintTarget, 1f - Mathf.Exp(-14f * Time.deltaTime));
             recoil.Advance(Time.deltaTime);
             UpdateViewmodelExtras(Time.deltaTime);
-            float gait = bobWeight * (aiming ? 0.28f : 1f);
+            float gait = portViewmodel != null && portViewmodel.UsesDonorWalk && !aiming ? 0f : bobWeight * (aiming ? 0.28f : 1f);
+            float sprintOffset = portViewmodel != null && portViewmodel.UsesDonorSprint ? 0f : sprintPose;
             float pump = Mathf.Lerp(0.45f, 1f, viewSprint);
             float step = Mathf.Abs(Mathf.Sin(headBobTime));
             float sway = Mathf.Sin(headBobTime * 0.5f);
             Vector3 weaponBob = new Vector3(sway * 0.01f, step * 0.014f, Mathf.Sin(headBobTime) * 0.005f) * pump * gait;
             Quaternion weaponBobRotation = Quaternion.Euler(Mathf.Sin(headBobTime) * 0.55f * pump * gait, sway * -0.35f * pump * gait, sway * 0.9f * pump * gait);
-            weaponRoot.localPosition = posePosition + recoil.position + SprintDrop * sprintPose + weaponBob + ViewmodelOffset();
-            weaponRoot.localRotation = ViewmodelRotation() * Quaternion.Slerp(Quaternion.identity, SprintTilt, sprintPose) * weaponBobRotation * Quaternion.Euler(recoil.rotation * Mathf.Rad2Deg) * poseRotation;
+            // In aim the sight is already a few centimetres from the lens. The backward kick would push the
+            // hollow receiver over the camera. Keep the tilt; drop most of the slide toward the eye.
+            Vector3 kick = recoil.position;
+            if (aiming) kick.z *= .15f;
+            weaponRoot.localPosition = posePosition + kick + SprintDrop * sprintOffset + weaponBob + ViewmodelOffset();
+            weaponRoot.localRotation = ViewmodelRotation() * Quaternion.Slerp(Quaternion.identity, SprintTilt, sprintOffset) * weaponBobRotation * Quaternion.Euler(recoil.rotation * Mathf.Rad2Deg) * poseRotation;
+            // KeepGunOutsideCamera(); // off: the hold editor decides how close the gun sits to the eye
         }
+    }
+
+    // The gun meshes are open at the back. If a kick, a sway or the aim pose slides one closer than the near
+    // plane, the camera looks into the empty shell. Push the whole hold forward until the closest gun point
+    // is just outside that plane. Arms are not part of the measure, so a sleeve does not shove the sight.
+    Renderer[] gunShells;
+    void CacheGunShell(Transform selected)
+    {
+        Transform holder = null;
+        foreach (var t in selected.GetComponentsInChildren<Transform>(true))
+            if (t.name.StartsWith("OperatorWeapon_")) { holder = t; break; }
+        var all = (holder != null ? holder : selected).GetComponentsInChildren<Renderer>(true);
+        int n = 0;
+        var keep = new Renderer[all.Length];
+        foreach (var r in all)
+        {
+            if (r is ParticleSystemRenderer || r is LineRenderer) continue;
+            if (holder == null)
+            {
+                string name = r.name.ToLowerInvariant();
+                if (name.Contains("arm") || name.Contains("hand") || name.Contains("sleeve") || name.Contains("glove")) continue;
+            }
+            keep[n++] = r;
+        }
+        gunShells = new Renderer[n];
+        System.Array.Copy(keep, gunShells, n);
+    }
+
+    void KeepGunOutsideCamera()
+    {
+        if ((gunShells == null || gunShells.Length == 0) && weaponRoot != null) CacheGunShell(weaponRoot);
+        if (gunShells == null || gunShells.Length == 0 || weaponRoot.parent == null) return;
+        float safe = (viewCamera != null ? viewCamera.nearClipPlane : .025f) + .02f;
+        var parent = weaponRoot.parent;
+        float minZ = float.PositiveInfinity;
+        // The gun's own box corners in the camera's space: a world-aligned box (Renderer.bounds) grows and shrinks
+        // as the view turns, which pushed the gun and the arms back and forth when looking left and right.
+        var toParent = parent.worldToLocalMatrix;
+        foreach (var r in gunShells)
+        {
+            if (r == null || !r.enabled || !r.gameObject.activeInHierarchy) continue;
+            Bounds local;
+            if (r is SkinnedMeshRenderer sk) local = sk.localBounds;
+            else { var mf = r.GetComponent<MeshFilter>(); if (mf == null || mf.sharedMesh == null) continue; local = mf.sharedMesh.bounds; }
+            var m = toParent * r.transform.localToWorldMatrix;
+            for (int i = 0; i < 8; i++)
+            {
+                var corner = local.center + Vector3.Scale(local.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
+                float z = m.MultiplyPoint3x4(corner).z;
+                if (z < minZ) minZ = z;
+            }
+        }
+        if (minZ < safe) weaponRoot.localPosition += new Vector3(0f, 0f, safe - minZ);
     }
 
     void UpdateWeaponActions(bool abilityBusy, bool handBusy)
     {
         SetWeaponState(ResolveWeaponState(abilityBusy, handBusy));
         if (WeaponDeposited) return;
+        if (weaponState == ElderboomWeaponState.Ready && !abilityBusy && !aiming && Down("inspect_weapon"))
+            portViewmodel?.PlayDonorInspect();
         if (Down("reload") && weaponState != ElderboomWeaponState.Reloading && !abilityBusy && ammo < magazineSize && reserveAmmo > 0)
             StartCoroutine(Reload());
         if (Input.GetKeyDown(KeyCode.Alpha1)) ElderboomGame.Active?.SelectAbility(0);
@@ -82,7 +146,7 @@ public sealed partial class HDRPSlicePlayer
             if (ElderboomGame.Active != null) ElderboomGame.Active.UseSelectedAbility(this);
             else PlayOneShot(abilityClipName);
         }
-        bool trigger=weaponDisplayName=="STRIKER-12" || audioCategory==ElderboomIds.Category.Handgun || audioCategory==ElderboomIds.Category.Melee ? Down("fire"):Held("fire");
+        bool trigger=weaponDisplayName=="STRIKER-12" || weaponDisplayName=="BENELLI M4" || audioCategory==ElderboomIds.Category.Handgun || audioCategory==ElderboomIds.Category.Melee ? Down("fire"):Held("fire");
         // Sprint-to-fire: the weapon must come back up from the sprint pose before it fires.
         SetWeaponState(ResolveWeaponState(abilityBusy, handBusy));
         if (trigger && weaponState == ElderboomWeaponState.Ready && Time.time >= nextShotTime)
@@ -92,6 +156,7 @@ public sealed partial class HDRPSlicePlayer
     void Fire()
     {
         nextShotTime = Time.time + fireInterval;
+        if (ammo > 0) ElderboomGamepad.Rumble(.25f, .45f, .07f);
         if (ammo <= 0 && audioCategory!=ElderboomIds.Category.Melee)
         {
             ElderboomAudio.DryFire(audioCategory, transform.position);
@@ -101,19 +166,27 @@ public sealed partial class HDRPSlicePlayer
         if(audioCategory!=ElderboomIds.Category.Melee)ammo--;
         var director=ElderboomGame.Active;
         if(director!=null){director.ReportShot();director.ReportNoise(transform.position,audioCategory==ElderboomIds.Category.Melee?6f:audioCategory==ElderboomIds.Category.Handgun?22f:30f);}
-        ElderboomAudio.FireWeapon(audioCategory, transform.position, definition != null && definition.upgraded);
+        // The flamethrower has its own continuous sound. Melee has the impact, not a rifle shot.
+        bool melee = audioCategory == ElderboomIds.Category.Melee || (definition != null && definition.FireMode == ElderboomFireMode.Melee);
+        bool flame = definition != null && definition.FireMode == ElderboomFireMode.Flame;
+        if (!melee && !flame)
+        {
+            if (ElderboomWeaponMods.Suppressed(definition)) ElderboomAudio.FireSuppressed(audioCategory, transform.position, definition != null && definition.upgraded);
+            else ElderboomAudio.FireWeapon(audioCategory, transform.position, definition != null && definition.upgraded);
+        }
         if (muzzleFlash != null) StartCoroutine(Flash());
-        recoil.Kick(weaponDisplayName == "RHINO 60DS" ? 1f : 0.65f);
+        float modRecoil=ElderboomWeaponMods.RecoilScale(definition);
+        if (portViewmodel == null || !portViewmodel.PlayDonorFire(fireInterval)) recoil.Kick((weaponDisplayName == "RHINO 60DS" ? 1f : 0.65f)*modRecoil);
         var profile=definition ?? new ElderboomWeaponDefinition { category=audioCategory,damage=damage,range=78,falloffStart=25,minimumDamage=.52f,spread=.85f,pellets=1,pierce=1,fireInterval=fireInterval };
         // View recoil: a snappy kick that springs back, part of it staying in the aim
         // (the player pulls down to compensate), plus a little trauma shake.
         ElderboomFeel.Recoil(profile,out float kickUp,out float kickSide,out float kickTrauma,out float climb);
-        float adsScale=aiming?.6f:1f;
+        float adsScale=(aiming?.6f:1f)*modRecoil;
         viewKick.Kick(kickUp*adsScale,Random.Range(-kickSide,kickSide)*adsScale);
         pitch=Mathf.Clamp(pitch-kickUp*adsScale*climb,-82f,82f);
         viewKick.AddTrauma(kickTrauma*(aiming?.7f:1f));
         ElderboomWeaponFire.Fire(this,profile,viewCamera,rifleMuzzle,aiming,spreadBloom);
-        spreadBloom=Mathf.Min(2.5f,spreadBloom+.18f);
+        spreadBloom=Mathf.Min(2.5f,spreadBloom+.18f*ElderboomWeaponMods.BloomScale(definition));
     }
 
     IEnumerator Flash()
@@ -123,19 +196,60 @@ public sealed partial class HDRPSlicePlayer
         if (muzzleFlash != null) muzzleFlash.enabled = false;
     }
 
+    int reloadToken;
+    // Reload interrupted from outside (weapon switch): the ammo already in stays, the arms go back to idle.
+    public void CancelReload()
+    {
+        if (!reloading) return;
+        reloadToken++; reloading = false;
+        portViewmodel?.arms?.CancelReload();
+    }
+
     IEnumerator Reload()
     {
         reloading = true;
         aiming = false;
+        int token = ++reloadToken;
         var reloadingRoot = weaponRoot;
         var clip = PlayOneShot(reloadClipName);
-        float duration = portViewmodel!=null ? portViewmodel.PlayReload() : clip != null ? Mathf.Clamp(clip.length, 1.2f, 3.2f) : 1.85f;
+        var arms = portViewmodel != null ? portViewmodel.arms : null;
+        if (arms != null)
+        {
+            // Ammo follows the animation: the magazine fills when it goes in, a tube takes one shell per loop.
+            // Interrupted by firing (tube with a shell in), by starting to sprint, or by a weapon switch.
+            var plan = arms.Reload(ammo <= 0, Mathf.Min(magazineSize - ammo, reserveAmmo));
+            StartCoroutine(ReloadSounds(plan.duration));
+            float start = Time.time; int next = 0; bool wasSprinting = sprinting; bool fireAfter = false;
+            while (true)
+            {
+                if (token != reloadToken) yield break;
+                if (dead || weaponRoot != reloadingRoot) { arms.CancelReload(); reloading = false; yield break; }
+                float t = Time.time - start;
+                while (next < plan.events.Count && t >= plan.events[next].time)
+                {
+                    int amount = plan.events[next].amount; next++;
+                    int load = amount < 0 ? Mathf.Min(magazineSize - ammo, reserveAmmo) : Mathf.Min(amount, Mathf.Min(magazineSize - ammo, reserveAmmo));
+                    ammo += load; reserveAmmo -= load;
+                }
+                if (t >= plan.duration) break;
+                if (plan.tube && (ammo >= magazineSize || reserveAmmo <= 0) && next >= plan.events.Count) break;
+                if (plan.tube && ammo > 0 && Down("fire")) { arms.CancelReload(); fireAfter = true; break; }
+                if (sprinting && !wasSprinting) { arms.CancelReload(); break; }
+                wasSprinting = sprinting;
+                yield return null;
+            }
+            reloading = false;
+            if (fireAfter && Time.time >= nextShotTime && ammo > 0) Fire();
+            yield break;
+        }
+        float duration = portViewmodel!=null ? portViewmodel.PlayReload(ammo <= 0, definition?.id == "shotgun", Mathf.Min(magazineSize - ammo, reserveAmmo)) : clip != null ? Mathf.Clamp(clip.length, 1.2f, 3.2f) : 1.85f;
         StartCoroutine(ReloadSounds(duration));
         yield return new WaitForSeconds(duration);
+        if (token != reloadToken) yield break;
         if (dead || weaponRoot != reloadingRoot) { reloading = false; yield break; }
-        int load = Mathf.Min(magazineSize - ammo, reserveAmmo);
-        ammo += load;
-        reserveAmmo -= load;
+        int full = Mathf.Min(magazineSize - ammo, reserveAmmo);
+        ammo += full;
+        reserveAmmo -= full;
         reloading = false;
         PlayIdle();
     }
@@ -259,7 +373,7 @@ public sealed partial class HDRPSlicePlayer
 
     public void ConfigureWeapon(ElderboomWeaponDefinition data,int loaded,int carried)
     {
-        definition=data;ConfigurePortedLoadout(operatorDisplayName,data.name,data.capacity,carried,data.damage,data.fireInterval);
+        definition=data;adsKey=null;ConfigurePortedLoadout(operatorDisplayName,data.name,data.capacity,carried,data.damage,data.fireInterval);
         ammo=loaded;reserveAmmo=carried;audioCategory=data.category;
         if(weaponRoot!=null)ApplyWeaponPose(weaponRoot); // aim distance depends on the category (handgun or long gun)
     }
@@ -268,14 +382,16 @@ public sealed partial class HDRPSlicePlayer
     {
         weaponRoot = selected;
         poseReady = false;
-        ElderboomShoulderTrim.Ensure(selected, operatorDisplayName);
+        CacheGunShell(selected);
         ScaleStriker(selected);
         BeginEquip();
         recoil.Reset();spreadBloom=0;
         portViewmodel = selected.GetComponent<ElderboomViewmodel>();
+        adsKey = null;
+
         weaponAnimator = portViewmodel == null ? selected.GetComponentInChildren<Animator>(true) : null;
         weaponLegacyAnimation = portViewmodel == null ? selected.GetComponentInChildren<Animation>(true) : null;
-        muzzleFlash = selected.GetComponentInChildren<Light>(true);
+        muzzleFlash = ElderboomWeaponMods.ShotLight(selected); // never an attachment's torch or laser
         if(muzzleFlash != null) muzzleFlash.enabled = false;
         adsRearSight = FindNamed(selected, "ads", "rear");
         adsFrontSight = FindNamed(selected, "ads", "front");
@@ -283,6 +399,7 @@ public sealed partial class HDRPSlicePlayer
         ApplyWeaponPose(selected);
         selected.localPosition = hipPosition;
         selected.localRotation = hipRotation;
+        portViewmodel?.PlayDonorDraw();
     }
 
     // STRIKER-12 a little smaller (10%), in the Tactical's own viewmodel and in every other hold of it.
@@ -308,6 +425,28 @@ public sealed partial class HDRPSlicePlayer
     {
         ApplyWeaponPoseBase(selected);
         TightenAds(selected);
+        adsBasePosition = adsPosition; adsBaseRotation = adsRotation;
+        ApplyAdsOffset();
+    }
+
+    // Hand-tuned camera for this operator and weapon (ElderboomGripEditor, CAMERA): the eye moves and turns (view
+    // space), arms and weapon stay where they are. Faded out while aiming, so the sights stay centred.
+    float camAim;
+    void CameraTweak(out Vector3 pos, out Quaternion rot)
+    {
+        pos = Vector3.zero; rot = Quaternion.identity;
+        camAim = Mathf.Lerp(camAim, aiming ? 0f : 1f, 1f - Mathf.Exp(-12f * Time.deltaTime));
+        // hand-tuned per-hold camera offsets were part of the archived grip system
+    }
+
+    // Hand-tuned aim correction for this operator and weapon (ElderboomGripAdjust, edited in the test range).
+    Vector3 adsBasePosition; Quaternion adsBaseRotation = Quaternion.identity;
+    string adsKey;
+    public string AdsKey => adsKey;
+    public void ApplyAdsOffset()
+    {
+        // hand-tuned per-hold aim offsets were part of the archived grip system
+        adsPosition = adsBasePosition; adsRotation = adsBaseRotation;
     }
 
     // Hip pose, framed like a modern military shooter's idle: the gun big in the lower right, its back end very
@@ -348,6 +487,7 @@ public sealed partial class HDRPSlicePlayer
     void TightenAds(Transform selected)
     {
         if (!hasAdsReference || selected == null || selected.parent == null) return;
+        if (portViewmodel != null && portViewmodel.keepAdsRelief) return;
         var rear = adsRearSight != null ? adsRearSight : ElderboomWeaponFraming.FindNamed(selected, "Soph_ADS_Rear", "MainWeapon_ADS_Rear");
         if (rear == null || !rear.IsChildOf(selected)) return;
         Vector3 keepP = selected.localPosition; Quaternion keepR = selected.localRotation;
@@ -355,6 +495,7 @@ public sealed partial class HDRPSlicePlayer
         Vector3 rearInParent = selected.parent.InverseTransformPoint(rear.position);
         selected.localPosition = keepP; selected.localRotation = keepR;
         float want = audioCategory == ElderboomIds.Category.Handgun ? .19f : .12f;
+        if (portViewmodel != null && portViewmodel.adsRelief >= .27f - .001f) want = portViewmodel.adsRelief;
         if (rearInParent.z > want) adsPosition.z -= rearInParent.z - want;
     }
 

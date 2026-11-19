@@ -5,8 +5,10 @@ using UnityEngine;
 public sealed partial class HDRPSlicePlayer
 {
     const float CrouchHeight = 1.15f, CrouchCameraDrop = -.55f, SlideCameraDrop = -.72f;
+    const float FlashlightLumens = 600f, FlashlightRange = 12f, FlashlightOff = .08f;
     const float SlideDuration = .75f, SlideCooldown = .9f, VaultDuration = .4f;
-    const float SprintDrainPerSecond = 18f, StaminaRecoveryPerSecond = 22f, StaminaRecoveryDelay = .7f;
+    const float SprintDrainPerSecond = 12f, StaminaRecoveryPerSecond = 26f, StaminaRecoveryDelay = .5f;
+    const float GravityScale = 1.6f; // snappier jumps and landings, less floaty
     float standHeight = 1.8f, crouchOffset, slideRoll, slideUntil, slideReadyAt, vaultT = -1f, vaultApex, airSince;
     Vector3 standCenter = new Vector3(0f, .9f, 0f), slideDir, vaultFrom, vaultTo;
     bool crouched, sliding, movementReady, flashlightOn = true;
@@ -28,11 +30,26 @@ public sealed partial class HDRPSlicePlayer
                 if (light.type == LightType.Spot && light.transform.parent == viewCamera.transform) { flashlight = light; break; }
         if (flashlight != null)
         {
-            flashlightIntensity = flashlight.intensity; flashlightRange = flashlight.range;
-            // A camera-mounted beam must illuminate surfaces without filling the
-            // player's view with an opaque cone of local/global volumetric fog.
+            // One lamp, behind the eyes. The cone's edge catches the weapon; the beam lights the path.
+            // 600 lumens is under a village lantern (those are 3000–4000). The old 55000, sitting on the camera,
+            // burned the exposure. No second fill light.
+            flashlight.transform.localPosition = new Vector3(0.03f, 0.05f, -0.35f);
+            flashlight.color = new Color(1f, 0.95f, 0.86f);
+            flashlight.useColorTemperature = false;
+            flashlight.shadows = LightShadows.None;
+            flashlight.spotAngle = 52f;
+            flashlight.innerSpotAngle = 18f;
+            flashlight.range = FlashlightRange;
+            flashlight.lightUnit = UnityEngine.Rendering.LightUnit.Lumen;
+            flashlight.intensity = FlashlightLumens;
+            flashlightIntensity = FlashlightLumens;
+            flashlightRange = FlashlightRange;
             var hd = flashlight.GetComponent<UnityEngine.Rendering.HighDefinition.HDAdditionalLightData>();
-            if (hd != null) hd.volumetricDimmer = 0f;
+            if (hd != null)
+            {
+                hd.volumetricDimmer = 0f;
+                hd.affectsVolumetric = false;
+            }
         }
     }
 
@@ -55,8 +72,8 @@ public sealed partial class HDRPSlicePlayer
     {
         flashlightOn = on;
         if (flashlight == null) return;
-        // "Off" keeps a faint close fill so the held weapon stays readable.
-        flashlight.intensity = on ? flashlightIntensity : flashlightIntensity * .035f;
+        // Off leaves a dim edge on the weapon. Same lamp, not a second light.
+        flashlight.intensity = on ? flashlightIntensity : flashlightIntensity * FlashlightOff;
         flashlight.range = on ? flashlightRange : 1.2f;
         if (sound) ElderboomAudio.Play("kenney/impactPlate_light_00" + Random.Range(0, 5), transform.position, .22f, false, 1.7f);
     }
@@ -76,7 +93,7 @@ public sealed partial class HDRPSlicePlayer
             character.center = new Vector3(standCenter.x, standCenter.y - (standHeight - height) * .5f, standCenter.z);
         }
         float drop = sliding ? SlideCameraDrop : crouched ? CrouchCameraDrop : 0f;
-        crouchOffset = Mathf.MoveTowards(crouchOffset, drop, Time.deltaTime * (sliding ? 4f : 2.6f));
+        crouchOffset = Mathf.MoveTowards(crouchOffset, drop, Time.deltaTime * (sliding ? 5f : 4.5f));
         slideRoll = Mathf.Lerp(slideRoll, sliding ? -3.5f : 0f, 1f - Mathf.Exp(-10f * Time.deltaTime));
     }
 
@@ -104,7 +121,8 @@ public sealed partial class HDRPSlicePlayer
         return Mathf.Lerp(sprintSpeed * 1.45f, walkSpeed * .5f, t * t);
     }
 
-    float MoveSpeed() => (sliding ? SlideSpeed() : crouched ? walkSpeed * .5f : sprinting ? sprintSpeed : walkSpeed) * (Grabbed ? grabFactor : 1f);
+    const float SpeedScale = 1.14f; // scenes serialize walk/sprint speeds; scale them here for a quicker feel
+    float MoveSpeed() => SpeedScale * (sliding ? SlideSpeed() : crouched ? walkSpeed * .5f : sprinting ? sprintSpeed : walkSpeed) * (Grabbed ? grabFactor : 1f) * (MeleeOperator ? MeleeMoveScale : 1f);
 
     // Grab zombies hold the player: much slower while held; walking out of reach breaks the hold.
     float grabUntil, grabFactor = 1f, grabStartedAt = -10f;
@@ -217,8 +235,9 @@ public sealed partial class HDRPSlicePlayer
     void Look()
     {
         if (!Application.isFocused) { lookDeltaX = lookDeltaY = 0f; return; } // tools driving a background editor: no stray mouse
-        float yaw = Input.GetAxisRaw("Mouse X") * pause.Sensitivity;
-        float mouseY = Input.GetAxisRaw("Mouse Y") * pause.Sensitivity;
+        Vector2 pad = ElderboomGamepad.Look(pause.Sensitivity, aiming);
+        float yaw = Input.GetAxisRaw("Mouse X") * pause.Sensitivity + pad.x;
+        float mouseY = Input.GetAxisRaw("Mouse Y") * pause.Sensitivity + pad.y;
         transform.Rotate(0f, yaw, 0f, Space.Self);
         pitch = Mathf.Clamp(pitch - mouseY, -82f, 82f);
         lookDeltaX = yaw; lookDeltaY = mouseY;
@@ -228,9 +247,11 @@ public sealed partial class HDRPSlicePlayer
     {
         float x = (Held("move_right") ? 1f : 0f) - (Held("move_left") ? 1f : 0f);
         float z = (Held("move_forward") ? 1f : 0f) - (Held("move_back") ? 1f : 0f);
+        Vector2 stick = ElderboomGamepad.Move; // analog: walk slowly with a light push
+        if (stick.sqrMagnitude > 0f && ElderboomInput.AcceptsInput) { x = stick.x; z = stick.y; }
         InitMovement();
         if (UpdateVault()) return;
-        UpdateCrouch(x, z);
+        if (!MeleeOperator) UpdateCrouch(x, z); // crouch key is the dodge for the melee operator
         bool request=Held("sprint") && z>.1f && !aiming && !crouched;
         if(!request)exhausted=false;
         bool wasSprinting=sprinting;sprinting=request && !exhausted && stamina>0 && !Grabbed;
@@ -238,7 +259,7 @@ public sealed partial class HDRPSlicePlayer
         else if(Time.time>=regenAt)stamina=Mathf.Min(100,stamina+StaminaRecoveryPerSecond*Time.deltaTime);
         if(sprinting && !wasSprinting)sprintStarted=Time.time;
         if(!sprinting && wasSprinting && Time.time-sprintStarted>1.2f)ElderboomAudio.Play("player/exhausted_gasp_0"+Random.Range(1,3),transform.position,.5f);
-        viewSprint = Mathf.Lerp(viewSprint, sprinting ? 1f : 0f, 1f - Mathf.Exp(-6f * Time.deltaTime));
+        viewSprint = Mathf.Lerp(viewSprint, sprinting ? 1f : 0f, 1f - Mathf.Exp(-10f * Time.deltaTime));
         moveX = x;
         moveZ = z;
         float speed = MoveSpeed();
@@ -253,11 +274,11 @@ public sealed partial class HDRPSlicePlayer
                 if (!crouched || sliding)
                 {
                     if (sliding) EndSlide();
-                    verticalSpeed = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+                    verticalSpeed = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y * GravityScale);
                 }
             }
         }
-        verticalSpeed += Physics.gravity.y * Time.deltaTime;
+        verticalSpeed += Physics.gravity.y * GravityScale * Time.deltaTime;
         character.Move((planar * speed + Vector3.up * verticalSpeed) * Time.deltaTime);
         locomoting = character.isGrounded && planar.sqrMagnitude > .1f;
     }
@@ -278,8 +299,8 @@ public sealed partial class HDRPSlicePlayer
         if (locomoting) headBobTime += Time.deltaTime * frequency;
         float aimDamp = aiming ? 0.4f : 1f;
         // Halve sprint camera travel and tilt for a steadier running view.
-        float vertical = Mathf.Lerp(0.028f, 0.025f, viewSprint) * aimDamp;
-        float lateral = Mathf.Lerp(0.012f, 0.011f, viewSprint) * aimDamp;
+        float vertical = Mathf.Lerp(0.019f, 0.018f, viewSprint) * aimDamp;
+        float lateral = Mathf.Lerp(0.008f, 0.008f, viewSprint) * aimDamp;
         float depth = 0.005f * aimDamp;
         float step = Mathf.Abs(Mathf.Sin(headBobTime));
         float sway = Mathf.Sin(headBobTime * 0.5f);
@@ -292,18 +313,36 @@ public sealed partial class HDRPSlicePlayer
         Vector3 bob = new Vector3(sway * lateral - moveX * 0.006f * viewSprint, step * vertical * bobWeight + landingOffset, Mathf.Sin(headBobTime) * depth * bobWeight);
         viewCamera.transform.localPosition = cameraBaseLocal + bob + Vector3.up * crouchOffset;
         float roll = sway * Mathf.Lerp(0.35f, 0.5f, viewSprint) * bobWeight * aimDamp - moveX * Mathf.Lerp(0.25f, 0.4f, viewSprint);
-        float lean = Mathf.Lerp(0.15f, 0.35f, viewSprint);
+        float lean = Mathf.Lerp(0.1f, 0.22f, viewSprint);
         var shake = viewKick.Shake;
-        viewCamera.transform.localRotation = Quaternion.Euler(pitch + lean - viewKick.Pitch + shake.x, viewKick.Yaw + shake.y, roll + slideRoll + viewKick.Roll + shake.z);
+        var look = Quaternion.Euler(pitch + lean - viewKick.Pitch + shake.x, viewKick.Yaw + shake.y, roll + slideRoll + viewKick.Roll + shake.z);
+        CameraTweak(out var camPos, out var camRot);
+        viewCamera.transform.localPosition += look * camPos;
+        viewCamera.transform.localRotation = look * camRot;
+        // First-person models stay put: the inverse on their parent (a child of the camera).
+        EnsureViewmodelRoot();
+        if (viewmodelFov != null)
+        {
+            var inv = Quaternion.Inverse(camRot);
+            viewmodelFov.localRotation = inv;
+            viewmodelFov.localPosition = inv * -camPos;
+        }
         fovKick = Mathf.MoveTowards(fovKick, 0f, Time.deltaTime * 25f);
         float zoom = 0f;
         if (aiming && audioCategory != ElderboomIds.Category.Melee)
         {
             zoom = weaponDisplayName != null && weaponDisplayName.Contains("1911") ? 10f : 17f;
             zoom = Mathf.Min(zoom, Mathf.Max(0f, pause.FieldOfView - 45f));
+            // Magnified optic (weapon customization): the view narrows by its magnification.
+            float magnification = ElderboomWeaponMods.Zoom(definition);
+            if (magnification > 1.01f)
+            {
+                float narrow = 2f * Mathf.Atan(Mathf.Tan(pause.FieldOfView * .5f * Mathf.Deg2Rad) / magnification) * Mathf.Rad2Deg;
+                zoom = Mathf.Max(zoom, pause.FieldOfView - narrow);
+            }
         }
         float targetFov = pause.FieldOfView - zoom + fovKick + 2.5f * viewSprint + (sliding ? 5f : 0f);
-        viewCamera.fieldOfView = Mathf.Lerp(viewCamera.fieldOfView, targetFov, 1f - Mathf.Exp(-12f * Time.deltaTime));
+        viewCamera.fieldOfView = Mathf.Lerp(viewCamera.fieldOfView, targetFov, 1f - Mathf.Exp(-18f * Time.deltaTime));
         if (!locomoting) return;
         const float plant = Mathf.PI * 0.5f;
         float now = Mathf.Repeat(headBobTime, Mathf.PI);

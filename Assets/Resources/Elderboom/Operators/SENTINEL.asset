@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a4c1a36af341437e8e5267aa7d76480, type: 3}
+  m_Name: SENTINEL
+  m_EditorClassIdentifier: Assembly-CSharp::ElderboomOperatorDefinition
+  id: SENTINEL
+  displayName: SENTINEL
+  menuOrder: 3
+  menuDescription: "Battle staff / Twin batons\nShockwave / Keep Away"
+  cardTitle: "STEEL SENTINEL \xB7 MELEE"
+  cardTag: THIRD PERSON / BATTLE STAFF
+  cardBody: Fights up close in third person. A steel staff that splits into twin batons - combos, heavy blows and a dodge instead of bullets.
+  portrait: {fileID: 0}
+  primaryWeapon: striker
+  secondaryWeapon: m1911
+  extraWeapon: 
+  weaponSlots: 2
+  weaponLabel: BATTLE STAFF
+  capacity: 12
+  reserve: 72
+  damage: 13
+  fireInterval: 0.43
+  tacticalArms: 1
+  rightHandBone: Hand.R
+  weaponMuzzle: MainWeapon_Muzzle
+  stowedWeaponNodes:
+  - output_unwrapped.003
+  abilities:
+  - {fileID: 11400000, guid: 84d7edbc823fd4794b47ec2a6e00d9f9, type: 2}
+  - {fileID: 11400000, guid: 097ea636180ae42b499542d1ce1586ee, type: 2}
+  sharedCooldown: 0
+  abilityAnimationSeconds: 3.1
+  thirdPersonMelee: 1

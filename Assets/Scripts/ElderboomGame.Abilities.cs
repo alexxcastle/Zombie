@@ -56,6 +56,7 @@ public sealed partial class ElderboomGame
     internal void IgnorePlayerFor(float seconds) { ignoredUntil = Mathf.Max(ignoredUntil, Time.time + seconds); ElderboomLan.SendIgnore(seconds); }
 
     readonly List<ElderboomZombie> abilityTargets = new List<ElderboomZombie>();
+    readonly RaycastHit[] abilityRayHits = new RaycastHit[32];
 
     // Living zombies within range of the player, inside the view cone and not behind cover.
     // The returned list is reused: copy it if you keep it across frames.
@@ -72,8 +73,12 @@ public sealed partial class ElderboomGame
             Vector3 offset = point - origin;
             float distance = Vector3.Distance(player.transform.position, zombie.transform.position);
             if (distance > range || distance < 0.1f || Vector3.Dot(offset.normalized, forward) < coneDot) continue;
-            if (Physics.Raycast(origin, offset.normalized, out var hit, offset.magnitude, ElderboomCombat.WorldMask, QueryTriggerInteraction.Ignore)
-                && hit.collider.GetComponentInParent<ElderboomZombie>() != zombie) continue;
+            // Only the world blocks an ability: a zombie standing in front of another one does not shield it.
+            int hits = Physics.RaycastNonAlloc(origin, offset.normalized, abilityRayHits, offset.magnitude, ElderboomCombat.WorldMask, QueryTriggerInteraction.Ignore);
+            bool blocked = false;
+            for (int i = 0; i < hits && !blocked; i++)
+                blocked = abilityRayHits[i].collider.GetComponentInParent<ElderboomZombie>() == null;
+            if (blocked) continue;
             abilityTargets.Add(zombie);
         }
         return abilityTargets;

@@ -28,13 +28,13 @@ using UnityEngine.AI;
 public sealed class ElderboomLan : MonoBehaviour
 {
     public enum Mode { Offline, Host, Client }
-    public const int MaxRelayPlayers = 8;
+    public const int MaxRelayPlayers = 4; // co-op: host + 3
     public const int GamePort = 47777, DiscoveryPort = 47778;
-    const float SendInterval = .05f, AnnounceInterval = 1f, PeerTimeout = 10f, GameListTimeout = 4f;
+    const float SendInterval = .05f, WorldInterval = .1f, AnnounceInterval = 1f, PeerTimeout = 10f, GameListTimeout = 4f, LoadTimeout = 120f;
     // Bump Version whenever messages change: players on different builds get a clear "update" message.
-    const byte Magic = 0xEB, Version = 6;
-    enum Msg : byte { Announce = 1, Join = 2, Accept = 3, State = 4, World = 5, Hit = 6, Damage = 7, Kill = 8, Leave = 9, Effect = 10, Ignore = 11, Collect = 12, PowerUp = 13, Grant = 14, GateOpen = 15, Reject = 16, HorsePart = 17, Altar = 18, Revive = 19 }
-    static readonly string[] Variants = { "walker", "runner", "brute" };
+    const byte Magic = 0xEB, Version = 9; // 9: Join carries the player slot to take back after a dropped connection
+    enum Msg : byte { Announce = 1, Join = 2, Accept = 3, State = 4, World = 5, Hit = 6, Damage = 7, Kill = 8, Leave = 9, Effect = 10, Ignore = 11, Collect = 12, PowerUp = 13, Grant = 14, GateOpen = 15, Reject = 16, HorsePart = 17, Altar = 18, Revive = 19, Ready = 20, Lobby = 21, Start = 22 }
+    static readonly string[] Variants = { "walker", "runner", "brute", "boss" };
 
     public static ElderboomLan Instance { get; private set; }
     public static Mode Current => Instance != null ? Instance.mode : Mode.Offline;
@@ -55,6 +55,8 @@ public sealed class ElderboomLan : MonoBehaviour
     public int LocalId { get; private set; }
     public string HostDifficulty { get; private set; } = "NORMAL";
     public int Players => mode == Mode.Host ? peers.Count + 1 : avatars.Count + 1;
+    // Host in the lobby with nobody else yet: READY must not start the match and lock friends out.
+    public bool HostAlone => mode == Mode.Host && !MatchStarted && peers.Count == 0;
     public static string LocalAddress => FindLocalAddress();
 
     Mode mode;
@@ -72,7 +74,7 @@ public sealed class ElderboomLan : MonoBehaviour
 
     // Relay transport.
     NetworkDriver driver;
-    NetworkPipeline fastPipe, reliablePipe;
+    NetworkPipeline fastPipe, reliablePipe, hitPipe;
     readonly List<NetworkConnection> connections = new List<NetworkConnection>();
     readonly Dictionary<NetworkConnection, Remote> relayRemotes = new Dictionary<NetworkConnection, Remote>();
     bool relayActive, relayConnected, lanDriver; // relayActive: a Transport driver is running (Relay or LAN)
@@ -90,6 +92,8 @@ public sealed class ElderboomLan : MonoBehaviour
         public int id; public Remote ep; public float seen; public string op = "";
         public bool hasState; public Vector3 pos; public float feet, yaw; public bool dead, downed; public int shots;
         public int seat; public Vector3 horsePos; public float horseYaw, horseSpeed; // 1 driver, 2 passenger
+        public bool ready;
+        public byte weapon;
     }
     readonly Dictionary<string, Peer> peers = new Dictionary<string, Peer>();
     int nextPeerId = 1;
@@ -131,7 +135,7 @@ public sealed class ElderboomLan : MonoBehaviour
     {
         var lan = Ensure();
         lan.CloseSockets();
-        lan.mode = Mode.Host; lan.hostDifficulty = difficulty; lan.LocalId = 0;
+        lan.mode = Mode.Host; lan.hostDifficulty = difficulty; lan.LocalId = 0; lan.ResetLobby();
         try
         {
             // Game traffic: Unity Transport on GamePort. Announcements: a separate broadcast socket.
@@ -157,7 +161,7 @@ public sealed class ElderboomLan : MonoBehaviour
     {
         var lan = Ensure();
         lan.CloseGameSocket(); lan.CloseRelay();
-        lan.mode = Mode.Client; lan.host = null; lan.joinOperator = op;
+        lan.mode = Mode.Client; lan.host = null; lan.joinOperator = op; lan.ResetLobby();
         lan.Accepted = false; lan.Failed = false; lan.joinAt = 0f; lan.joinUntil = Time.unscaledTime + 6f;
         try
         {
@@ -178,6 +182,131 @@ public sealed class ElderboomLan : MonoBehaviour
         Instance = null;
     }
 
+    // ---- Pre-match lobby -------------------------------------------------------------------
+    // Every co-op match (online or Wi-Fi) starts in a lobby: the players mark READY and the match starts, for everyone
+    // at once, LobbyCountdown seconds after the last one is ready. Nobody can join a match that has already started.
+    public const float LobbyCountdown = 5f;
+    public struct LobbyEntry { public int id; public string op; public bool ready; }
+    public readonly List<LobbyEntry> Lobby = new List<LobbyEntry>();
+    public bool MatchStarted { get; private set; }
+    public bool LocalReady { get; private set; }
+    // Seconds before the match starts, or -1 while somebody is not ready.
+    public float Countdown { get; private set; } = -1f;
+    float lobbySendAt, startAt = -1f, pulseAt;
+    // Online client: a dropped Relay connection during a match (e.g. a PC frozen while the map activates) reconnects
+    // by itself with the same code and takes back its player slot; credits, weapons and progress are local anyway.
+    string onlineCode = ""; int rejoinId = -1; bool rejoining; float rejoinUntil, attemptUntil;
+    public bool Reconnecting => rejoining;
+    bool soloStart, linkLost;
+
+    void ResetLobby()
+    {
+        MatchStarted = false; LocalReady = false; Countdown = -1f; startAt = -1f; pulseAt = 0f;
+        soloStart = false; linkLost = false; lostNoticeAt = 0f; Lobby.Clear();
+    }
+
+    public static void SetReady(bool ready)
+    {
+        var lan = Instance;
+        if (lan == null || lan.MatchStarted) return;
+        lan.LocalReady = ready;
+        lan.lobbySendAt = 0f; // tell the others now
+    }
+
+    // Host is alone: READY would start the match and reject anyone still picking an operator.
+    public static void ToggleSolo()
+    {
+        var lan = Instance;
+        if (lan == null || !lan.HostAlone) return;
+        lan.soloStart = !lan.soloStart;
+        lan.LocalReady = lan.soloStart;
+        lan.lobbySendAt = 0f;
+    }
+
+    void UpdateLobbyHost(float now)
+    {
+        if (MatchStarted || now < lobbySendAt) return;
+        lobbySendAt = now + .2f;
+        // Friends left: a READY pressed for them must not turn into a solo start.
+        if (peers.Count == 0 && !soloStart) LocalReady = false;
+        else if (peers.Count > 0) soloStart = false;
+        Lobby.Clear();
+        Lobby.Add(new LobbyEntry { id = 0, op = ElderboomMenu.Operator, ready = LocalReady });
+        bool allReady = LocalReady;
+        foreach (var peer in peers.Values) { Lobby.Add(new LobbyEntry { id = peer.id, op = peer.op, ready = peer.ready }); allReady &= peer.ready; }
+        Lobby.Sort((a, b) => a.id.CompareTo(b.id));
+        // Alone, the match starts only after an explicit START SOLO. A friend joining still has to ready up.
+        bool canStart = allReady && (peers.Count > 0 || soloStart);
+        if (!canStart) startAt = -1f;
+        else if (startAt < 0f) { startAt = now + LobbyCountdown; Log("everyone ready: match starts in " + LobbyCountdown + " s"); }
+        Countdown = startAt < 0f ? -1f : Mathf.Max(0f, startAt - now);
+        if (startAt >= 0f && now >= startAt)
+        {
+            MatchStarted = true; Countdown = 0f; pulseAt = now + .5f;
+            foreach (var peer in peers.Values) peer.seen = now;
+            Begin(Msg.Start);
+            foreach (var peer in peers.Values) Send(peer.ep, true);
+            Log("match started with " + (peers.Count + 1) + " players");
+            return;
+        }
+        var w = Begin(Msg.Lobby);
+        w.Write(Countdown); w.Write((byte)Lobby.Count);
+        foreach (var e in Lobby) { w.Write((byte)e.id); w.Write(e.op ?? ""); w.Write(e.ready); }
+        foreach (var peer in peers.Values) Send(peer.ep, true);
+    }
+
+    void UpdateLobbyClient(float now)
+    {
+        if (MatchStarted || now < lobbySendAt) return;
+        lobbySendAt = now + .4f; // also the keep-alive that stops the host from timing us out
+        var w = Begin(Msg.Ready); w.Write(LocalReady); w.Write(joinOperator ?? "");
+        Send(host, true);
+        if (now - hostSeen > PeerTimeout && !Failed) Fail("CONNECTION TO HOST LOST");
+    }
+
+    // Start is tiny and reliable: it keeps hostSeen fresh while the map loads and while snapshots are dropped.
+    void PulseStart(float now, bool inGame)
+    {
+        if (!MatchStarted || now < pulseAt) return;
+        pulseAt = now + (inGame ? 1f : .5f);
+        Begin(Msg.Start);
+        foreach (var peer in peers.Values) Send(peer.ep, true);
+    }
+
+    void PulseReady(float now)
+    {
+        if (now < lobbySendAt) return;
+        lobbySendAt = now + .4f;
+        var w = Begin(Msg.Ready); w.Write(LocalReady); w.Write(joinOperator ?? "");
+        Send(host, true);
+    }
+
+    void NoteLinkLost()
+    {
+        hostSeen = -100f;
+        if (linkLost) return;
+        linkLost = true;
+        Log("connection to host lost");
+        if (ElderboomGame.Active != null) { ElderboomGame.Active.ShowNotice("CONNECTION TO HOST LOST", 5f); lostNoticeAt = 1f; }
+    }
+
+    void StartRejoin()
+    {
+        rejoining = true; rejoinId = LocalId; Accepted = false; Failed = false;
+        rejoinUntil = Time.unscaledTime + 90f; attemptUntil = 0f;
+        Status = "RECONNECTING..."; Log("relay dropped during the match: reconnecting as player " + rejoinId);
+        ElderboomGame.Active?.ShowNotice("CONNECTION LOST // RECONNECTING...", 6f);
+    }
+
+    void TickRejoin(float now, ElderboomGame game)
+    {
+        if (now > rejoinUntil) { rejoining = false; Log("reconnect gave up"); NoteLinkLost(); return; }
+        if (now < attemptUntil) return;
+        attemptUntil = now + 14f; Failed = false;
+        if (game != null && game.IsPlaying) game.ShowNotice("RECONNECTING TO THE HOST...", 3f);
+        _ = JoinOnlineAsync(onlineCode); // new Relay connection; Join below asks for the old slot
+    }
+
     public static void StopDiscovery() { if (Instance != null) Instance.CloseDiscovery(); }
 
     // Client: a shot on a zombie proxy goes to the host, which applies it to the real zombie.
@@ -187,7 +316,7 @@ public sealed class ElderboomLan : MonoBehaviour
         if (lan == null || lan.mode != Mode.Client || !lan.Accepted || proxy == null) return;
         var w = lan.Begin(Msg.Hit);
         w.Write(proxy.NetId); w.Write(amount); Write(w, point); Write(w, normal);
-        lan.Send(lan.host, true);
+        lan.SendReliable(lan.host, lan.hitPipe, lan.hitOutbox); // own reliable window: a burst cannot block revive, gates or rewards
     }
 
     // Client: an ability effect on a zombie proxy (freeze, push, lift, ...) is applied by the host to the real zombie.
@@ -434,7 +563,7 @@ public sealed class ElderboomLan : MonoBehaviour
     {
         var lan = Ensure();
         lan.CloseSockets();
-        lan.mode = Mode.Host; lan.hostDifficulty = difficulty; lan.LocalId = 0;
+        lan.mode = Mode.Host; lan.hostDifficulty = difficulty; lan.LocalId = 0; lan.ResetLobby();
         lan.HostReady = false; lan.Failed = false; lan.JoinCode = "";
         lan.Status = "CREATING ONLINE GAME...";
         _ = lan.HostOnlineAsync();
@@ -445,10 +574,11 @@ public sealed class ElderboomLan : MonoBehaviour
     {
         var lan = Ensure();
         lan.CloseSockets();
-        lan.mode = Mode.Client; lan.joinOperator = op; lan.host = null;
+        lan.mode = Mode.Client; lan.joinOperator = op; lan.host = null; lan.ResetLobby();
         lan.Accepted = false; lan.Failed = false; lan.joinAt = 0f; lan.joinUntil = float.MaxValue;
         lan.Status = "CONNECTING ONLINE...";
-        _ = lan.JoinOnlineAsync((code ?? "").Trim().ToUpperInvariant());
+        lan.onlineCode = (code ?? "").Trim().ToUpperInvariant(); lan.rejoinId = -1; lan.rejoining = false;
+        _ = lan.JoinOnlineAsync(lan.onlineCode);
     }
 
     void Fail(string why)
@@ -527,10 +657,14 @@ public sealed class ElderboomLan : MonoBehaviour
     {
         // Big hordes: a snapshot with 130 zombies is about 3 KB, above the 4 KB default once pickups and players are added.
         Unity.Networking.Transport.Utilities.FragmentationStageParameterExtensions.WithFragmentationStageParameters(ref settings, payloadCapacity: 8192);
+        // Each reliable pipeline has its own window. Hits use a second one, so a full-auto burst cannot fill the
+        // window that carries join, revive, gates and rewards, and a refused hit is queued instead of dropped.
+        Unity.Networking.Transport.Utilities.ReliableStageParameterExtensions.WithReliableStageParameters(ref settings, windowSize: 64);
         driver = NetworkDriver.Create(settings);
-        // Snapshots: unreliable (a newer one follows); events (join, hits, damage, kills): reliable and ordered.
+        // Snapshots: unreliable (a newer one follows). Events and hits: reliable and ordered, on separate pipelines.
         fastPipe = driver.CreatePipeline(typeof(FragmentationPipelineStage));
         reliablePipe = driver.CreatePipeline(typeof(FragmentationPipelineStage), typeof(ReliableSequencedPipelineStage));
+        hitPipe = driver.CreatePipeline(typeof(FragmentationPipelineStage), typeof(ReliableSequencedPipelineStage));
         relayActive = true; lanDriver = lan;
         if (driver.Bind(bind) != 0) { if (!lan) Fail("COULD NOT REACH THE ONLINE SERVICE"); return false; }
         return true;
@@ -540,6 +674,7 @@ public sealed class ElderboomLan : MonoBehaviour
     {
         if (!relayActive || !driver.IsCreated) return;
         driver.ScheduleUpdate().Complete();
+        FlushOutbox();
         if (mode == Mode.Host)
         {
             NetworkConnection c;
@@ -577,8 +712,10 @@ public sealed class ElderboomLan : MonoBehaviour
                     else
                     {
                         relayConnected = false;
-                        if (!Accepted) { if (!Failed) Fail("THE HOST DID NOT ACCEPT THE CONNECTION"); }
-                        else { ElderboomGame.Active?.ShowNotice("CONNECTION TO HOST LOST", 5f); hostSeen = -100f; }
+                        if (rejoining) { attemptUntil = 0f; } // this attempt failed: the loop tries again
+                        else if (!Accepted) { if (!Failed) Fail("THE HOST DID NOT ACCEPT THE CONNECTION"); }
+                        else if (MatchStarted && onlineCode.Length >= 4) StartRejoin();
+                        else NoteLinkLost();
                     }
                     break;
                 }
@@ -588,6 +725,7 @@ public sealed class ElderboomLan : MonoBehaviour
 
     void CloseRelay()
     {
+        outbox.Clear(); hitOutbox.Clear();
         if (driver.IsCreated)
         {
             foreach (var c in connections) driver.Disconnect(c);
@@ -695,9 +833,55 @@ public sealed class ElderboomLan : MonoBehaviour
         writer.Flush();
         if (!to.relay) { SendUdp(to.ep); return; }
         if (!relayActive || !driver.IsCreated) return;
-        if (driver.BeginSend(reliable ? reliablePipe : fastPipe, to.conn, out var w) != 0) return;
-        w.WriteBytes(new Span<byte>(outStream.GetBuffer(), 0, (int)outStream.Length));
-        driver.EndSend(w);
+        if (reliable) { SendReliable(to, reliablePipe, outbox); return; }
+        TrySendRaw(fastPipe, to.conn, outStream.GetBuffer(), (int)outStream.Length);
+    }
+
+    readonly Dictionary<NetworkConnection, Queue<byte[]>> outbox = new Dictionary<NetworkConnection, Queue<byte[]>>();
+    readonly Dictionary<NetworkConnection, Queue<byte[]>> hitOutbox = new Dictionary<NetworkConnection, Queue<byte[]>>();
+
+    // Hits and gameplay events are both resent until acknowledged, but not through the same window.
+    void SendReliable(Remote to, NetworkPipeline pipe, Dictionary<NetworkConnection, Queue<byte[]>> box)
+    {
+        if (to == null) return;
+        writer.Flush();
+        if (!to.relay) { SendUdp(to.ep); return; }
+        if (!relayActive || !driver.IsCreated) return;
+        if (!box.TryGetValue(to.conn, out var queue)) box[to.conn] = queue = new Queue<byte[]>();
+        // Keep the order: once something waits, later messages on this pipe wait behind it.
+        if (queue.Count > 0 || !TrySendRaw(pipe, to.conn, outStream.GetBuffer(), (int)outStream.Length))
+        {
+            queue.Enqueue(outStream.ToArray());
+            while (queue.Count > 1024) queue.Dequeue();
+        }
+    }
+
+    bool TrySendRaw(NetworkPipeline pipe, NetworkConnection conn, byte[] data, int length)
+    {
+        if (driver.BeginSend(pipe, conn, out var w) != 0) return false;
+        w.WriteBytes(new Span<byte>(data, 0, length));
+        return driver.EndSend(w) >= 0;
+    }
+
+    // Reliable messages refused because the window was full go out as soon as acknowledgements free it.
+    void FlushOutbox()
+    {
+        if (!relayActive || !driver.IsCreated) return;
+        FlushOne(outbox, reliablePipe);
+        FlushOne(hitOutbox, hitPipe);
+    }
+
+    void FlushOne(Dictionary<NetworkConnection, Queue<byte[]>> box, NetworkPipeline pipe)
+    {
+        if (box.Count == 0) return;
+        List<NetworkConnection> gone = null;
+        foreach (var kv in box)
+        {
+            if (driver.GetConnectionState(kv.Key) != NetworkConnection.State.Connected) { (gone ??= new List<NetworkConnection>()).Add(kv.Key); continue; }
+            var queue = kv.Value;
+            while (queue.Count > 0 && TrySendRaw(pipe, kv.Key, queue.Peek(), queue.Peek().Length)) queue.Dequeue();
+        }
+        if (gone != null) foreach (var c in gone) if (driver.GetConnectionState(c) == NetworkConnection.State.Disconnected) box.Remove(c);
     }
 
     void SendUdp(IPEndPoint to)
@@ -762,8 +946,15 @@ public sealed class ElderboomLan : MonoBehaviour
         {
             if (now >= announceAt) { announceAt = now + AnnounceInterval; Announce(); }
             var lost = new List<string>();
-            foreach (var kv in peers) if (now - kv.Value.seen > PeerTimeout) lost.Add(kv.Key);
+            // Before the match, silence means they left. After it starts, no position yet means the map is still loading.
+            foreach (var kv in peers)
+            {
+                float limit = MatchStarted && !kv.Value.hasState ? LoadTimeout : PeerTimeout;
+                if (now - kv.Value.seen > limit) lost.Add(kv.Key);
+            }
             foreach (var key in lost) RemovePeer(key, "LEFT");
+            UpdateLobbyHost(now);
+            PulseStart(now, inGame);
             if (inGame && game.IsPlaying && game.Session != placedSession) { placedSession = game.Session; game.ShowNotice(Online ? "ONLINE GAME  //  CODE " + JoinCode : "LAN HOST  //  JOIN ON " + LocalAddress, 8f); }
             if (inGame)
             {
@@ -771,11 +962,11 @@ public sealed class ElderboomLan : MonoBehaviour
                     if (peer.hasState)
                     {
                         var avatar = AvatarFor(peer.id, peer.op);
-                        avatar.Apply(peer.pos, peer.feet, peer.yaw, peer.dead, peer.shots, peer.seat, peer.downed);
+                        avatar.Apply(peer.pos, peer.feet, peer.yaw, peer.dead, peer.shots, peer.seat, peer.downed, peer.weapon);
                     }
                 if (now >= sendAt)
                 {
-                    sendAt = now + SendInterval;
+                    sendAt = now + WorldInterval;
                     try { SendWorld(game); }
                     catch (Exception e) { if (now >= worldErrorAt) { worldErrorAt = now + 5f; Log("snapshot error " + e); } }
                 }
@@ -786,15 +977,30 @@ public sealed class ElderboomLan : MonoBehaviour
             if (!Accepted)
             {
                 bool canSend = host != null && (!host.relay || relayConnected);
-                if (canSend && now >= joinAt) { joinAt = now + .4f; var w = Begin(Msg.Join); w.Write(joinOperator ?? ""); Send(host, true); }
-                if (host != null && now > joinUntil && !Failed) { Failed = true; Status = "NO ANSWER FROM " + host.Label.ToUpperInvariant(); }
+                if (canSend && now >= joinAt) { joinAt = now + .4f; var w = Begin(Msg.Join); w.Write(joinOperator ?? ""); w.Write((sbyte)(rejoining ? rejoinId : -1)); Send(host, true); }
+                if (rejoining) TickRejoin(now, game);
+                else if (host != null && now > joinUntil && !Failed) { Failed = true; Status = "NO ANSWER FROM " + host.Label.ToUpperInvariant(); }
             }
-            else if (inGame)
+            else if (!MatchStarted) UpdateLobbyClient(now);
+            else
             {
-                PlaceLocalPlayer(game);
-                if (now >= sendAt) { sendAt = now + SendInterval; try { SendState(game); } catch (Exception e) { if (now >= worldErrorAt) { worldErrorAt = now + 5f; Log("state error " + e); } } }
-                UpdateProxies();
-                if (now - hostSeen > PeerTimeout && now >= lostNoticeAt) { lostNoticeAt = now + 5f; game.ShowNotice("CONNECTION TO HOST LOST", 4f); Log("no snapshot from host for " + (now - hostSeen).ToString("F1") + " s, relayConnected=" + relayConnected); }
+                if (!inGame) PulseReady(now);
+                else
+                {
+                    PlaceLocalPlayer(game);
+                    if (now >= sendAt) { sendAt = now + SendInterval; try { SendState(game); } catch (Exception e) { if (now >= worldErrorAt) { worldErrorAt = now + 5f; Log("state error " + e); } } }
+                    UpdateProxies();
+                    if (linkLost)
+                    {
+                        if (lostNoticeAt == 0f) { lostNoticeAt = 1f; game.ShowNotice("CONNECTION TO HOST LOST", 5f); }
+                    }
+                    else if (now - hostSeen > PeerTimeout && now >= lostNoticeAt)
+                    {
+                        lostNoticeAt = now + 5f;
+                        game.ShowNotice("CONNECTION TO HOST LOST", 4f);
+                        Log("no word from host for " + (now - hostSeen).ToString("F1") + " s, relayConnected=" + relayConnected);
+                    }
+                }
             }
         }
     }
@@ -834,9 +1040,32 @@ public sealed class ElderboomLan : MonoBehaviour
             {
                 if (mode != Mode.Host) return;
                 string op = r.ReadString();
+                int rejoin = r.BaseStream.Position < r.BaseStream.Length ? r.ReadSByte() : -1;
                 string key = remote.Key;
+                if (!peers.ContainsKey(key) && MatchStarted && rejoin >= 1 && rejoin < nextPeerId)
+                {
+                    // A player whose connection dropped takes back the same slot (avatar, number) on a new connection.
+                    string stale = null;
+                    foreach (var kv in peers) if (kv.Value.id == rejoin) stale = kv.Key;
+                    if (stale != null) peers.Remove(stale);
+                    peers[key] = new Peer { id = rejoin, ep = remote, op = op, seen = now };
+                    ElderboomGame.Active?.ShowNotice("PLAYER " + (rejoin + 1) + " RECONNECTED", 3f);
+                    Log("player " + rejoin + " reconnected from " + key);
+                }
                 if (!peers.TryGetValue(key, out var peer))
                 {
+                    if (peers.Count + 1 >= MaxRelayPlayers)
+                    {
+                        Begin(Msg.Reject); writer.Write("THE LOBBY IS FULL (" + MaxRelayPlayers + "/" + MaxRelayPlayers + " PLAYERS)");
+                        Send(remote, true);
+                        return;
+                    }
+                    if (MatchStarted)
+                    {
+                        Begin(Msg.Reject); writer.Write("THE MATCH HAS ALREADY STARTED: JOIN THE NEXT ONE");
+                        Send(remote, true);
+                        return;
+                    }
                     peer = new Peer { id = nextPeerId++, ep = remote };
                     peers[key] = peer;
                     ElderboomGame.Active?.ShowNotice("PLAYER " + (peer.id + 1) + " JOINED", 3f);
@@ -852,6 +1081,11 @@ public sealed class ElderboomLan : MonoBehaviour
                 if (mode != Mode.Client || !SameHost(remote)) return;
                 LocalId = r.ReadByte(); HostDifficulty = r.ReadString();
                 if (!Accepted) { Accepted = true; hostSeen = now; Status = "CONNECTED AS PLAYER " + (LocalId + 1); Log("accepted as player " + LocalId); }
+                if (rejoining)
+                {
+                    rejoining = false; linkLost = false; lostNoticeAt = 0f; sendAt = 0f;
+                    ElderboomGame.Active?.ShowNotice("RECONNECTED", 3f); Log("reconnected as player " + LocalId);
+                }
                 return;
             }
             case Msg.State:
@@ -859,13 +1093,35 @@ public sealed class ElderboomLan : MonoBehaviour
                 if (mode != Mode.Host || !peers.TryGetValue(remote.Key, out var peer)) return;
                 peer.seen = now;
                 peer.op = r.ReadString(); peer.pos = ReadV(r); peer.feet = r.ReadSingle(); peer.yaw = r.ReadSingle();
-                byte flags = r.ReadByte(); peer.dead = (flags & 1) != 0; peer.downed = (flags & 8) != 0; peer.shots = r.ReadUInt16(); peer.hasState = true;
+                byte flags = r.ReadByte(); peer.dead = (flags & 1) != 0; peer.downed = (flags & 8) != 0; peer.shots = r.ReadUInt16(); peer.weapon = r.ReadByte(); peer.hasState = true;
                 peer.seat = (flags >> 1) & 3;
                 if (peer.seat == 1) { peer.horsePos = ReadV(r); peer.horseYaw = r.ReadSingle(); peer.horseSpeed = r.ReadSingle(); }
                 return;
             }
             case Msg.World:
-                if (mode == Mode.Client && SameHost(remote)) { hostSeen = now; ApplyWorld(r); }
+                if (mode == Mode.Client && SameHost(remote)) { hostSeen = now; if (!MatchStarted) { MatchStarted = true; Log("match started (snapshot)"); } ApplyWorld(r); }
+                return;
+            case Msg.Ready:
+            {
+                if (mode != Mode.Host || !peers.TryGetValue(remote.Key, out var peer)) return;
+                peer.seen = now; peer.ready = r.ReadBoolean(); peer.op = r.ReadString();
+                return;
+            }
+            case Msg.Lobby:
+            {
+                if (mode != Mode.Client || !SameHost(remote)) return;
+                hostSeen = now;
+                if (MatchStarted) return;
+                Countdown = r.ReadSingle();
+                int count = r.ReadByte();
+                Lobby.Clear();
+                for (int i = 0; i < count; i++) Lobby.Add(new LobbyEntry { id = r.ReadByte(), op = r.ReadString(), ready = r.ReadBoolean() });
+                return;
+            }
+            case Msg.Start:
+                if (mode != Mode.Client || !SameHost(remote)) return;
+                hostSeen = now;
+                if (!MatchStarted) { MatchStarted = true; Countdown = 0f; Log("match started"); }
                 return;
             case Msg.Hit:
             {
@@ -1059,7 +1315,7 @@ public sealed class ElderboomLan : MonoBehaviour
         var w = Begin(Msg.State);
         w.Write(game.Operator != null ? game.Operator.id : ElderboomMenu.Operator);
         Write(w, p.transform.position); w.Write(FeetOffset(p)); w.Write(p.transform.eulerAngles.y);
-        w.Write((byte)((p.IsDead ? 1 : 0) | (LocalSeat() << 1) | (p.Downed ? 8 : 0))); w.Write((ushort)(game.ShotsFired & 0xFFFF));
+        w.Write((byte)((p.IsDead ? 1 : 0) | (LocalSeat() << 1) | (p.Downed ? 8 : 0))); w.Write((ushort)(game.ShotsFired & 0xFFFF)); w.Write(p.WeaponKind);
         var horse = ElderboomMount.Instance;
         if (LocalSeat() == 1 && horse != null) { Write(w, horse.transform.position); w.Write(horse.transform.eulerAngles.y); w.Write(horse.Speed); }
         Send(host);
@@ -1078,13 +1334,13 @@ public sealed class ElderboomLan : MonoBehaviour
         ResolveSeats();
         w.Write((byte)0); w.Write(game.Operator != null ? game.Operator.id : ElderboomMenu.Operator);
         Write(w, p.transform.position); w.Write(FeetOffset(p)); w.Write(p.transform.eulerAngles.y);
-        w.Write((byte)((p.IsDead ? 1 : 0) | (LocalSeat() << 1) | (p.Downed ? 8 : 0))); w.Write((ushort)(game.ShotsFired & 0xFFFF));
+        w.Write((byte)((p.IsDead ? 1 : 0) | (LocalSeat() << 1) | (p.Downed ? 8 : 0))); w.Write((ushort)(game.ShotsFired & 0xFFFF)); w.Write(p.WeaponKind);
         foreach (var peer in peers.Values)
         {
             if (!peer.hasState) continue;
             w.Write((byte)peer.id); w.Write(peer.op ?? "");
             Write(w, peer.pos); w.Write(peer.feet); w.Write(peer.yaw);
-            w.Write((byte)((peer.dead ? 1 : 0) | (peer.seat << 1) | (peer.downed ? 8 : 0))); w.Write((ushort)peer.shots);
+            w.Write((byte)((peer.dead ? 1 : 0) | (peer.seat << 1) | (peer.downed ? 8 : 0))); w.Write((ushort)peer.shots); w.Write(peer.weapon);
         }
 
         // Zombies: id, position, yaw, animator state and speed, flags.
@@ -1140,10 +1396,10 @@ public sealed class ElderboomLan : MonoBehaviour
         {
             int id = r.ReadByte(); string op = r.ReadString();
             var pos = ReadV(r); float feet = r.ReadSingle(), yaw = r.ReadSingle();
-            int flags = r.ReadByte(); bool dead = (flags & 1) != 0; int shots = r.ReadUInt16();
+            int flags = r.ReadByte(); bool dead = (flags & 1) != 0; int shots = r.ReadUInt16(); byte weapon = r.ReadByte();
             if (id == LocalId || game == null) continue;
             seenPlayers.Add(id);
-            AvatarFor(id, op).Apply(pos, feet, yaw, dead, shots, (flags >> 1) & 3, (flags & 8) != 0);
+            AvatarFor(id, op).Apply(pos, feet, yaw, dead, shots, (flags >> 1) & 3, (flags & 8) != 0, weapon);
         }
         dropPlayers.Clear();
         foreach (var id in avatars.Keys) if (!seenPlayers.Contains(id)) dropPlayers.Add(id);
@@ -1200,6 +1456,7 @@ public sealed class ElderboomLan : MonoBehaviour
         if (prefab == null) prefab = Resources.Load<GameObject>("Elderboom/Zombie");
         if (prefab == null) return null;
         var go = Instantiate(prefab, pos, Quaternion.Euler(0f, yaw, 0f));
+        go.transform.localScale *= ElderboomZombie.BodyScale; // same size as on the host
         go.name = "LanZombie_" + id;
         var profile = go.GetComponent<ElderboomZombieProfile>(); if (profile != null && profile.scale > .01f) go.transform.localScale *= profile.scale;
         foreach (var agent in go.GetComponentsInChildren<NavMeshAgent>(true)) agent.enabled = false;

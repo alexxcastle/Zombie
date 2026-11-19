@@ -13,8 +13,8 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
 {
 
     [Header("Movement")]
-    [SerializeField] float walkSpeed = 4.2f;
-    [SerializeField] float sprintSpeed = 6.1f;
+    [SerializeField] float walkSpeed = 4.8f;
+    [SerializeField] float sprintSpeed = 6.9f;
     [SerializeField] float mouseSensitivity = 1.8f;
     [SerializeField] float jumpHeight = 1.0f;
     [Header("AKMN")]
@@ -78,7 +78,7 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
     float damagePulse, heartAt;
     public float DamagePulse => damagePulse;
     public IReadOnlyList<(Vector3 from, float at)> RecentHits => recentHits;
-    public void AddTrauma(float amount) => viewKick.AddTrauma(amount);
+    public void AddTrauma(float amount) { viewKick.AddTrauma(amount); ElderboomGamepad.Rumble(amount * .7f, amount, .12f + amount * .3f); }
     float fovKick;
     float stamina=100f,regenAt,footstepAt,sprintStarted;
     bool exhausted,sprinting;
@@ -90,6 +90,9 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
 
     public float Health => health;
     public bool IsDead => dead;
+    public bool IsAiming => aiming;
+    public ElderboomWeaponDefinition CurrentWeaponDefinition => definition;
+    public Transform ActiveWeaponTransform => weaponRoot;
     public const float ReviveWindow = 20f;
     float hurtVoiceAt;
     public bool Downed { get; private set; }
@@ -132,10 +135,29 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
     public int Ammo => ammo;
     public int ReserveAmmo => reserveAmmo;
     public string OperatorDisplayName => operatorDisplayName;
+    // Weapon kind sent to teammates (ElderboomLan), so they hear the right weapon.
+    public const byte KindRifle = 0, KindHandgun = 1, KindShotgun = 2, KindSmg = 3, KindMelee = 4, KindFlame = 5, KindExplosive = 6;
+    public byte WeaponKind
+    {
+        get
+        {
+            if (definition != null && definition.FireMode == ElderboomFireMode.Flame) return KindFlame;
+            if (definition != null && definition.FireMode == ElderboomFireMode.Explosive) return KindExplosive;
+            switch (audioCategory)
+            {
+                case ElderboomIds.Category.Handgun: return KindHandgun;
+                case ElderboomIds.Category.Shotgun: return KindShotgun;
+                case ElderboomIds.Category.Melee: return KindMelee;
+                case "smg": return KindSmg;
+            }
+            return KindRifle;
+        }
+    }
+    public static string KindCategory(byte kind) => kind == KindHandgun ? ElderboomIds.Category.Handgun : kind == KindShotgun ? ElderboomIds.Category.Shotgun : kind == KindSmg ? "smg" : ElderboomIds.Category.AssaultRifle;
     public string WeaponDisplayName => weaponDisplayName + (definition != null && definition.upgraded ? " // CRIMSON" : "");
     public bool SettingsOpen => pause != null && pause.IsOpen;
     public bool ActionDown(string action) => Down(action);
-    public string ActionLabel(string action) => ElderboomInput.Label(action);
+    public string ActionLabel(string action) => ElderboomInput.Prompt(action);
     public bool Reloading => reloading;
     public int Syringes {get;private set;}
     static bool Down(string action) => ElderboomInput.Down(action);
@@ -184,25 +206,36 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
         // Only an ability that took the weapon away blocks the trigger.
         var arsenal = GetComponent<ElderboomArsenal>();
         bool handBusy = abilityBusy && ((arms != null && arms.HidesWeapon) || (arsenal != null && arsenal.AbilityHidesWeapon));
+        if (MeleeOperator)
+        {   // third-person melee operator (ElderboomSentinel): no gun, abilities still on their keys
+            aiming = false; ApplyViewBob();
+            if (Input.GetKeyDown(KeyCode.Alpha1)) ElderboomGame.Active?.SelectAbility(0);
+            if (Input.GetKeyDown(KeyCode.Alpha2)) ElderboomGame.Active?.SelectAbility(1);
+            if (Down("shockwave") && !abilityBusy) ElderboomGame.Active?.UseSelectedAbility(this);
+            return;
+        }
         UpdateWeaponPose(arms, abilityBusy);
         ApplyViewBob();
         UpdateWeaponActions(abilityBusy, handBusy);
     }
+
+    // Set by ElderboomSentinel: the operator fights in third person with a melee weapon.
+    public bool MeleeOperator { get; set; }
+    public float MeleeMoveScale { get; set; } = 1f;
+    public float InvulnerableUntil { get; set; }
 
     // Riding behind on the mechanical horse (ElderboomMount): no walking, everything else as usual.
     public bool Seated { get; set; }
 
     public void TakeDamage(float amount) => TakeDamage(amount, transform.position);
 
-#if UNITY_EDITOR
-    public static bool DevInvulnerable; // Elderboom HDRP > Dev > Toggle Invulnerable (Editor only)
-#endif
+    public static bool DevInvulnerable; // Dev menu (editor) and the in-game cheat menu (ElderboomCheats)
     public void TakeDamage(float amount, Vector3 source)
     {
-#if UNITY_EDITOR
         if (DevInvulnerable && amount < 999f) return;
-#endif
         if (dead || amount<=0) return;
+        if (Time.time < InvulnerableUntil && amount < 999f) return; // dodge
+        ElderboomGamepad.Rumble(.85f, .5f, .22f);
         health = Mathf.Max(0f, health - amount);
         if (health > 0f && Time.time >= hurtVoiceAt) { hurtVoiceAt = Time.time + .45f; ElderboomAudio.PlayAny("player/hurt", 3, transform.position, .7f, false); }
         ElderboomGame.Active?.ReportPlayerDamage(amount);
@@ -255,7 +288,7 @@ public sealed partial class HDRPSlicePlayer : MonoBehaviour
         float cx = Screen.width * 0.5f, cy = Screen.height * 0.5f;
         GUI.color = Color.white;
         if(HitMarkerVisible)hitMarker.Draw(new Vector2(cx,cy),Time.time);
-        else
+        else if (!aiming) // no pointer while aiming down sights
         {
             GUI.DrawTexture(new Rect(cx - 8, cy - 1, 16, 2), Texture2D.whiteTexture);
             GUI.DrawTexture(new Rect(cx - 1, cy - 8, 2, 16), Texture2D.whiteTexture);

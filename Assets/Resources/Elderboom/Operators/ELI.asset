@@ -15,14 +15,12 @@ MonoBehaviour:
   id: ELI
   displayName: ELI
   menuOrder: 1
-  menuDescription: 'SIG 550
-
-    Ignore / Pulse / Freeze'
+  menuDescription: Ignore / Pulse / Freeze
   cardTitle: "ELI \xB7 ACOUSTIC OPERATOR"
-  cardTag: URBAN SURVIVOR / SIG 550
+  cardTag: URBAN SURVIVOR
   cardBody: Uses the acoustic signal to divert or immobilize nearby zombies.
   portrait: {fileID: 2800000, guid: fd43c86c89c3647dab43cf2a8352b037, type: 3}
-  primaryWeapon: sig550
+  primaryWeapon: 
   secondaryWeapon: rhino
   extraWeapon: 
   weaponSlots: 2

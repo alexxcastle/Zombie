@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2691246475660358026}
-  - component: {fileID: 3210118940118055170}
   m_Layer: 19
   m_Name: armmesh
   m_TagString: Untagged
@@ -32,114 +31,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 539378152909167234}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &3210118940118055170
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 121789770908861219}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 8243980396678913872, guid: 3c4cd5816545049239e06990996dc8ba, type: 3}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 0
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 2943159094147269357, guid: 3c4cd5816545049239e06990996dc8ba, type: 3}
-  m_Bones:
-  - {fileID: 767035810283504190}
-  - {fileID: 4292849195507156199}
-  - {fileID: 4814225505871365525}
-  - {fileID: 8503439063787536649}
-  - {fileID: 2589894432541105917}
-  - {fileID: 8760663631873159377}
-  - {fileID: 2182339998359481482}
-  - {fileID: 7698860798826336085}
-  - {fileID: 4267676087040960287}
-  - {fileID: 2297801393031957325}
-  - {fileID: 4514980489160626542}
-  - {fileID: 6699385567736292234}
-  - {fileID: 7891397639980584670}
-  - {fileID: 2905050875769137995}
-  - {fileID: 6405415953602384379}
-  - {fileID: 6978144573280093356}
-  - {fileID: 4397292914000887481}
-  - {fileID: 8673310264858167487}
-  - {fileID: 118408753926784921}
-  - {fileID: 7696734118574354090}
-  - {fileID: 6000855440278009754}
-  - {fileID: 1813427438989108093}
-  - {fileID: 3133485873764897109}
-  - {fileID: 1646878101835654623}
-  - {fileID: 7592227694913658203}
-  - {fileID: 8279547631616904054}
-  - {fileID: 4457522902946879936}
-  - {fileID: 1939611110411059182}
-  - {fileID: 3175761920175494144}
-  - {fileID: 1115476022662715315}
-  - {fileID: 2298186366711720786}
-  - {fileID: 5814375799683497250}
-  - {fileID: 3928279928915958807}
-  - {fileID: 7206852114362137827}
-  - {fileID: 2699529223774462767}
-  - {fileID: 5530346047465857827}
-  - {fileID: 8373919914767036245}
-  - {fileID: 4319597198333633128}
-  - {fileID: 6900659106033551575}
-  - {fileID: 6203698956500068912}
-  - {fileID: 2098770904589625237}
-  - {fileID: 8389813339753847327}
-  - {fileID: 7402163078597883568}
-  - {fileID: 8565092964052666870}
-  - {fileID: 7997229389998935623}
-  - {fileID: 837842780061019092}
-  - {fileID: 8224399458064633120}
-  - {fileID: 1226285600602495436}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 7592227694913658203}
-  m_AABB:
-    m_Center: {x: 0.05283138, y: 0.2782415, z: -0.047826514}
-    m_Extent: {x: 0.39497277, y: 0.5002456, z: 0.47757477}
-  m_DirtyAABB: 0
 --- !u!1 &316323400563741274
 GameObject:
   m_ObjectHideFlags: 0
@@ -1496,6 +1387,8 @@ MonoBehaviour:
   hasAds: 0
   framingStored: 1
   authoredReloadTiming: 0
+  proceduralReload: 0
+  reloadPivot: {x: 0, y: 0, z: 0}
 --- !u!1 &6679345207935003631
 GameObject:
   m_ObjectHideFlags: 0

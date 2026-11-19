@@ -12,6 +12,8 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
     public Light processLight;
     HDRPSlicePlayer customer;
     ElderboomArsenal inventory;
+    ElderboomSentinel staff; // the melee operator upgrades the battle staff instead of a firearm
+    static ElderboomSentinel StaffOf(HDRPSlicePlayer player) { var s = player != null ? player.GetComponent<ElderboomSentinel>() : null; return s != null && s.Active ? s : null; }
     ElderboomGame transactionGame;
     GameObject display;
     int session, paid;
@@ -47,7 +49,12 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
         var game = ElderboomGame.Active;
         if (Busy || pendingUntil > Time.unscaledTime || player == null || !Focused(player) || game == null || !game.CanInteract || player.Seated) return false;
         var arsenal = player.GetComponent<ElderboomArsenal>();
-        if (arsenal == null || !arsenal.CanUpgradeActive)
+        var melee = StaffOf(player);
+        if (melee != null)
+        {
+            if (!melee.CanUpgrade) { if (melee.Upgraded) game.ShowNotice("STAFF ALREADY UPGRADED"); return false; }
+        }
+        else if (arsenal == null || !arsenal.CanUpgradeActive)
         { game.ShowNotice(arsenal != null && arsenal.ActiveUpgraded ? "WEAPON ALREADY UPGRADED" : "EQUIP A PERMANENT FIREARM"); return false; }
         if (!ElderboomPowerGrid.RequirePower(transform.position)) return false;
         if (game.Credits < cost) { game.ShowNotice("NEED " + cost + " CREDITS"); return false; }
@@ -63,12 +70,14 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
     {
         var game = ElderboomGame.Active;
         var arsenal = player != null ? player.GetComponent<ElderboomArsenal>() : null;
-        if (game == null || !game.CanInteract || !Focused(player) || arsenal == null || !arsenal.CanUpgradeActive || game.Credits < cost)
+        var melee = StaffOf(player);
+        if (game == null || !game.CanInteract || !Focused(player) || game.Credits < cost
+            || (melee != null ? !melee.CanUpgrade : arsenal == null || !arsenal.CanUpgradeActive))
         { Release(); return false; }
-        var visual = arsenal.BeginAltarDeposit(weaponSocket);
+        var visual = melee != null ? melee.BeginAltarDeposit(weaponSocket) : arsenal.BeginAltarDeposit(weaponSocket);
         if (visual == null) { game.ShowNotice("WEAPON DISPLAY UNAVAILABLE"); Release(); return false; }
-        if (!game.TrySpend(cost)) { arsenal.CancelAltarDeposit(); Destroy(visual); Release(); return false; }
-        customer = player; inventory = arsenal; display = visual; transactionGame = game;
+        if (!game.TrySpend(cost)) { if (melee != null) melee.CancelAltarDeposit(); else arsenal.CancelAltarDeposit(); Destroy(visual); Release(); return false; }
+        customer = player; inventory = melee != null ? null : arsenal; staff = melee; display = visual; transactionGame = game;
         session = game.Session; paid = cost; elapsed = 0; tinted = false;
         game.ShowNotice("ALTAR // WEAPON DEPOSITED", 2f);
         ElderboomAudio.PlayAny("power/upgrader_deposit", 1, transform.position, .9f);
@@ -79,7 +88,8 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
     {
         if (customer != null)
         {
-            if (inventory == null || customer.IsDead || !inventory.WeaponDeposited || transactionGame == null || !transactionGame.IsSessionActive(session)) { Abort(); return; }
+            bool held = staff != null ? staff.Deposited : inventory != null && inventory.WeaponDeposited;
+            if (!held || customer.IsDead || transactionGame == null || !transactionGame.IsSessionActive(session)) { Abort(); return; }
             elapsed += Time.deltaTime; SetPose(elapsed);
             if (!tinted && elapsed >= Duration * .62f)
             {
@@ -89,11 +99,11 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
             }
             if (elapsed >= Duration)
             {
-                if (inventory.CompleteAltarUpgrade())
+                if (staff != null ? staff.CompleteAltarUpgrade() : inventory.CompleteAltarUpgrade())
                 {
                     ElderboomAudio.PlayAny("power/upgrader_complete", 1, transform.position, 1f);
-                    paid = 0; transactionGame.ShowNotice("CRIMSON UPGRADE // DAMAGE x2 · AMMO +50%", 5f);
-                    ClearVisual(); customer = null; inventory = null; Release();
+                    paid = 0; transactionGame.ShowNotice(staff != null ? "CRIMSON STAFF // DAMAGE x2" : "CRIMSON UPGRADE // DAMAGE x2 · AMMO +50%", 5f);
+                    ClearVisual(); customer = null; inventory = null; staff = null; Release();
                 }
                 else Abort();
             }
@@ -126,6 +136,8 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
     public void Abort()
     {
         inventory?.CancelAltarDeposit();
+        if (staff != null) staff.CancelAltarDeposit();
+        staff = null;
         if (paid > 0 && transactionGame != null && transactionGame.Session == session) transactionGame.RefundAltar(paid);
         paid = 0; ClearVisual(); customer = null; inventory = null; transactionGame = null; Release();
     }
@@ -159,9 +171,10 @@ public sealed class ElderboomAltarUpgrader : MonoBehaviour
         if (player == null || !game.IsPlaying || player.SettingsOpen || player.IsDead || !Focused(player)) return;
         var arsenal = player.GetComponent<ElderboomArsenal>();
         string text = Busy ? "ALTAR // " + Mathf.RoundToInt(Progress * 100) + "%"
-            : arsenal != null && arsenal.ActiveUpgraded ? "CRIMSON WEAPON // UPGRADED"
+            : StaffOf(player) != null && StaffOf(player).Upgraded ? "CRIMSON STAFF // UPGRADED"
+            : StaffOf(player) == null && arsenal != null && arsenal.ActiveUpgraded ? "CRIMSON WEAPON // UPGRADED"
             : !ElderboomPowerGrid.Powered ? "WEAPON UPGRADER // NO POWER\nSTART THE GENERATOR"
-            : player.ActionLabel("interact") + " · UPGRADE WEAPON\n" + cost + " CREDITS";
+            : player.ActionLabel("interact") + (StaffOf(player) != null ? " · UPGRADE STAFF\n" : " · UPGRADE WEAPON\n") + cost + " CREDITS";
         ElderboomPrompt.Offer(player.transform.position, transform.position, text);
     }
 }

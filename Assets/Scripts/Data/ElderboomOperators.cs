@@ -42,14 +42,14 @@ public static class ElderboomOperators
             Ability<ElderboomLiftSmashAbility>("lift_smash", "Lift & smash", 9f),
             Ability<ElderboomKeepAwayAbility>("keep_away", "Keep away", 25f)
         };
-        var eli = Operator(ElderboomIds.Eli, 1, "SIG 550\nIgnore / Pulse / Freeze", "sig550", "rhino", "", 2, "SIG 550", 30, 120, 5f, .086f);
+        var eli = Operator(ElderboomIds.Eli, 1, "Ignore / Pulse / Freeze", "", "rhino", "", 2, "SIG 550", 30, 120, 5f, .086f);
         // Eli: the SIG is output_unwrapped.001 + Caricatore; the acoustic device is an ability prop and stays.
         Rig(eli, "DEF_hand.R", "MainWeapon_Muzzle", "output_unwrapped.001", "Caricatore");
-        Card(eli, "ELI · ACOUSTIC OPERATOR", "URBAN SURVIVOR / SIG 550", "Uses the acoustic signal to divert or immobilize nearby zombies.", "Elderboom/UI/female_urban_survivor");
+        Card(eli, "ELI · ACOUSTIC OPERATOR", "URBAN SURVIVOR", "Uses the acoustic signal to divert or immobilize nearby zombies.", "Elderboom/UI/female_urban_survivor");
         eli.abilities = new ElderboomAbilityDefinition[]
         {
             Ability<ElderboomAcousticIgnoreAbility>("ignore_signal", "Ignore signal", 15f),
-            Ability<ElderboomAcousticPulseAbility>("acoustic_pulse", "Acoustic pulse", 15f),
+            Ability<ElderboomAcousticPulseAbility>("acoustic_pulse", "Acoustic device", 15f),
             Ability<ElderboomAcousticFreezeAbility>("freeze_signal", "Freeze signal", 15f)
         };
         var soph = Operator(ElderboomIds.Soph, 2, "AKMN ZENITCO\nPlasma Volley / Blinding Flare", "akmn", "rhino", "hk53", 3, "AKMN ZENITCO", 30, 120, 6f, .10f);
@@ -103,7 +103,7 @@ public static class ElderboomOperators
             case "lift_smash": return "Lifts the zombies ahead into the air, then slams them into the ground.";
             case "keep_away": return "A barrier around you holds the horde outside its radius for a few seconds.";
             case "ignore_signal": return "An acoustic signal that makes every zombie ignore you while it plays.";
-            case "acoustic_pulse": return "Throws a sound decoy where you aim. Zombies near it stop chasing you and go to investigate.";
+            case "acoustic_pulse": return "Sticks the acoustic device to any wall you aim at. Every zombie that hears it stops chasing and is drawn to that spot while it plays.";
             case "freeze_signal": return "Freezes every zombie close to you for as long as the signal plays.";
             case "plasma_volley": return "Draws the plasma pistol and fires three blazing bolts.";
             case "blinding_flare": return "Charges a plasma flare that blinds the zombies in front of you.";

@@ -66,7 +66,10 @@ public sealed partial class ElderboomGame
         buttons.AddToClassList("eb-row");
         over.Add(buttons);
         ElderboomUi.Button(buttons, "PLAY AGAIN", () => BeginSession(selectedOperator, selectedDifficulty), true, 240).style.marginRight = 16;
-        ElderboomUi.Button(buttons, "MAIN MENU", () => UnityEngine.SceneManagement.SceneManager.LoadScene("ZombieTest_Menu"), false, 240);
+        if (ElderboomTestRange.StandaloneOnly)
+            ElderboomUi.Button(buttons, "QUIT", () => Application.Quit(), false, 240);
+        else
+            ElderboomUi.Button(buttons, "MAIN MENU", () => UnityEngine.SceneManagement.SceneManager.LoadScene("ZombieTest_Menu"), false, 240);
 
         ElderboomUi.Show(gameOver, false);
     }

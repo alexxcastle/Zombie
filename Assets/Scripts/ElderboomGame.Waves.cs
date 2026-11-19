@@ -8,10 +8,14 @@ using UnityEngine.AI;
 public sealed partial class ElderboomGame
 {
     // Zombies alive at once, by difficulty: EASY 40 / NORMAL 70 / HARD 100, +10 per extra player, at most 130.
-    public int MaxActiveZombies => Mathf.Min((selectedDifficulty == "EASY" ? 40 : selectedDifficulty == "HARD" ? 100 : 70) + 10 * (TeamSize - 1), 130);
-    float HordeScale => selectedDifficulty == "EASY" ? .75f : selectedDifficulty == "HARD" ? 1.35f : 1f;
-    // Difficulty grows gradually, wave by wave (no steps): 0 at wave 1, 1 by wave 7 for the early ramps.
-    static float Ramp(int wave, int fullAt = 7) => Mathf.Clamp01((wave - 1) / (float)(fullAt - 1));
+    // Per-difficulty value: EASY / NORMAL / HARD / INFERNO.
+    T ByDifficulty<T>(T easy, T normal, T hard, T inferno) => selectedDifficulty == "EASY" ? easy : selectedDifficulty == "HARD" ? hard : selectedDifficulty == "INFERNO" ? inferno : normal;
+    bool Inferno => selectedDifficulty == "INFERNO";
+    // Zombies alive at once: EASY 40 / NORMAL 70 / HARD 100 / INFERNO 130, +10 per extra player (cap 130, INFERNO 160).
+    public int MaxActiveZombies => Mathf.Min(ByDifficulty(40, 70, 100, 130) + 10 * (TeamSize - 1), Inferno ? 160 : 130);
+    float HordeScale => ByDifficulty(.75f, 1f, 1.35f, 1.8f);
+    // Difficulty grows gradually, wave by wave (no steps): 0 at wave 1, 1 by wave 10 for the early ramps.
+    static float Ramp(int wave, int fullAt = 10) => Mathf.Clamp01((wave - 1) / (float)(fullAt - 1));
 
     public bool CanSpawn(int limit)
     {
@@ -68,7 +72,7 @@ public sealed partial class ElderboomGame
         bool playing = state == State.Playing;
         float combat = playing ? Mathf.Clamp01(near / 8f + intensity * .5f) : 0f;
         float k = 1f - Mathf.Exp(-1.5f * Time.unscaledDeltaTime);
-        musicSource.volume = Mathf.Lerp(musicSource.volume, playing ? musicSetting * Mathf.Lerp(.06f, .32f, combat) : 0f, k);
+        musicSource.volume = Mathf.Lerp(musicSource.volume, playing && !ElderboomBossHud.MusicOn ? musicSetting * Mathf.Lerp(.06f, .32f, combat) : 0f, k);
         ambienceSource.volume = Mathf.Lerp(ambienceSource.volume, playing ? musicSetting * .22f * (1f - combat * .7f) : 0f, k);
     }
 
@@ -96,6 +100,7 @@ public sealed partial class ElderboomGame
         Cursor.visible = false;
         ShowNotice("ELDERBOOM VILLAGE // SURVIVE THE NIGHT");
         yield return new WaitForSeconds(2f);
+        if (ElderboomTestRange.Active) { ShowNotice("TEST RANGE // " + selectedOperator + " // 7 TACTICAL  8 ELI  9 SOPH", 8f); yield break; }
         if (ElderboomLan.IsClient) yield break; // LAN client: the host runs the waves
         while (state == State.Playing && player != null && !TeamDown)
         {
@@ -104,7 +109,7 @@ public sealed partial class ElderboomGame
             if (state != State.Playing || TeamDown) break;
             wavesCleared++;
             ElderboomEvents.RaiseWaveCleared(wave);
-            int pause = wave < 6 ? 15 : 12; // more room to regroup and spend credits early on
+            int pause = Inferno ? 8 : wave < 6 ? 15 : 12; // more room to regroup and spend credits early on (INFERNO: short breaks)
             ShowNotice("WAVE " + wave + " CLEAR // NEXT WAVE IN " + pause);
             yield return new WaitForSeconds(pause);
         }
@@ -115,22 +120,29 @@ public sealed partial class ElderboomGame
         float multiplier = HordeScale;
         // Bigger hordes with more players: +50% per extra player (multiplayer host).
         float team = 1f + .5f * (TeamSize - 1);
-        // Wave size: 9 at wave 1, ~25 at 5, ~50 at 10, ~80 at 15 (NORMAL, one player).
-        int count = Mathf.Max(5, Mathf.RoundToInt((6f + 3.2f * number + .12f * number * number) * multiplier * team));
-        int packet = Mathf.Clamp(2 + number, 3, 10);
-        int maxActive = Mathf.Min(MaxActiveZombies, Mathf.RoundToInt((6f + 2.2f * number) * multiplier * team));
-        float spacing = Mathf.Max(.3f, 1.1f - number * .07f) * (selectedDifficulty == "EASY" ? 1.2f : selectedDifficulty == "HARD" ? .75f : 1f);
-        waveRemaining = count;
+        // Endless, slow growth (NORMAL, one player): 6 at wave 1, ~15 at 5, ~29 at 10, ~60 at 20,
+        // ~100 at 30, ~200 at 50, ~560 at 100. No ceiling on the wave size: only the number
+        // alive at once is capped (performance), so late waves last longer instead of piling up.
+        int w0 = number - 1;
+        int count = Mathf.Max(5, Mathf.RoundToInt((6f + 2.2f * w0 + .035f * w0 * w0) * multiplier * team));
+        // Boss wave: the boss and half the usual horde as his escort.
+        bool bossWave = IsBossWave(number);
+        if (bossWave) count = Mathf.Max(6, count / 2);
+        int packet = Mathf.Clamp(3 + number / 3, 3, 12);
+        int maxActive = Mathf.Min(MaxActiveZombies, Mathf.RoundToInt((6f + 1.3f * w0) * multiplier * team));
+        float spacing = Mathf.Max(.35f, 1.25f - number * .03f) * ByDifficulty(1.2f, 1f, .75f, .55f);
+        waveRemaining = count + (bossWave ? 1 : 0);
         spawning = true;
         recentSpawns.Clear();
-        ShowNotice("WAVE " + number + " // " + count + " HOSTILES");
+        ShowNotice(bossWave ? "WAVE " + number + " // BOSS: " + ElderboomZombie.BossName : "WAVE " + number + " // " + count + " HOSTILES", bossWave ? 6f : 4f);
+        if (bossWave) StartCoroutine(SpawnBoss(number));
         waveBannerAt = Time.time;
         ElderboomEvents.RaiseWaveStarted(number);
         if (player != null) ElderboomAudio.Play("zombies/zombie-feral-snarl", player.transform.position, .35f, false, .85f);
 
         for (int index = 0; index < count && state == State.Playing; index++)
         {
-            if (index > 0) yield return new WaitForSeconds(index % packet == 0 ? Mathf.Max(2f, 6f - number * .35f) : spacing);
+            if (index > 0) yield return new WaitForSeconds(index % packet == 0 ? Mathf.Max(2.5f, 7f - number * .15f) : spacing);
             // Director: after a burst of damage, hold new spawns briefly so pressure comes in waves.
             float relaxStart = Time.time;
             while (intensity > .9f && Time.time - relaxStart < 6f && state == State.Playing) yield return new WaitForSeconds(.25f);
@@ -167,6 +179,37 @@ public sealed partial class ElderboomGame
             else blindSince = -1f;
             yield return null;
         }
+    }
+
+    // ---- boss waves ----
+    public static bool IsBossWave(int number) => number > 0 && number % 10 == 0;
+
+    IEnumerator SpawnBoss(int number)
+    {
+        yield return new WaitForSeconds(5f);
+        Transform spawn = null; float since = Time.time;
+        while (spawn == null && state == State.Playing && Time.time - since < 25f)
+        {
+            spawn = SelectSpawn("pressure");
+            if (spawn == null) { yield return new WaitForSeconds(.5f); spawn = FindHiddenFallbackSpawn(); }
+        }
+        if (state != State.Playing) yield break;
+        int before = zombies.Count;
+        if (spawn == null || !SpawnZombie(spawn, number, true) || zombies.Count == before) { waveRemaining = Mathf.Max(0, waveRemaining - 1); yield break; }
+        var boss = zombies[zombies.Count - 1];
+        ElderboomBossHud.Show(boss);
+        if (player != null) ElderboomAudio.Play("boss/boss_roar", player.transform.position, .9f, false);
+        ShowNotice(ElderboomZombie.BossName + " // AIM FOR THE GLOWING BELLY", 5f);
+    }
+
+    // Guaranteed reward: credits for the team and a special weapon where he fell.
+    void BossDefeated(ElderboomZombie boss)
+    {
+        const int reward = 2000;
+        credits += reward; totalScore += reward;
+        ShowNotice("BOSS DEFEATED // +" + reward + " CREDITS", 5f);
+        var ids = ElderboomSpecialPickup.DropIds;
+        ElderboomSpecialPickup.Spawn(boss.transform.position, ElderboomWeapons.Find(ids[UnityEngine.Random.Range(0, ids.Length)]));
     }
 
     Transform SelectSpawn(string phase)
@@ -279,11 +322,12 @@ public sealed partial class ElderboomGame
         return alive[spawnFocusTurn++ % alive.Count];
     }
 
-    bool SpawnZombie(Transform marker, int number)
+    bool SpawnZombie(Transform marker, int number, bool boss = false)
     {
         if (marker == null) return false;
         // The rural set (all villagers of the valley); the old prefabs only if the set is missing.
-        var prefab = ElderboomZombieModels.Pick(out int netModel);
+        int netModel;
+        var prefab = boss ? ElderboomZombieModels.Boss(out netModel) : ElderboomZombieModels.Pick(out netModel);
         var keys = new[] { "Elderboom/Zombie", "Elderboom/ZombieFemale" };
         if (prefab == null) prefab = Resources.Load<GameObject>(keys[UnityEngine.Random.Range(0, keys.Length)]);
         if (prefab == null)
@@ -300,26 +344,31 @@ public sealed partial class ElderboomGame
             return false;
         }
         var root = Instantiate(prefab, marker.position, Quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0));
+        root.transform.localScale *= ElderboomZombie.BodyScale;
         root.name = "Zombie_W" + number;
         var zombie = root.GetComponent<ElderboomZombie>();
-        float healthBase = selectedDifficulty == "EASY" ? 3 : selectedDifficulty == "HARD" ? 6 : 4;
-        float damageBase = selectedDifficulty == "EASY" ? 7 : selectedDifficulty == "HARD" ? 15 : 10;
-        // Continuous growth instead of steps every 3 waves: x1.3 health by wave 5, x1.9 by 10, x2.6 by 15.
+        float healthBase = ByDifficulty(3f, 4f, 6f, 8f);
+        float damageBase = ByDifficulty(7f, 10f, 15f, 20f);
+        // Slow continuous growth with no ceiling: x1.2 health by wave 5, x1.5 by 10, x2.2 by 20, x3.8 by 40, x6.7 by 70.
+        // Damage rises gently and stops at x1.8 (wave ~33) so late waves are about numbers, not one-shots.
         int w = number - 1;
-        float health = healthBase * 1.5f * (1f + .06f * w + .004f * w * w), hit = damageBase * Mathf.Min(2f, 1f + .04f * w);
-        float speed = selectedDifficulty == "EASY" ? 1.9f : selectedDifficulty == "HARD" ? 3f : 2.5f;
-        float interval = selectedDifficulty == "EASY" ? 1.35f : selectedDifficulty == "HARD" ? .75f : 1f;
+        float health = healthBase * 1.5f * (1f + .045f * w + .0006f * w * w), hit = damageBase * Mathf.Min(1.8f, 1f + .025f * w);
+        float speed = ByDifficulty(1.9f, 2.5f, 3f, 3.4f);
+        float interval = ByDifficulty(1.35f, 1f, .75f, .6f);
         // Variety: runners from wave 3, brutes from wave 5.
         string kind = "walker"; float roll = UnityEngine.Random.value;
         var profile = root.GetComponent<ElderboomZombieProfile>();
         if (profile != null) { health *= profile.health; hit *= profile.damage; speed *= profile.speed; interval *= profile.attackInterval; }
         if (profile != null && profile.scale > .01f && Mathf.Abs(profile.scale - 1f) > .001f) root.transform.localScale *= profile.scale;
-        // Early waves are slower and hit less often; runners from wave 4, brutes from wave 7, both ramping in.
-        speed *= Mathf.Lerp(.8f, 1f, Ramp(number)); interval *= Mathf.Lerp(1.25f, 1f, Ramp(number));
-        if (number >= 7 && !(profile != null && profile.noBrute) && roll < Mathf.Min(.10f, .015f * (number - 6))) { kind = "brute"; health *= 3.2f; hit *= 1.7f; speed *= .72f; interval *= 1.25f; }
-        else if (number >= 4 && !(profile != null && profile.noRunner) && roll < Mathf.Min(.3f, .04f * (number - 3))) { kind = "runner"; health *= .65f; speed *= 1.85f; interval *= .9f; }
+        // Early waves are slower and hit less often; runners from wave 4, brutes from wave 8, both ramping in slowly.
+        if (!Inferno) { speed *= Mathf.Lerp(.8f, 1f, Ramp(number)); interval *= Mathf.Lerp(1.25f, 1f, Ramp(number)); }
+        int vw = Inferno ? number + 3 : number; // INFERNO: runners and brutes three waves earlier
+        if (boss) { kind = "boss"; health *= 50f * (1f + .75f * (TeamSize - 1)); hit *= 1.5f; speed = Mathf.Max(1.7f, speed * .85f); interval *= 1.2f; }
+        else if (vw >= 8 && !(profile != null && profile.noBrute) && roll < Mathf.Min(Inferno ? .18f : .12f, .006f * (vw - 7))) { kind = "brute"; health *= 3.2f; hit *= 1.7f; speed *= .72f; interval *= 1.25f; }
+        else if (vw >= 4 && !(profile != null && profile.noRunner) && roll < Mathf.Min(Inferno ? .4f : .3f, .018f * (vw - 3))) { kind = "runner"; health *= .65f; speed *= 1.85f; interval *= .9f; }
         zombie.Initialize(this, player, health, hit, speed, interval);
         zombie.SetVariant(kind);
+        if (boss) zombie.MakeBoss();
         zombie.NetFemale = prefab.name.IndexOf("Female", StringComparison.OrdinalIgnoreCase) >= 0;
         zombie.NetModel = netModel;
         AssignZombieSkill(zombie, kind, number);
@@ -333,15 +382,15 @@ public sealed partial class ElderboomGame
     // Ambush from wave 2, grab from wave 1. Armed zombies (the cook's cleaver) never get a second skill.
     void AssignZombieSkill(ElderboomZombie zombie, string kind, int number)
     {
-        if (zombie.GetComponent<ElderboomZombieWeapon>() != null || kind == "brute") return;
-        float ambushChance = selectedDifficulty == "EASY" ? .06f : selectedDifficulty == "HARD" ? .14f : .10f;
-        float grabChance = selectedDifficulty == "EASY" ? .08f : selectedDifficulty == "HARD" ? .16f : .12f;
-        int maxAmbush = selectedDifficulty == "EASY" ? 2 : selectedDifficulty == "HARD" ? 6 : 4;
-        int maxGrab = selectedDifficulty == "EASY" ? 3 : selectedDifficulty == "HARD" ? 8 : 5;
+        if (zombie.GetComponent<ElderboomZombieWeapon>() != null || kind == "brute" || kind == "boss") return;
+        float ambushChance = ByDifficulty(.06f, .10f, .14f, .20f);
+        float grabChance = ByDifficulty(.08f, .12f, .16f, .22f);
+        int maxAmbush = ByDifficulty(2, 4, 6, 9);
+        int maxGrab = ByDifficulty(3, 5, 8, 12);
         int ambushers = 0, grabbers = 0;
         foreach (var z in zombies) if (z != null && z.IsAlive) { if (z.Skill == ElderboomZombieSkill.Ambush) ambushers++; else if (z.Skill == ElderboomZombieSkill.Grab) grabbers++; }
-        // Skills come in gradually: grab from wave 3, ambush from wave 4, full chance by wave 9.
-        float skillRamp = Ramp(number - 2, 7); ambushChance *= skillRamp; grabChance *= skillRamp;
+        // Skills come in gradually: grab from wave 3, ambush from wave 4, full chance by wave 14.
+        float skillRamp = Ramp(number - 2, 12); ambushChance *= skillRamp; grabChance *= skillRamp;
         float roll = UnityEngine.Random.value;
         if (number >= 4 && kind != "runner" && roll < ambushChance && ambushers < maxAmbush) zombie.AssignSkill(ElderboomZombieSkill.Ambush);
         else if (number >= 3 && roll >= ambushChance && roll < ambushChance + grabChance && grabbers < maxGrab) zombie.AssignSkill(ElderboomZombieSkill.Grab);

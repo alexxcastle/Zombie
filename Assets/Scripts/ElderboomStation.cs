@@ -13,8 +13,10 @@ public sealed class ElderboomStation : MonoBehaviour
         // Weapon stations sell every weapon of their kind in the catalog except the zombie drops and the knife.
         if(category=="weapons")
         {
+            // Melee weapons are out of the game except the knife: the old melee station sells SMGs.
+            if(label.Contains("MELEE"))label="SMGS";
             string kind=label.Contains("PISTOL")?ElderboomIds.Category.Handgun:label.Contains("SHOTGUN")?ElderboomIds.Category.Shotgun:
-                label.Contains("MELEE")?ElderboomIds.Category.Melee:label.Contains("RIFLE")?ElderboomIds.Category.AssaultRifle:null;
+                label.Contains("SMG")?"smg":label.Contains("RIFLE")?ElderboomIds.Category.AssaultRifle:null;
             if(kind!=null)
             {
                 var list=new System.Collections.Generic.List<string>();

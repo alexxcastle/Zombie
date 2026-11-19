@@ -35,6 +35,7 @@ static partial class ElderboomBackdrop
         if (mode.StartsWith("build")) return Build(mode);
         if (mode.StartsWith("sky")) return Sky();
         if (mode.StartsWith("terrain")) return MountainTerrain();
+        if (mode.StartsWith("vegetation")) return MountainVegetation();
         if (mode.StartsWith("shots")) { Horizon("now"); return "DONE"; }
         return "FAIL unknown mode " + mode;
     }

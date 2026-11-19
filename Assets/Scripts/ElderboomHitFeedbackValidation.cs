@@ -71,7 +71,7 @@ public sealed class ElderboomHitFeedbackValidation : MonoBehaviour
         // Render requests can take longer than an animation frame on this machine.
         // Keep functional timing deterministic, and still use normal Player animation updates.
         Time.maximumDeltaTime=.05f;QualitySettings.vSyncCount=0;Application.targetFrameRate=60;
-        player.GetComponent<ElderboomArsenal>().Equip("hk53");
+        player.GetComponent<ElderboomArsenal>().Equip("mp7");
         foreach(var zombie in FindObjectsByType<ElderboomZombie>())zombie.gameObject.SetActive(false);
         foreach(var view in FindObjectsByType<ElderboomViewmodel>(FindObjectsInactive.Include))view.gameObject.SetActive(false);
         camera.GetComponent<HDAdditionalCameraData>().antialiasing=HDAdditionalCameraData.AntialiasingMode.None;

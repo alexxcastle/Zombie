@@ -24,7 +24,7 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
     public bool HasTemporary => temporary!=null;
     public bool TemporarySelected => active!=null && active==temporary;
     public float TemporaryRemaining => HasTemporary?Mathf.Max(0,temporaryUntil-Time.time):0;
-    public bool CanSwitch => !WeaponDeposited && player!=null && !player.SettingsOpen && !player.IsDead && !player.Reloading && !showingAbility
+    public bool CanSwitch => !WeaponDeposited && player!=null && !player.SettingsOpen && !player.IsDead && !showingAbility
         && !(ElderboomGame.Active!=null && ElderboomGame.Active.AbilityBusy)
         && !(player.GetComponent<ElderboomTacticalArms>() is ElderboomTacticalArms arms && arms.Playing);
 
@@ -40,7 +40,7 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
         // Starting weapons and slot count come from the operator definition.
         var op=ElderboomOperators.Find(operatorId)??ElderboomOperators.All[0];
         operatorRoot=primary;selectedRegular=0;slotLimit=Mathf.Clamp(op.weaponSlots,2,3);
-        operatorId=op.id;
+        this.operatorId=op.id;
         var main=ElderboomWeapons.Find(op.primaryWeapon);
         // Every match starts with the same pistol and nothing else; the rest comes from the weapon stations.
         var start=string.IsNullOrEmpty(StartingWeapon)?null:Create(ElderboomWeapons.Find(StartingWeapon));
@@ -51,12 +51,13 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
         }
         else
         {
-            slots.Add(new Slot{definition=main,root=primary,ammo=main.capacity,reserve=main.reserve});
-            slots.Add(Create(ElderboomWeapons.Find(op.secondaryWeapon)));
+            if (main != null) slots.Add(Create(main) ?? new Slot{definition=main,root=primary,ammo=main.capacity,reserve=main.reserve});
+            else if (Create(ElderboomWeapons.Find(op.secondaryWeapon)) is Slot fallback) slots.Add(fallback);
+            if (main != null && Create(ElderboomWeapons.Find(op.secondaryWeapon)) is Slot sidearm) slots.Add(sidearm);
             if(!string.IsNullOrEmpty(op.extraWeapon))slots.Add(Create(ElderboomWeapons.Find(op.extraWeapon)));
         }
         knife=Create(ElderboomWeapons.Find("knife"));
-        EquipUnchecked(slots[0]);
+        if (slots.Count > 0) EquipUnchecked(slots[0]);
     }
     void Update()
     {
@@ -65,6 +66,7 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
         int total=slots.Count+(knife!=null?1:0)+(temporary!=null?1:0);
         if(total<2)return;
         float wheel=Input.mouseScrollDelta.y;
+        if(wheel==0 && ElderboomInput.AcceptsInput && ElderboomGamepad.NextWeaponDown)wheel=1;
         if(wheel==0)return;
         int current=slots.IndexOf(active);
         if(current<0)current=active==knife?slots.Count:total-1;
@@ -74,35 +76,26 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
     // Starting loadout for every operator (empty = the operator's own weapons, as before).
     public static string StartingWeapon="rhino";
     string operatorId;
+    // Every weapon the game hands out (start, stations, dispenser) is built here: the menu's saved loadout
+    // (ElderboomWeaponMods) is mounted on it and its spread/range follow the attachments.
     Slot Create(ElderboomWeaponDefinition definition)
     {
-        if(definition==null)return null;
-        // The operator's own primary is its own viewmodel (as in the old starting loadout), bought at a station.
-        var self=ElderboomOperators.Find(operatorId);
-        if(self!=null && operatorRoot!=null && string.Equals(definition.id,self.primaryWeapon,StringComparison.OrdinalIgnoreCase))
-            return new Slot{definition=definition,root=operatorRoot,ammo=definition.capacity,reserve=definition.reserve,owned=false};
-        var prefab=string.IsNullOrEmpty(definition.resource)?null:Resources.Load<GameObject>(definition.resource);
-        // Another operator's primary has no prefab: only an authored grip can show it.
-        if(prefab==null && !definition.IsOperatorPrimary)return null;
-        // Every weapon is held in the operator's own right hand; the pack's arms are
-        // only a fallback when the operator rig cannot be resolved.
-        var op=ElderboomOperators.Find(player.OperatorDisplayName);
-        // Soph's authored holds stretch her flat-rigged sleeves across the screen and miss the sights: she uses the
-        // packs with their own arms and calibrated aim, and the other operators' own viewmodels for their primaries.
-        bool authored=!(op!=null && op.id==ElderboomIds.Soph);
-        var root=operatorRoot!=null && authored?ElderboomAuthoredGrip.Build(operatorRoot,op,definition,player.ViewmodelParent):null;
-        if(root==null && op!=null && op.id==ElderboomIds.Soph && definition.IsOperatorPrimary)
+        var slot=CreateBase(definition);
+        if(slot!=null && slot.owned && slot.root!=null && ElderboomWeaponMods.Customizable(slot.definition.id))
         {
-            // Soph with Eli's or Tactical's own weapon: that operator's whole viewmodel (arms, hold and aim as authored).
-            var src=ElderboomOperators.Find(definition.operatorId);
-            string pivotName=src!=null?char.ToUpperInvariant(src.id[0])+src.id.Substring(1).ToLowerInvariant()+"_Viewmodel_Pivot":null;
-            Transform pivot=null;
-            if(pivotName!=null)foreach(Transform c in player.ViewmodelParent)if(c.name==pivotName){pivot=c;break;}
-            if(pivot!=null){root=Instantiate(pivot.gameObject,player.ViewmodelParent,false).transform;root.name=pivotName+"_"+definition.id;root.gameObject.SetActive(false);}
+            ElderboomWeaponMods.Apply(slot.root,slot.definition.id);
+            slot.definition=ElderboomWeaponMods.Modified(slot.definition);
+            slot.ammo=slot.definition.capacity;slot.reserve=slot.definition.reserve; // drum magazines
         }
-        if(root==null && UseOperatorGrip && operatorRoot!=null)root=ElderboomOperatorGrip.Build(operatorRoot,op,definition,player.ViewmodelParent);
-        if(root==null && prefab==null)return null;
-        if(root==null){root=Instantiate(prefab,player.ViewmodelParent,false).transform;root.gameObject.SetActive(false);}
+        return slot;
+    }
+    Slot CreateBase(ElderboomWeaponDefinition definition)
+    {
+        if(definition==null)return null;
+        // Weapons without arms (ElderboomWeaponOnly): the old arms / rig / animation / grip system is archived in
+        // _Archivio_braccia_20261115 and will be rebuilt from scratch.
+        var root=ElderboomWeaponOnly.Build(definition,player.ViewmodelParent);
+        if(root==null){Debug.LogWarning("[Elderboom] No weapon model for "+definition.id);return null;}
         return new Slot{definition=definition,root=root,ammo=definition.capacity,reserve=definition.reserve,owned=true};
     }
     // Runtime IK grip (fallback when no authored grip exists) is parked: not good enough.
@@ -151,6 +144,7 @@ public sealed partial class ElderboomArsenal : MonoBehaviour
     void EquipUnchecked(Slot next)
     {
         if(next?.root==null)return;
+        player.CancelReload(); // switching interrupts a reload; the ammo already in stays
         SaveActive();
         foreach(var slot in slots)if(slot?.root!=null)slot.root.gameObject.SetActive(false);
         if(knife?.root!=null)knife.root.gameObject.SetActive(false);

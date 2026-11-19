@@ -67,18 +67,35 @@ public sealed class ElderboomLanAvatar : MonoBehaviour
     public int Seat { get; private set; } // 1 driving the horse, 2 passenger
     // Down but revivable (co-op): the player waits up to 20 s for a teammate to hold interact next to them.
     public bool Downed { get; private set; }
-    public void Apply(Vector3 position, float feetOffset, float yaw, bool dead, int shotCount, int seat = 0, bool downed = false)
+    public void Apply(Vector3 position, float feetOffset, float yaw, bool dead, int shotCount, int seat = 0, bool downed = false, byte weapon = 0)
     {
         Seat = seat; Downed = downed && dead;
         if (!placed) { transform.position = lastPos = position; transform.rotation = Quaternion.Euler(0f, yaw, 0f); placed = true; }
         target = position; targetYaw = yaw; IsDead = dead;
         if (!Mathf.Approximately(feet, feetOffset)) { feet = feetOffset; if (visual != null) visual.localPosition = new Vector3(0f, -feet, 0f); }
-        if (shots >= 0 && shotCount != shots && !dead) ElderboomAudio.FireWeapon("assault_rifle", position);
+        if (shots >= 0 && shotCount != shots && !dead) RemoteShot(weapon, position);
         shots = shotCount;
+    }
+
+    // A teammate's shot, heard as their weapon (HDRPSlicePlayer.WeaponKind): the flamethrower roars, the rest fire.
+    AudioSource flame;
+    float flameUntil;
+    void RemoteShot(byte weapon, Vector3 position)
+    {
+        if (weapon == HDRPSlicePlayer.KindFlame)
+        {
+            if (flame == null) flame = ElderboomAudio.Loop("weapons/flamethrower/flamethrower_loop", position, 0f, 3f, 40f, transform, false);
+            if (Time.time > flameUntil) ElderboomAudio.Play("weapons/flamethrower/flamethrower_start", position, .6f, true);
+            flameUntil = Time.time + .25f;
+            return;
+        }
+        if (weapon == HDRPSlicePlayer.KindMelee) return;
+        ElderboomAudio.FireWeapon(HDRPSlicePlayer.KindCategory(weapon), position, false, true);
     }
 
     void Update()
     {
+        if (flame != null) flame.volume = Mathf.MoveTowards(flame.volume, Time.time < flameUntil ? .7f * ElderboomAudio.Effects : 0f, Time.deltaTime * 6f);
         if (!placed) return;
         float dt = Mathf.Max(Time.deltaTime, 1e-4f);
         float k = 1f - Mathf.Exp(-12f * dt);

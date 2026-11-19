@@ -2389,6 +2389,8 @@ MonoBehaviour:
   hasAds: 1
   framingStored: 1
   authoredReloadTiming: 1
+  proceduralReload: 0
+  reloadPivot: {x: 0, y: 0, z: 0}
 --- !u!1 &4050094760012137440
 GameObject:
   m_ObjectHideFlags: 0
@@ -3707,7 +3709,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1773028920811871570}
-  - component: {fileID: 2794646372632201595}
   m_Layer: 19
   m_Name: Arms-Mesh
   m_TagString: Untagged
@@ -3730,117 +3731,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7076016740766871761}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &2794646372632201595
-SkinnedMeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6828637867140427118}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 3
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 111690740065759945, guid: a6c7ca5e9433479b891924bfff035659, type: 3}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  serializedVersion: 2
-  m_Quality: 0
-  m_UpdateWhenOffscreen: 1
-  m_SkinnedMotionVectors: 1
-  m_Mesh: {fileID: 4165342263654883198, guid: a6c7ca5e9433479b891924bfff035659, type: 3}
-  m_Bones:
-  - {fileID: 1907921804610016351}
-  - {fileID: 1076037833808031116}
-  - {fileID: 2595712978115103104}
-  - {fileID: 2910665549206447144}
-  - {fileID: 4947783799917592122}
-  - {fileID: 2671022842904418865}
-  - {fileID: 1661753104392189393}
-  - {fileID: 1866652802238795990}
-  - {fileID: 2238041665143536964}
-  - {fileID: 1404801358703935805}
-  - {fileID: 3706501192653600069}
-  - {fileID: 3968887524786371802}
-  - {fileID: 1806566124199118401}
-  - {fileID: 1596872753216250785}
-  - {fileID: 6022959486596500224}
-  - {fileID: 2545875620846912195}
-  - {fileID: 7563300854691010395}
-  - {fileID: 1622875280522558001}
-  - {fileID: 3316404945369993350}
-  - {fileID: 7320527824480503056}
-  - {fileID: 6432266016695247058}
-  - {fileID: 4994594832825216694}
-  - {fileID: 7807566215213058098}
-  - {fileID: 1405453855405902285}
-  - {fileID: 1735365897614604670}
-  - {fileID: 8391386097453205515}
-  - {fileID: 213266022591445123}
-  - {fileID: 6334300110475502396}
-  - {fileID: 6713809654168579121}
-  - {fileID: 3767892171546389889}
-  - {fileID: 4229742152447790481}
-  - {fileID: 7814723933775716782}
-  - {fileID: 9160867815667414465}
-  - {fileID: 2437074367706938101}
-  - {fileID: 7221561667766353086}
-  - {fileID: 9152021436717010765}
-  - {fileID: 30642321860590750}
-  - {fileID: 7024619966523069960}
-  - {fileID: 1375647140295287537}
-  - {fileID: 4068863534575226572}
-  - {fileID: 4868271172074530101}
-  - {fileID: 1433889756296457792}
-  - {fileID: 3267660916324874137}
-  - {fileID: 3126248805865225403}
-  - {fileID: 1721846789151593362}
-  - {fileID: 5036928251587989421}
-  - {fileID: 2336522229137892273}
-  - {fileID: 8369544494526283392}
-  - {fileID: 3616925037234272848}
-  - {fileID: 5537036519712880088}
-  - {fileID: 2089842045176368393}
-  m_BlendShapeWeights: []
-  m_RootBone: {fileID: 7076016740766871761}
-  m_AABB:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
-  m_DirtyAABB: 1
 --- !u!1 &6844128478336814836
 GameObject:
   m_ObjectHideFlags: 0

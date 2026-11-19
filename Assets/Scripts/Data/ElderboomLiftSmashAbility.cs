@@ -6,8 +6,9 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Elderboom/Abilities/Lift and Smash", fileName = "ElderboomLiftSmashAbility")]
 public sealed class ElderboomLiftSmashAbility : ElderboomAbilityDefinition
 {
-    public float range = 5f;
-    public float coneDot = .42f;
+    public float range = 7f;
+    [Tooltip("Minimum dot product with the view direction (0.15 ≈ 81° half-angle).")]
+    public float coneDot = .15f;
     public float liftHeight = 1.7f;
     public float impactDamage = 3f;
     public float recovery = .65f;

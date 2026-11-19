@@ -1,0 +1,127 @@
+{
+ "family": "DoubleBarrel",
+ "magazine": "",
+ "spare": "",
+ "clips": [
+  {
+   "name": "DoubleBarrel - CQB Sprint",
+   "role": "Sprint",
+   "file": "DoubleBarrel_Sprint",
+   "frames": 31,
+   "length": 0.5
+  },
+  {
+   "name": "DoubleBarrel - Draw",
+   "role": "Draw",
+   "file": "DoubleBarrel_Draw",
+   "frames": 60,
+   "length": 0.9833333333333333
+  },
+  {
+   "name": "DoubleBarrel - Fire",
+   "role": "Fire",
+   "file": "DoubleBarrel_Fire",
+   "frames": 63,
+   "length": 1.0333333333333334
+  },
+  {
+   "name": "DoubleBarrel - Holster",
+   "role": "Holster",
+   "file": "DoubleBarrel_Holster",
+   "frames": 58,
+   "length": 0.95
+  },
+  {
+   "name": "DoubleBarrel - Idle",
+   "role": "Idle",
+   "file": "DoubleBarrel_Idle",
+   "frames": 243,
+   "length": 4.033333333333333
+  },
+  {
+   "name": "DoubleBarrel - Reload Empty",
+   "role": "ReloadEmpty",
+   "file": "DoubleBarrel_ReloadEmpty",
+   "frames": 229,
+   "length": 3.8
+  },
+  {
+   "name": "DoubleBarrel - Reload",
+   "role": "Reload",
+   "file": "DoubleBarrel_Reload",
+   "frames": 222,
+   "length": 3.683333333333333
+  },
+  {
+   "name": "DoubleBarrel - Walk",
+   "role": "Walk",
+   "file": "DoubleBarrel_Walk",
+   "frames": 52,
+   "length": 0.85
+  }
+ ],
+ "hasIdle": true,
+ "idle": {
+  "gripR": [
+   {
+    "x": -0.044466160237789154,
+    "y": 0.23575860261917114,
+    "z": -0.006810755003243685
+   },
+   {
+    "x": -0.030534200370311737,
+    "y": 0.10529320687055588,
+    "z": -0.014219633303582668
+   },
+   {
+    "x": -0.026359781622886658,
+    "y": 0.11119050532579422,
+    "z": 0.01089094765484333
+   },
+   {
+    "x": -0.01840570569038391,
+    "y": 0.13395652174949646,
+    "z": 0.05450807139277458
+   }
+  ],
+  "gripL": [
+   {
+    "x": 0.050876349210739136,
+    "y": -0.119273841381073,
+    "z": 0.0015792937483638525
+   },
+   {
+    "x": -0.0146754439920187,
+    "y": -0.2328563630580902,
+    "z": -0.006915995851159096
+   },
+   {
+    "x": -0.032729338854551315,
+    "y": -0.21499738097190857,
+    "z": -0.0007636716472916305
+   },
+   {
+    "x": -0.05802004039287567,
+    "y": -0.17308160662651062,
+    "z": 0.008589415811002254
+   }
+  ],
+  "eye": {
+   "x": 0.127278670668602,
+   "y": 0.5341454744338989,
+   "z": -0.22387275099754333
+  },
+  "forward": {
+   "x": -0.021593520417809486,
+   "y": -0.9997661709785461,
+   "z": 0.0011039597447961569
+  },
+  "up": {
+   "x": -0.10198263823986053,
+   "y": 0.001104298746213317,
+   "z": -0.994785487651825
+  }
+ },
+ "hasAds": false,
+ "ads": null
+}

@@ -42,4 +42,7 @@ public sealed class ElderboomOperatorDefinition : ScriptableObject
     [Tooltip("One cooldown for all abilities (Soph, Eli) instead of one per ability (Tactical).")]
     public bool sharedCooldown = true;
     public float abilityAnimationSeconds = 3.1f;
+
+    [Header("Third-person melee (ElderboomSentinel)")]
+    public bool thirdPersonMelee;
 }

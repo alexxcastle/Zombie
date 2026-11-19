@@ -190,7 +190,8 @@ public sealed partial class ElderboomGame : MonoBehaviour
         if (ElderboomLan.RemoteShooter == 0) { credits += points; totalScore += points; kills++; }
         popups.Add((zombie.transform.position + Vector3.up * 1.9f, points, Time.time));
         ElderboomEvents.RaiseZombieKilled(zombie, points);
-        if (ElderboomSpecialPickup.TrySpawn(zombie.transform.position) == null) ElderboomPowerUp.TrySpawn(zombie.transform.position);
+        if (zombie.IsBoss) BossDefeated(zombie);
+        else if (ElderboomSpecialPickup.TrySpawn(zombie.transform.position) == null) ElderboomPowerUp.TrySpawn(zombie.transform.position);
         if (zombie.CountsForWave) waveRemaining = Mathf.Max(0, waveRemaining - 1);
     }
 
@@ -205,7 +206,7 @@ public sealed partial class ElderboomGame : MonoBehaviour
     void ConfigureLoadout()
     {
         var op = Operator;
-        player.SelectPortedViewmodel(op.id);
+        player.SelectPortedViewmodel(op.thirdPersonMelee ? ElderboomIds.Tactical : op.id);
         player.ConfigurePortedLoadout(op.id, op.weaponLabel, op.capacity, op.reserve, op.damage, op.fireInterval);
         if (op.tacticalArms)
         {
@@ -216,6 +217,9 @@ public sealed partial class ElderboomGame : MonoBehaviour
             arms.BindStriker(pivot);
         }
         var arsenal=player.GetComponent<ElderboomArsenal>();if(arsenal==null)arsenal=player.gameObject.AddComponent<ElderboomArsenal>();arsenal.Initialize(op.id);
+        var sentinel = player.GetComponent<ElderboomSentinel>();
+        if (op.thirdPersonMelee) { if (sentinel == null) sentinel = player.gameObject.AddComponent<ElderboomSentinel>(); sentinel.Begin(player); }
+        else if (sentinel != null) sentinel.End();
     }
 
 

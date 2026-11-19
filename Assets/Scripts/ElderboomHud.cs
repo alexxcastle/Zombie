@@ -20,7 +20,12 @@ public sealed class ElderboomHud : MonoBehaviour
     Texture2D atlas;
     Sprite healthIcon, abilityIcon, creditIcon;
 
-    VisualElement root, vignette, map, crossDot, healthFill, abilityIconElement;
+    VisualElement root, vignette, map, crossDot, healthFill, abilityIconElement, healthBack, compass, compassMarker, weaponIcon;
+    Label healthValue;
+    readonly List<(Label label, float angle)> compassLabels = new List<(Label, float)>();
+    readonly List<(VisualElement tick, float angle)> compassTicks = new List<(VisualElement, float)>();
+    string lastIconId; int lastHealth = -1; Texture2D weaponIconTexture;
+    const float CompassWidth = 600f, CompassPxPerDeg = 2.4f, HealthBarWidth = 220f;
     Label prompt, hint, scoreTitle, score, kills, doublePoints, instaKill, waveLine, notice, banner, abilityName, abilityStatus, slots, special, credits, syringes, weaponName, ammo;
     readonly List<VisualElement> dots = new List<VisualElement>();
     readonly List<Label> popups = new List<Label>();
@@ -87,15 +92,18 @@ public sealed class ElderboomHud : MonoBehaviour
         Box(map, 90.5f, 90.5f, 4, 4, Color.white);
         Box(map, 91.5f, 83.5f, 2, 6, Color.white);
         for (int i = 0; i < MaxDots; i++) { var d = Box(map, 0, 0, 4, 4, HudRed); d.style.display = DisplayStyle.None; dots.Add(d); }
+        map.style.display = DisplayStyle.None; // replaced by the compass
+        BuildCompass();
 
-        scoreTitle = Text(root, 16, false, HudMuted); Place(scoreTitle, right: 26, top: 26, width: 170, height: 22); scoreTitle.text = "SCORE";
-        score = Text(root, 28, true, HudText); Place(score, right: 26, top: 48, width: 170, height: 36);
-        kills = Text(root, 14, false, HudMuted); Place(kills, right: 26, top: 84, width: 170, height: 22);
+        scoreTitle = Text(root, 13, false, HudMuted); Place(scoreTitle, right: 40, top: 26, width: 170, height: 18); scoreTitle.text = "SCORE";
+        score = Text(root, 22, true, HudText); Place(score, right: 40, top: 43, width: 170, height: 28);
+        kills = Text(root, 12, false, HudMuted); Place(kills, right: 40, top: 70, width: 170, height: 18);
+        scoreTitle.style.unityTextAlign = score.style.unityTextAlign = kills.style.unityTextAlign = TextAnchor.MiddleRight;
         doublePoints = Text(root, 15, true, new Color(1f, .82f, .2f), TextAnchor.MiddleRight); Place(doublePoints, right: 28, top: 108, width: 232, height: 22);
         instaKill = Text(root, 15, true, new Color(1f, .3f, .25f), TextAnchor.MiddleRight); Place(instaKill, right: 28, top: 130, width: 232, height: 22);
 
-        waveLine = Text(root, 20, true, HudText, TextAnchor.MiddleCenter); Place(waveLine, left: 0, right: 0, top: 26, height: 30);
-        notice = Text(root, 15, false, HudText, TextAnchor.UpperCenter); Place(notice, top: 60, width: 720, height: 52); notice.style.whiteSpace = WhiteSpace.Normal;
+        waveLine = Text(root, 14, true, HudMuted, TextAnchor.MiddleCenter); Place(waveLine, left: 0, right: 0, top: 66, height: 22);
+        notice = Text(root, 15, false, HudText, TextAnchor.UpperCenter); Place(notice, top: 92, width: 720, height: 52); notice.style.whiteSpace = WhiteSpace.Normal;
         // Interaction prompt (stations, gates, altar, horse...) and controls hint, offered through ElderboomPrompt.
         prompt = Text(root, 17, true, HudText, TextAnchor.MiddleCenter); Place(prompt, width: 520, height: 62); prompt.style.whiteSpace = WhiteSpace.Normal;
         prompt.style.backgroundColor = new Color(0f, 0f, 0f, .55f); prompt.style.borderTopLeftRadius = prompt.style.borderTopRightRadius = prompt.style.borderBottomLeftRadius = prompt.style.borderBottomRightRadius = 4;
@@ -113,20 +121,27 @@ public sealed class ElderboomHud : MonoBehaviour
             popups.Add(p);
         }
 
-        abilityName = Text(root, 16, true, HudText); Place(abilityName, left: 28, bottom: 142, width: 500, height: 28);
-        abilityStatus = Text(root, 13, false, HudMuted); Place(abilityStatus, left: 28, bottom: 121, width: 500, height: 24);
-        slots = Text(root, 12, false, HudMuted, TextAnchor.MiddleRight); Place(slots, right: 28, bottom: 143, width: 422, height: 24);
-        special = Text(root, 13, false, HudText, TextAnchor.MiddleRight); Place(special, right: 28, bottom: 121, width: 422, height: 24);
-
-        Icon(root, healthIcon, HudRed, 28, 87, 24);
-        abilityIconElement = Icon(root, abilityIcon, Color.white, 66, 87, 24);
-        Icon(root, creditIcon, Color.white, 106, 88, 22);
-        credits = Text(root, 16, false, HudText); Place(credits, left: 132, bottom: 88, width: 150, height: 26);
-        var healthBack = Box(root, 28, 0, 312, 8, new Color(HudRed.r, HudRed.g, HudRed.b, .22f)); healthBack.style.top = StyleKeyword.Auto; healthBack.style.bottom = 58;
-        healthFill = Box(healthBack, 0, 0, 312, 8, HudRed);
-        syringes = Text(root, 12, false, HudMuted); Place(syringes, left: 28, bottom: 31, width: 160, height: 22);
-        weaponName = Text(root, 12, false, HudMuted, TextAnchor.MiddleRight); Place(weaponName, right: 28, bottom: 88, width: 280, height: 22);
-        ammo = Text(root, 24, true, HudText, TextAnchor.MiddleRight); Place(ammo, right: 28, bottom: 42, width: 280, height: 42);
+        // Bottom left (reference layout): "+ 100" and a thin white bar; ability, credits and syringes small above it.
+        abilityName = Text(root, 14, true, HudText); Place(abilityName, left: 44, bottom: 160, width: 500, height: 22);
+        abilityStatus = Text(root, 12, false, HudMuted); Place(abilityStatus, left: 44, bottom: 141, width: 500, height: 20);
+        abilityIconElement = Icon(root, abilityIcon, Color.white, 44, 110, 22);
+        Icon(root, creditIcon, Color.white, 82, 111, 20);
+        credits = Text(root, 15, false, HudText); Place(credits, left: 106, bottom: 108, width: 90, height: 26);
+        syringes = Text(root, 12, false, HudMuted); Place(syringes, left: 190, bottom: 110, width: 160, height: 22);
+        BoxB(root, 49, 64, 4, 18, Color.white);   // plus sign
+        BoxB(root, 42, 71, 18, 4, Color.white);
+        healthValue = Text(root, 27, true, Color.white); Place(healthValue, left: 68, bottom: 56, width: 70, height: 34);
+        healthBack = BoxB(root, 128, 68, HealthBarWidth, 9, new Color(1f, 1f, 1f, .2f));
+        healthFill = Box(healthBack, 0, 0, HealthBarWidth, 9, Color.white);
+        if (healthIcon == null) { } // the old red heart is no longer drawn
+        // Bottom right: white side silhouette of the weapon, then "mag | reserve".
+        slots = Text(root, 12, false, HudMuted, TextAnchor.MiddleRight); Place(slots, right: 44, bottom: 168, width: 422, height: 20);
+        special = Text(root, 13, false, HudText, TextAnchor.MiddleRight); Place(special, right: 44, bottom: 148, width: 422, height: 20);
+        weaponIcon = BoxB(root, 0, 96, 150, 40, Color.clear); weaponIcon.style.left = StyleKeyword.Auto; weaponIcon.style.right = 44;
+        weaponIcon.style.backgroundSize = new StyleBackgroundSize(new BackgroundSize(Length.Percent(100), Length.Percent(100)));
+        weaponName = Text(root, 13, false, HudMuted, TextAnchor.MiddleRight); Place(weaponName, right: 44, bottom: 100, width: 280, height: 22);
+        ammo = Text(root, 30, true, Color.white, TextAnchor.MiddleRight); Place(ammo, right: 44, bottom: 52, width: 300, height: 40);
+        ammo.enableRichText = true;
 
         for (int i = 0; i < MaxWedges; i++)
         {
@@ -152,6 +167,96 @@ public sealed class ElderboomHud : MonoBehaviour
         e.style.backgroundColor = color;
         parent.Add(e);
         return e;
+    }
+
+    VisualElement BoxB(VisualElement parent, float left, float bottom, float width, float height, Color color)
+    {
+        var e = Box(parent, left, 0, width, height, color);
+        e.style.top = StyleKeyword.Auto; e.style.bottom = bottom;
+        return e;
+    }
+
+    // Compass band (reference layout): dark band fading at both ends, cardinal letters and 15-degree ticks.
+    void BuildCompass()
+    {
+        compass = Box(root, 0, 24, CompassWidth, 34, Color.clear);
+        compass.style.overflow = Overflow.Hidden;
+        compass.style.backgroundImage = new StyleBackground(CompassBand());
+        compass.style.backgroundSize = new StyleBackgroundSize(new BackgroundSize(Length.Percent(100), Length.Percent(100)));
+        for (int a = 0; a < 360; a += 15)
+        {
+            if (a % 45 == 0) continue;
+            var t = Box(compass, 0, 13, 1.5f, a % 45 == 0 ? 10 : 7, new Color(1f, 1f, 1f, .55f));
+            compassTicks.Add((t, a));
+        }
+        string[] names = { "N", "NE", "E", "SE", "S", "SW", "W", "NW" };
+        for (int i = 0; i < 8; i++)
+        {
+            bool north = i == 0;
+            var l = Text(compass, north ? 20 : 15, north, north ? Color.white : new Color(.92f, .92f, .92f, .9f), TextAnchor.MiddleCenter);
+            l.style.top = 0; l.style.width = 44; l.style.height = 34; l.text = names[i];
+            l.style.textShadow = new TextShadow { offset = new Vector2(0f, 1f), blurRadius = 2f, color = new Color(0f, 0f, 0f, .6f) };
+            compassLabels.Add((l, i * 45f));
+        }
+        compassMarker = Box(root, 0, 17, 8, 8, Color.white);
+        compassMarker.style.rotate = new StyleRotate(new Rotate(new Angle(45f, AngleUnit.Degree)));
+    }
+
+    static Texture2D compassBand;
+    static Texture2D CompassBand()
+    {
+        if (compassBand != null) return compassBand;
+        compassBand = new Texture2D(256, 1, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+        for (int x = 0; x < 256; x++)
+        {
+            float t = x / 255f, e = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(t / .22f)) * Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((1f - t) / .22f));
+            compassBand.SetPixel(x, 0, new Color(.05f, .06f, .07f, .5f * e));
+        }
+        compassBand.Apply();
+        return compassBand;
+    }
+
+    void UpdateCompass(float screenWidth)
+    {
+        float left = screenWidth * .5f - CompassWidth * .5f;
+        compass.style.left = left;
+        compassMarker.style.left = screenWidth * .5f - 4f;
+        float heading = player.transform.eulerAngles.y;
+        float half = CompassWidth * .5f;
+        foreach (var (label, angle) in compassLabels)
+        {
+            float d = Mathf.DeltaAngle(heading, angle);
+            bool on = Mathf.Abs(d) < 120f;
+            Show(label, on);
+            if (!on) continue;
+            label.style.left = half + d * CompassPxPerDeg - 22f;
+            label.style.opacity = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(70f, 118f, Mathf.Abs(d)));
+        }
+        foreach (var (tick, angle) in compassTicks)
+        {
+            float d = Mathf.DeltaAngle(heading, angle);
+            bool on = Mathf.Abs(d) < 120f;
+            Show(tick, on);
+            if (!on) continue;
+            tick.style.left = half + d * CompassPxPerDeg - .75f;
+            tick.style.opacity = 1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(70f, 118f, Mathf.Abs(d)));
+        }
+    }
+
+    void UpdateWeaponIcon()
+    {
+        var def = player.CurrentWeaponDefinition;
+        string id = def != null ? def.id : null;
+        if (id == lastIconId) return;
+        lastIconId = id;
+        weaponIconTexture = id != null ? Resources.Load<Texture2D>("Elderboom/UI/WeaponIcons/" + id) : null;
+        bool has = weaponIconTexture != null;
+        Show(weaponIcon, has); Show(weaponName, !has);
+        if (!has) return;
+        weaponIcon.style.backgroundImage = new StyleBackground(weaponIconTexture);
+        float height = 40f, width = height * weaponIconTexture.width / Mathf.Max(1f, weaponIconTexture.height);
+        if (width > 170f) { height *= 170f / width; width = 170f; }
+        weaponIcon.style.width = width; weaponIcon.style.height = height;
     }
 
     VisualElement Icon(VisualElement parent, Sprite sprite, Color tint, float left, float bottom, float size)
@@ -204,7 +309,7 @@ public sealed class ElderboomHud : MonoBehaviour
         float w = Screen.width / s, h = Screen.height / s;
 
         UpdateVignette();
-        UpdateMinimap(game);
+        UpdateCompass(w);
 
         if (player.Score != lastScore) { lastScore = player.Score; score.text = lastScore.ToString("000000"); }
         if (game.Kills != lastKills) { lastKills = game.Kills; kills.text = "KILLS  " + lastKills; }
@@ -256,19 +361,24 @@ public sealed class ElderboomHud : MonoBehaviour
         if (sp != lastSpecial) { lastSpecial = sp; Show(special, sp >= 0); if (sp >= 0) special.text = "SPECIAL WEAPON " + sp + "s"; }
 
         if (game.Credits != lastCredits) { lastCredits = game.Credits; credits.text = lastCredits.ToString(); }
-        healthFill.style.width = 312 * Mathf.Clamp01(player.Health / 100f);
+        float health01 = Mathf.Clamp01(player.Health / 100f);
+        healthFill.style.width = HealthBarWidth * health01;
+        healthFill.style.backgroundColor = player.Health < 35f ? HudRed : Color.white;
+        int hp = Mathf.CeilToInt(Mathf.Max(0f, player.Health));
+        if (hp != lastHealth) { lastHealth = hp; healthValue.text = hp.ToString(); }
         if (player.Syringes != lastSyringes) { lastSyringes = player.Syringes; syringes.text = "SYRINGES  " + lastSyringes.ToString("00"); }
         if (player.WeaponDisplayName != lastWeapon) { lastWeapon = player.WeaponDisplayName; weaponName.text = lastWeapon; }
+        UpdateWeaponIcon();
         if (player.Ammo != lastAmmo || player.ReserveAmmo != lastReserve || player.Reloading != lastReloading)
         {
             lastAmmo = player.Ammo; lastReserve = player.ReserveAmmo; lastReloading = player.Reloading;
-            ammo.text = lastReloading ? "RELOADING" : lastAmmo + "/" + lastReserve.ToString("000");
+            ammo.text = lastReloading ? "<size=60%>RELOADING</size>" : lastAmmo + " <color=#FFFFFF88>|</color> <size=70%>" + lastReserve + "</size>";
         }
 
         float cx = w * .5f, cy = h * .5f;
         UpdateDamageDirections(cx, cy);
         bool marker = player.HitMarkerVisible;
-        Show(crossDot, !marker);
+        Show(crossDot, !marker && !player.IsAiming); // no pointer while aiming down sights
         crossDot.style.left = cx - 1; crossDot.style.top = cy - 1;
         UpdateHitMarker(marker, cx, cy);
     }

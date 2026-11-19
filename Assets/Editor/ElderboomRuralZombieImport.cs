@@ -269,8 +269,8 @@ public static class ElderboomRuralZombieImport
         if (Mathf.Abs(rest.size.y - spec.height_m) > .015f || Mathf.Abs(rest.min.y) > .015f)
             throw new Exception("Incorrect imported scale/ground: " + spec.name + " " + rest);
         var lod = root.AddComponent<LODGroup>();
-        // Hordes: only the near LOD casts shadows; no per-bone motion vectors (each one is an extra pass per zombie).
-        for (int li = 0; li < levels.Length; li++) { if (levels[li] is SkinnedMeshRenderer smr) smr.skinnedMotionVectors = false; if (li > 0) levels[li].shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; }
+        // Only the near LOD casts shadows. Bone motion vectors stay on so temporal antialiasing does not smear a walking zombie.
+        for (int li = 0; li < levels.Length; li++) { if (levels[li] is SkinnedMeshRenderer smr) smr.skinnedMotionVectors = true; if (li > 0) levels[li].shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off; }
         lod.SetLODs(new[] { new LOD(.35f, new Renderer[] { levels[0] }), new LOD(.15f, new Renderer[] { levels[1] }), new LOD(.025f, new Renderer[] { levels[2] }) });
         lod.RecalculateBounds();
         var body = root.AddComponent<CapsuleCollider>();
@@ -284,6 +284,10 @@ public static class ElderboomRuralZombieImport
         sphere.radius = spec.height_m * .09f / Mathf.Abs(hit.transform.lossyScale.x);
         root.AddComponent<ElderboomZombie>();
         Extras(root, spec.name);
+        // Source meshes stay at spec.height_m. Spawn scale lifts the group to the port zombies' 1.82 m
+        // and keeps a short spread (1.74–1.88) so people are still different heights.
+        float spawn = SpawnHeight(spec.height_m);
+        root.transform.localScale = Vector3.one * (spawn / spec.height_m);
         Directory.CreateDirectory(PrefabFolder); string prefabPath = PrefabFolder + "/" + spec.name + ".prefab";
         // Save the untouched rest pose before exercising the animator.
         if (PrefabUtility.SaveAsPrefabAsset(root, prefabPath) == null) throw new Exception("Prefab save failed");
@@ -292,8 +296,8 @@ public static class ElderboomRuralZombieImport
         report.characters.Add(item);
         lod.ForceLOD(0);
         foreach (var mesh in meshes) mesh.updateWhenOffscreen = true;
-        Capture(spec.name + "_front", new Vector3(0, spec.height_m * .55f, 3.5f), Vector3.up * spec.height_m * .49f);
-        Capture(spec.name + "_back", new Vector3(-2, spec.height_m * .65f, -3.2f), Vector3.up * spec.height_m * .49f);
+        Capture(spec.name + "_front", new Vector3(0, spawn * .55f, 3.5f), Vector3.up * spawn * .49f);
+        Capture(spec.name + "_back", new Vector3(-2, spawn * .65f, -3.2f), Vector3.up * spawn * .49f);
         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
         animator.Rebind(); animator.Update(0);
         var controller = (AnimatorController)animator.runtimeAnimatorController;
@@ -342,6 +346,13 @@ public static class ElderboomRuralZombieImport
         Object.DestroyImmediate(root);
     }
 
+    // 1.59–1.81 m sources become 1.74–1.88 m in game, centered on the port height of 1.82 m.
+    static float SpawnHeight(float sourceHeight)
+    {
+        float t = Mathf.InverseLerp(1.59f, 1.81f, sourceHeight);
+        return Mathf.Lerp(1.74f, 1.88f, t);
+    }
+
     static Material Material(string folder, string name)
     {
         Texture2D Texture(string suffix, bool srgb, bool normal)
@@ -363,6 +374,13 @@ public static class ElderboomRuralZombieImport
         mat.SetTexture("_NormalMap", normalMap); mat.SetTexture("_MaskMap", mask);
         mat.SetFloat("_Metallic", 1); mat.SetFloat("_Smoothness", 1);
         mat.SetFloat("_SmoothnessRemapMin", 0); mat.SetFloat("_SmoothnessRemapMax", 1);
+        // Skin and cloth share one atlas, so the scatter stays short and the color is applied after it.
+        mat.SetFloat("_MaterialID", (float)MaterialId.LitSSS);
+        mat.SetFloat("_TransmissionEnable", 0f);
+        mat.SetFloat("_SubsurfaceMask", 1f);
+        var skin = AssetDatabase.LoadAssetAtPath<DiffusionProfileSettings>("Assets/Settings/ZombieSkinDiffusionProfile.asset");
+        if (skin == null) throw new Exception("Missing zombie skin diffusion profile");
+        HDMaterial.SetDiffusionProfile(mat, skin);
         HDMaterial.ValidateMaterial(mat); EditorUtility.SetDirty(mat); return mat;
     }
 

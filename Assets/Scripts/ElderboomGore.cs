@@ -198,6 +198,7 @@ public static class ElderboomGore
     static Mesh poolMesh; static Material poolMaterial;
     public static void Pool(Vector3 near, float size)
     {
+        if (ElderboomBloodSplat.Available) { ElderboomBloodSplat.PoolAt(near, size); return; } // Vefects HDRP pool
         RaycastHit ground = default; bool found = false; float best = 1e9f;
         foreach (var h in Physics.RaycastAll(near + Vector3.up * .5f, Vector3.down, 4f, ~((1 << 19) | (1 << 2)), QueryTriggerInteraction.Ignore))
             if (h.distance < best && h.collider.GetComponentInParent<ElderboomZombie>() == null && h.collider.GetComponentInParent<HDRPSlicePlayer>() == null && h.rigidbody == null)

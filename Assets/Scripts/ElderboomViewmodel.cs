@@ -4,8 +4,12 @@ using UnityEngine;
 public sealed class ElderboomViewmodel : MonoBehaviour
 {
     public GameObject model;
+    // Tactical arms on the Basic FPS clips (ElderboomArmsDriver): when set, it plays every action.
+    public ElderboomArmsDriver arms;
     public string operatorId;
     public AnimationClip idle, reload, ability;
+    // Aim distance set by the hold itself (ElderboomAuthoredGrip own-pose holds): the player does not pull it closer.
+    [System.NonSerialized] public bool keepAdsRelief;
     public Vector3 hipPosition;
     public Quaternion hipRotation = Quaternion.identity;
     public Vector3 adsPosition;
@@ -44,8 +48,29 @@ public sealed class ElderboomViewmodel : MonoBehaviour
         model.transform.localPosition = modelBasePosition;
         model.transform.localRotation = modelBaseRotation;
     }
+    float donorLocomotion;
+    bool donorSprinting;
+    // Arm animation (draw, fire, walk, sprint) is gone with the archived arms: the old callers get "not handled".
+    public bool UsesDonorSprint => arms != null;
+    public bool UsesDonorWalk => arms != null;
+    public bool UsesDonorDraw => arms != null;
+
+    public void SetLocomotion(float amount, bool sprinting)
+    {
+        donorLocomotion = amount;
+        donorSprinting = sprinting;
+        arms?.SetLocomotion(amount, sprinting);
+    }
+
+    public void PlayDonorDraw() { arms?.Draw(); }
+    public void PlayDonorInspect() { }
+    public bool PlayDonorFire(float interval) => arms != null && arms.Fire();
+
     string action = "idle";
     float elapsed;
+    const float AdsIdleHoldSeconds = 3f;
+    float adsIdleHoldRemaining;
+    bool aiming;
     AnimationClip classifiedIdle;
     bool frozenIdle;
     // Playables: idle (0), reload (1) and ability (2) on one mixer with short cross-fades.
@@ -56,10 +81,14 @@ public sealed class ElderboomViewmodel : MonoBehaviour
     bool mixerTried;
     GameObject mixerModel;
     public bool Busy => action != "idle";
+    // Donor reload clips run up to 7 s (tube shotguns, revolver): gameplay keeps them short by playing the clip faster.
+    
     public float ReloadDuration => authoredReloadTiming && reload != null ? reload.length : operatorId == ElderboomIds.Soph ? 2.5f : 2.3f;
     public void ResetToIdle()
     {
         action = "idle"; elapsed = 0f;
+        SetAiming(false);
+        if (arms != null) { arms.ResetIdle(); return; }
         RestoreModelBase();
         if (model == null || idle == null) return;
         if (EnsureMixer()) { mixer.SetTime(0, IdleTime(0f)); mixer.Snap(0); }
@@ -72,9 +101,33 @@ public sealed class ElderboomViewmodel : MonoBehaviour
         return mixer != null && mixer.Valid && mixer.Has(0);
     }
     void OnEnable() { if (mixer != null && mixer.Valid && model != null) ResetToIdle(); }
+    void OnDisable() => SetAiming(false);
     void OnDestroy() { mixer?.Dispose(); mixer = null; }
-    public float PlayReload() { action = "reload"; elapsed = 0; return ReloadDuration; }
+    public float PlayReload(bool empty = false, bool tube = false, int shells = 0)
+    {
+        if (arms != null) return arms.Reload(empty, shells).duration;
+        action = "reload";
+        elapsed = 0f;
+        return ReloadDuration;
+    }
     public float PlayAbility() { action = "ability"; elapsed = 0; return operatorId == ElderboomIds.Soph ? 6.867f : operatorId == ElderboomIds.Eli ? 3.1f : ability != null ? ability.length : 1f; }
+
+    public void SetAiming(bool active)
+    {
+        arms?.SetAim(active);
+        if (aiming == active) return;
+        aiming = active;
+        adsIdleHoldRemaining = active ? AdsIdleHoldSeconds : 0f;
+    }
+
+    void AdvancePlayback(float deltaTime)
+    {
+        float held = Mathf.Min(deltaTime, adsIdleHoldRemaining);
+        adsIdleHoldRemaining -= held;
+        // Hold the current idle sample and resume from it. Action clocks keep running.
+        elapsed += action == "idle" ? deltaTime - held : deltaTime;
+    }
+
     float IdleTime(float time)
     {
         if(operatorId==ElderboomIds.Tactical)return 1f/60f;
@@ -91,7 +144,8 @@ public sealed class ElderboomViewmodel : MonoBehaviour
     }
     void LateUpdate()
     {
-        elapsed += Time.deltaTime;
+        if (arms != null) return;
+        AdvancePlayback(Time.deltaTime);
         bool procedural = proceduralReload && action == "reload" && reload == null;
         AnimationClip clip = action == "reload" ? (procedural ? idle : reload) : action == "ability" ? ability : idle;
         if (model == null || !model.activeInHierarchy || clip == null) { if (action != "idle" && elapsed > 2.5f) action = "idle"; return; }

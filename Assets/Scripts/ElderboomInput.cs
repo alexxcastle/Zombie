@@ -18,6 +18,7 @@ public static class ElderboomInput
         ("interact", "Interact", KeyCode.E),
         ("use_syringe", "Use syringe", KeyCode.H),
         ("reload", "Reload", KeyCode.R),
+        ("inspect_weapon", "Inspect weapon", KeyCode.Y),
         ("shockwave", "Use selected ability", KeyCode.Q),
         ("cycle_ability", "Cycle selected ability", KeyCode.C),
         ("flashlight", "Flashlight", KeyCode.F),
@@ -31,9 +32,9 @@ public static class ElderboomInput
     static int ignoreThroughFrame = -1;
     public static bool AcceptsInput => (Application.isFocused
 #if UNITY_EDITOR
-        || HeldOverride != null // audit tools drive the player while the editor is in the background
+        || HeldOverride != null || DownOverride != null // audit tools drive the player while the editor is in the background
 #endif
-        ) && Time.frameCount > ignoreThroughFrame;
+        ) && Time.frameCount > ignoreThroughFrame && !ElderboomCheats.IsOpen; // the cheat console takes the keyboard
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     static void ResetStatics()
@@ -41,6 +42,7 @@ public static class ElderboomInput
         bindings = null; buttons.Clear(); ignoreThroughFrame = -1;
 #if UNITY_EDITOR
         HeldOverride = null;
+        DownOverride = null;
 #endif
         Application.focusChanged -= OnFocusChanged;
         Application.focusChanged += OnFocusChanged;
@@ -70,15 +72,25 @@ public static class ElderboomInput
 
     public static KeyCode Get(string action) => Bindings.TryGetValue(action, out var key) ? key : KeyCode.None;
     public static string Label(string action) => KeyName(Get(action));
+    // On-screen prompts: the pad's button while the pad is in use, the bound key otherwise.
+    public static string Prompt(string action)
+    {
+        if (ElderboomGamepad.LastUsed) { string pad = ElderboomGamepad.Label(action); if (pad != null) return pad; }
+        return Label(action);
+    }
 
     public static bool Down(string action)
     {
-        return AcceptsInput && Read(Get(action)).Pressed;
+#if UNITY_EDITOR
+        if (DownOverride != null && DownOverride(action)) { DownOverride = null; return true; }
+#endif
+        return AcceptsInput && (Read(Get(action)).Pressed || ElderboomGamepad.Down(action));
     }
 
-    // Tools (Editor/ElderboomClaudeWeaponAudit) can hold an action without a key press.
+    // Tools (Editor/ElderboomClaudeWeaponAudit, ElderboomClaudeArmsTest) can drive actions without a key press.
 #if UNITY_EDITOR
     public static System.Func<string, bool> HeldOverride;
+    public static System.Func<string, bool> DownOverride;
 #endif
 
     public static bool Held(string action)
@@ -86,7 +98,7 @@ public static class ElderboomInput
 #if UNITY_EDITOR
         if (HeldOverride != null && HeldOverride(action)) return true;
 #endif
-        return AcceptsInput && Read(Get(action)).Held;
+        return AcceptsInput && (Read(Get(action)).Held || ElderboomGamepad.Held(action));
     }
 
     static ElderboomButtonState Read(KeyCode key)

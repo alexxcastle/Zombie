@@ -32,24 +32,34 @@ public static class ElderboomAudio
         PlayClip(clip,position,volume,spatial,Random.Range(1f-pitchJitter,1f+pitchJitter));
     }
     // A looping 3D emitter (fountains, generator, wind); null when the clip is missing.
-    public static AudioSource Loop(string path,Vector3 position,float volume,float minDistance,float maxDistance,Transform parent=null)
+    // followEffects: loops that set their own volume afterwards (engine, flame, burning) pass false.
+    public static AudioSource Loop(string path,Vector3 position,float volume,float minDistance,float maxDistance,Transform parent=null,bool followEffects=true)
     {
         var clip=Clip(path); if(clip==null)return null;
         var go=new GameObject("Elderboom_Loop_"+path.Replace('/','_')); if(parent!=null)go.transform.SetParent(parent,true); go.transform.position=position;
         var s=go.AddComponent<AudioSource>(); s.clip=clip; s.loop=true; s.volume=volume*Effects; s.spatialBlend=maxDistance>0?1f:0f;
-        s.rolloffMode=AudioRolloffMode.Logarithmic; s.minDistance=minDistance; s.maxDistance=Mathf.Max(maxDistance,minDistance+1f); s.dopplerLevel=0; s.time=Random.Range(0f,clip.length); s.Play();
+        // Linear uses min and max. Logarithmic would keep playing past the distance written here.
+        s.rolloffMode=AudioRolloffMode.Linear; s.minDistance=minDistance; s.maxDistance=maxDistance>0?maxDistance:minDistance+1f; s.dopplerLevel=0; s.time=Random.Range(0f,clip.length); s.Play();
+        if(followEffects){var level=go.AddComponent<LoopLevel>(); level.Base=volume;}
         return s;
     }
-    public static void Play(string path,Vector3 position,float volume=1f,bool spatial=false,float pitch=1f,float time=0f)
-        =>PlayClip(Clip(path),position,volume,spatial,pitch,time);
-    public static void PlayClip(AudioClip clip,Vector3 position,float volume=1f,bool spatial=false,float pitch=1f,float time=0f)
+    sealed class LoopLevel:MonoBehaviour
+    {
+        public float Base;
+        AudioSource source;
+        void Awake()=>source=GetComponent<AudioSource>();
+        void LateUpdate(){if(source!=null)source.volume=Base*Effects;}
+    }
+    public static void Play(string path,Vector3 position,float volume=1f,bool spatial=false,float pitch=1f,float time=0f,float minDistance=2f,float maxDistance=48f)
+        =>PlayClip(Clip(path),position,volume,spatial,pitch,time,minDistance,maxDistance);
+    public static void PlayClip(AudioClip clip,Vector3 position,float volume=1f,bool spatial=false,float pitch=1f,float time=0f,float minDistance=2f,float maxDistance=48f)
     {
         if(clip==null)return;
         int index=next++%voices.Length;
         var source=voices[index];
         if(source==null){var go=new GameObject("Elderboom_Audio_Voice_"+index);source=go.AddComponent<AudioSource>();voices[index]=source;}
         source.transform.position=position;source.Stop();source.clip=clip;source.volume=volume*Effects;source.pitch=pitch;source.spatialBlend=spatial?1:0;
-        source.rolloffMode=AudioRolloffMode.Linear;source.minDistance=2f;source.maxDistance=48f;source.dopplerLevel=0;
+        source.rolloffMode=AudioRolloffMode.Linear;source.minDistance=minDistance;source.maxDistance=maxDistance;source.dopplerLevel=0;
         source.time=Mathf.Clamp(time,0f,Mathf.Max(0f,clip.length-0.02f));
         source.Play();
     }
@@ -74,7 +84,7 @@ public static class ElderboomAudio
         if(source==null){var go=new GameObject("Elderboom_Zombie_Voice_"+slot); Object.DontDestroyOnLoad(go); source=go.AddComponent<AudioSource>(); zombieVoices[slot]=source;}
         source.transform.position=position; source.Stop(); source.clip=clip;
         source.volume=Mathf.Pow(10f, db/20f)*Effects; source.pitch=Random.Range(minPitch,maxPitch); source.spatialBlend=1f;
-        source.rolloffMode=AudioRolloffMode.Logarithmic; source.minDistance=unit; source.maxDistance=maxDistance; source.dopplerLevel=0f;
+        source.rolloffMode=AudioRolloffMode.Linear; source.minDistance=unit; source.maxDistance=maxDistance; source.dopplerLevel=0f;
         source.Play();
     }
 
@@ -92,7 +102,8 @@ public static class ElderboomAudio
 
     // upgraded: the CRIMSON (altar) version of the weapon fires the "laser" variants made from the same gunshot and
     // tail (ring-modulated crack, falling zap, flanger), falling back to the plain ones.
-    public static void FireWeapon(string category, Vector3 position, bool upgraded = false)
+    // spatial: a teammate's shot, heard from where they stand. The local weapon stays in the ears.
+    public static void FireWeapon(string category, Vector3 position, bool upgraded = false, bool spatial = false)
     {
         float pitch = Random.Range(0.985f, 1.015f);
         string shot = ClipPath(category, "gunshot_01"), tail = ClipPath(category, "tail_01");
@@ -101,7 +112,7 @@ public static class ElderboomAudio
             if (Clip(ClipPath(category, "gunshot_laser")) != null) shot = ClipPath(category, "gunshot_laser");
             if (Clip(ClipPath(category, "tail_laser")) != null) tail = ClipPath(category, "tail_laser");
         }
-        Play(shot, position, Db(upgraded ? -2.5f : -1.5f), false, pitch);
+        Play(shot, position, Db(upgraded ? -2.5f : -1.5f), spatial, pitch, 0f, spatial ? 4f : 2f, spatial ? 70f : 48f);
         var clip = Clip(tail);
         if (clip == null) return;
         int slot = NextTail();
@@ -109,13 +120,44 @@ public static class ElderboomAudio
             if (i != slot && tails[i] != null && tails[i].isPlaying) tailFades[i] = 0.075f;
         var voice = tails[slot];
         voice.Stop();
+        voice.transform.position = position;
         voice.clip = clip;
         voice.pitch = pitch;
         voice.volume = Db(-3f) * Effects;
-        voice.spatialBlend = 0f;
+        voice.spatialBlend = spatial ? 1f : 0f;
+        voice.rolloffMode = AudioRolloffMode.Linear;
+        voice.minDistance = spatial ? 4f : 1f;
+        voice.maxDistance = spatial ? 70f : 48f;
         voice.Play();
         tailFades[slot] = 0f;
         EnsureHost();
+    }
+
+    // Suppressed shot (weapon customization): the same shot, quieter, muffled by a low-pass and a little higher
+    // (the crack of the can), with no long reverb tail. Sound only: the zombies hear it like any other shot.
+    static AudioSource suppressedVoice;
+    public static void FireSuppressed(string category, Vector3 position, bool upgraded = false)
+    {
+        string shot = ClipPath(category, "gunshot_01");
+        if (upgraded && Clip(ClipPath(category, "gunshot_laser")) != null) shot = ClipPath(category, "gunshot_laser");
+        var clip = Clip(shot);
+        if (clip == null) return;
+        if (suppressedVoice == null)
+        {
+            var go = new GameObject("Elderboom_Audio_Suppressed");
+            suppressedVoice = go.AddComponent<AudioSource>();
+            suppressedVoice.playOnAwake = false;
+            suppressedVoice.spatialBlend = 0f;
+            var lowPass = go.AddComponent<AudioLowPassFilter>();
+            lowPass.cutoffFrequency = 1900f;
+            lowPass.lowpassResonanceQ = 1.1f;
+        }
+        suppressedVoice.transform.position = position;
+        suppressedVoice.pitch = Random.Range(1.04f, 1.1f);
+        suppressedVoice.PlayOneShot(clip, Db(-9f) * Effects);
+        // A short, quiet echo instead of the full tail.
+        var tail = Clip(ClipPath(category, "tail_01"));
+        if (tail != null) suppressedVoice.PlayOneShot(tail, Db(-20f) * Effects);
     }
 
     public static void DryFire(string category, Vector3 position)
@@ -184,6 +226,7 @@ public static class ElderboomAudio
         }
     }
 
+    // The source pack has handgun, shotgun and assault rifle only. SMGs use the rifle set (see operator_weapons/README.md).
     static string Folder(string category) => category == ElderboomIds.Category.Shotgun ? "shotgun" : category == ElderboomIds.Category.Handgun ? "handgun" : "assaultrifle";
     static string Prefix(string category) => category == ElderboomIds.Category.Shotgun ? "sgn" : category == ElderboomIds.Category.Handgun ? "hgn" : "ar";
     static string ClipPath(string category, string stage) => "operator_weapons/" + Folder(category) + "/sfx_wpn_" + Prefix(category) + "_" + stage;

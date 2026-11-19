@@ -56,7 +56,7 @@ public sealed class ElderboomShoulderTrim : MonoBehaviour
         if (root == null) return;
         float right = 0f, left = 0f;
         if (operatorId == ElderboomIds.Tactical) { right = .38f; left = .12f; }
-        else if (operatorId == ElderboomIds.Soph) { right = .3f; left = .3f; }
+        else if (operatorId == ElderboomIds.Soph) { right = .75f; left = .75f; } // long sleeves: folded in so aiming keeps them out of the eye
         else if (operatorId == ElderboomIds.Eli) { right = .3f; left = .15f; }
         var trim = root.GetComponent<ElderboomShoulderTrim>() ?? root.gameObject.AddComponent<ElderboomShoulderTrim>();
         trim.Bind(operatorId, right, left);
@@ -75,6 +75,7 @@ public sealed class ElderboomShoulderTrim : MonoBehaviour
         boundTo = op; sides.Clear();
         var bones = new HashSet<Transform>();
         foreach (var smr in GetComponentsInChildren<SkinnedMeshRenderer>(true)) if (smr.bones != null) foreach (var b in smr.bones) if (b != null) bones.Add(b);
+        var fores = new List<Transform>();
         foreach (bool isRight in new[] { true, false })
         {
             float amount = isRight ? right : left; if (amount <= 0f) continue;
@@ -83,9 +84,12 @@ public sealed class ElderboomShoulderTrim : MonoBehaviour
             {
                 if (!IsSide(b.name, isRight)) continue;
                 string n = b.name.ToLowerInvariant();
-                if (n.Contains("upper") || n.Contains("upperarm") || n == (isRight ? "arm.r" : "arm.l") || n.EndsWith(isRight ? "rightarm" : "leftarm")) s.upper.Add(b);
-                else if (s.elbow == null && (n.Contains("forearm") || n.Contains("lowerarm") || n.Contains("fore"))) s.elbow = b;
+                if (n.Contains("upper") || n.Contains("upperarm") || n == (isRight ? "arm.r" : "arm.l") || n.EndsWith(isRight ? "rightarm" : "leftarm") || (op == ElderboomIds.Soph && n.Contains("shoulder"))) s.upper.Add(b);
+                else if (n.Contains("forearm") || n.Contains("lowerarm") || n.Contains("fore")) fores.Add(b);
             }
+            // The elbow is the topmost forearm bone (the unified rig has a twist bone, DEF-forearm.X.001, under it).
+            foreach (var f in fores) if (!fores.Contains(f.parent)) { s.elbow = f; break; }
+            fores.Clear();
             if (s.upper.Count > 0 && s.elbow != null) sides.Add(s);
         }
     }
@@ -115,7 +119,9 @@ public sealed class ElderboomSupportHand : MonoBehaviour
     public static void Attach(Transform model, Transform handBone, Transform marker)
     {
         if (handBone == null || marker == null || handBone.parent == null) return;
-        var fore = handBone.parent; var upper = fore.parent;
+        var fore = handBone.parent;
+        if (fore.name.EndsWith(".001") && fore.parent != null) fore = fore.parent; // twist bone of the unified rig: solve the forearm itself
+        var upper = fore.parent;
         while (upper != null && upper.parent != null && upper.parent.name.ToLowerInvariant().Contains("upper")) upper = upper.parent; // past twist bones
         if (upper == null) return;
         var c = model.gameObject.AddComponent<ElderboomSupportHand>();

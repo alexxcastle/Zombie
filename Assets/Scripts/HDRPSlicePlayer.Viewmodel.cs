@@ -50,15 +50,19 @@ public sealed partial class HDRPSlicePlayer
         EnsureViewmodelRoot();
         if (viewmodelFov != null)
         {
-            const float k = 1f; // the weapon is drawn with the world FOV: changing the FOV setting changes its size, as it should
+            // Framed at the default FOV. Scale depth with the slider so the weapon keeps that on-screen size;
+            // aiming still zooms it, because that zoom is the camera and not this scale.
+            float reference = ElderboomPauseMenu.VerticalFov(ElderboomPauseMenu.DefaultHorizontalFov);
+            float current = pause != null ? pause.FieldOfView : reference;
+            float k = Mathf.Tan(reference * .5f * Mathf.Deg2Rad) / Mathf.Tan(Mathf.Max(1f, current) * .5f * Mathf.Deg2Rad);
             viewmodelFov.localScale = new Vector3(1f, 1f, k * ViewmodelDepth);
         }
         // Look sway: the weapon lags slightly behind fast mouse movement.
         float ads = aiming ? .3f : 1f;
         Vector2 velocity = dt > 0f ? new Vector2(lookDeltaX, lookDeltaY) / dt : Vector2.zero;
         Vector2 target = Vector2.ClampMagnitude(-velocity * .011f * ads, 5f);
-        sway = Vector2.Lerp(sway, target, 1f - Mathf.Exp(-11f * dt));
-        strafeTilt = Mathf.Lerp(strafeTilt, -moveX * 2.4f * (aiming ? .3f : 1f), 1f - Mathf.Exp(-8f * dt));
+        sway = Vector2.Lerp(sway, target, 1f - Mathf.Exp(-16f * dt));
+        strafeTilt = Mathf.Lerp(strafeTilt, -moveX * 2.4f * (aiming ? .3f : 1f), 1f - Mathf.Exp(-12f * dt));
         equipT = Mathf.Min(1f, equipT + dt / EquipDuration);
         // Pull the weapon in when the camera is right against a wall.
         float target01 = 0f;
@@ -83,7 +87,7 @@ public sealed partial class HDRPSlicePlayer
 
     Vector3 ViewmodelOffset()
     {
-        float draw = 1f - Mathf.Pow(1f - equipT, 3f);
+        float draw = portViewmodel != null && portViewmodel.UsesDonorDraw ? 1f : 1f - Mathf.Pow(1f - equipT, 3f);
         return new Vector3(sway.x * .0022f, sway.y * .0022f, 0f)
              + new Vector3(0f, -.17f, -.05f) * (1f - draw)
              + new Vector3(.02f, -.07f, -.13f) * obstruct;
@@ -91,7 +95,7 @@ public sealed partial class HDRPSlicePlayer
 
     Quaternion ViewmodelRotation()
     {
-        float draw = 1f - Mathf.Pow(1f - equipT, 3f);
+        float draw = portViewmodel != null && portViewmodel.UsesDonorDraw ? 1f : 1f - Mathf.Pow(1f - equipT, 3f);
         return Quaternion.Euler(-sway.y + 28f * (1f - draw) + 32f * obstruct, sway.x - 22f * obstruct, sway.x * .6f + strafeTilt - 10f * (1f - draw));
     }
 }

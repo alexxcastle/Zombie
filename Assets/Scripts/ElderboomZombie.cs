@@ -4,6 +4,8 @@ using UnityEngine.AI;
 
 public sealed partial class ElderboomZombie : MonoBehaviour
 {
+    // Every zombie (host and LAN proxies) is spawned 6% larger than its model; variants scale on top of this.
+    public const float BodyScale = 1.06f;
     ElderboomGame game;
     HDRPSlicePlayer player;
     NavMeshAgent agent;
@@ -38,6 +40,7 @@ public sealed partial class ElderboomZombie : MonoBehaviour
         Variant = string.IsNullOrEmpty(kind) ? "walker" : kind;
         if (Variant == "brute") { transform.localScale *= 1.18f; pushResist = .45f; }
         else if (Variant == "runner") { transform.localScale *= .96f; pushResist = 1.15f; }
+        else if (Variant == "boss") { transform.localScale *= 1.85f; pushResist = .12f; } // ElderboomZombie.Boss
     }
     // Gunshots and explosions draw blinded or wandering zombies toward the noise.
     public void HearNoise(Vector3 position) => HearNoise(position, 7f);
@@ -101,6 +104,7 @@ public sealed partial class ElderboomZombie : MonoBehaviour
             case 6: ApplyShockwave(new Vector3(v[0], v[1], v[2]), v[3], v[4], v[5]); break;
             case 7: EnforceKeepAway(new Vector3(v[0], v[1], v[2]), v[3]); break;
             case 8: BeginLift(v[0], v[1], v[2], v[3], v[4], v[5], new Vector3(v[6], v[7], v[8])); break;
+            case 9: Ignite(v[0], v[1]); break;
         }
     }
     // Eli's Ignore Signal hides only the player who used it.
@@ -162,6 +166,8 @@ public sealed partial class ElderboomZombie : MonoBehaviour
 
     void Update()
     {
+        if (dead) { TickBurn(); SetState(ElderboomZombieState.Dead); return; }
+        TickBurn();
         if (dead) { SetState(ElderboomZombieState.Dead); return; }
         if (player == null || agent == null) { SetState(ElderboomZombieState.Idle); return; }
         Retarget();
@@ -169,6 +175,7 @@ public sealed partial class ElderboomZombie : MonoBehaviour
         if (!lifted && !agent.isOnNavMesh) { SetState(ElderboomZombieState.OffMesh); TickOffMesh(); return; }
         offMeshTime = 0f;
         float distance = Vector3.Distance(transform.position, TargetPos);
+        if (BossTick(distance)) return;
         if (SkillTick(distance)) return;
         TickBody(distance);
         // Global ignore (Eli's Ignore Signal) also silences noises; a per-zombie ignore
@@ -373,30 +380,58 @@ public sealed partial class ElderboomZombie : MonoBehaviour
         }
         if(dead || amount <= 0f)return false;
         if(game!=null && game.InstaKill)amount=Mathf.Max(amount,health+1f);
-        health-=amount;
+        amount=BossDamage(amount,hitPoint);health-=amount;
         if(health>0)
         {
             if(Time.time>=bloodAt){ElderboomImportedVfx.Blood(hitPoint,hitNormal,false);bloodAt=Time.time+.065f;}
+            if(!Burning || Random.value<.3f)ElderboomBloodSplat.FromHit(hitPoint,hitPoint-origin,false);
             ElderboomGore.OnHit(this,animator,hitPoint,origin,amount);
             ReactToShot();
             if(Time.time>=hitSoundAt){int hit=-1;ElderboomAudio.Zombie("hit", ref hit, transform.position);hitSoundAt=Time.time+.48f;}
             return false;
         }
-        dead=true;CancelMelee();ClearShotReaction();ElderboomImportedVfx.Blood(hitPoint,hitNormal,true);game?.RegisterKill(this);
+        dead=true;CancelMelee();ClearShotReaction();ElderboomImportedVfx.Blood(hitPoint,hitNormal,true);ElderboomBloodSplat.FromHit(hitPoint,hitPoint-origin,true);game?.RegisterKill(this);
         ElderboomGore.OnKill(this,animator,hitPoint,origin,amount,ElderboomCombat.BlastDamage);
         if(agent!=null && agent.isOnNavMesh)agent.isStopped=true;
         foreach(var collider in GetComponentsInChildren<Collider>())collider.enabled=false;
-        SetMotion("DeathA");int death=-1;ElderboomAudio.Zombie("death", ref death, transform.position);
-        Destroy(gameObject,3f);return true;
+        string deathState=MeleeState(MeleeDeaths[Random.Range(0,MeleeDeaths.Length)])??"DeathA";SetMotion(deathState);int death=-1;ElderboomAudio.Zombie("death", ref death, transform.position);
+        if(IsBoss){ElderboomAudio.Play("boss/death",transform.position+Vector3.up*2f,1f,true,1f,0f,6f,80f);Destroy(gameObject,8f);return true;}
+        Destroy(gameObject,deathState=="DeathA"?3f:5.2f);return true; // the melee deaths are longer falls
     }
     void ClearShotReaction(){hitReacting=false;shotReactionUntil=0f;}
+    // Melee blows (ElderboomSentinel): their own reactions and deaths, when the controller has the states
+    // (added by Editor/ElderboomZombieMeleeAnims). 1 = light blow, 2 = heavy.
+    int meleeBlow;
+    static readonly string[] MeleeLight={"MeleeHitA","MeleeHitB","MeleeHitL","MeleeHitR"},MeleeHeavy={"MeleeHeavyA","MeleeHeavyB","MeleeHeavyL","MeleeHeavyR"},
+        MeleeDeaths={"MeleeDeathA","MeleeDeathB","MeleeDeathC","MeleeDeathD","MeleeDeathE"};
+    Vector3 meleeFrom; // world direction the blow comes from (zero: straight on)
+    public bool TakeMeleeDamage(float amount, Vector3 origin, Vector3 hitPoint, Vector3 hitNormal, bool heavy, Vector3 from=default)
+    {
+        meleeBlow=heavy?2:1;meleeFrom=from;
+        try{return TakeDamage(amount,origin,hitPoint,hitNormal);}
+        finally{meleeBlow=0;}
+    }
+    string MeleeState(string name)=>meleeBlow>0 && animator!=null && animator.runtimeAnimatorController!=null && animator.HasState(0,Animator.StringToHash(name))?name:null;
     void ReactToShot()
     {
         // Keep ability reactions intact. Pellets/repeated hits must not keep
         // restarting ShotHit at frame zero while it is already playing.
-        if(hitReacting || lifted || IsFrozen || Time.time<reactionUntil || Time.time<pushUntil)return;
+        // sets are {front, front, from the left, from the right}: the flinch follows the side the blow lands on
+        var meleeSet=meleeBlow==2?MeleeHeavy:MeleeLight;
+        float meleeSide=meleeFrom.sqrMagnitude>.01f?Vector3.Dot(transform.right,meleeFrom.normalized):0f;
+        string meleeHit=MeleeState(meleeSet[meleeSide<-.45f?2:meleeSide>.45f?3:Random.Range(0,2)]);
+        // a melee combo restarts the flinch on every blow; bullets do not
+        if(IsBoss || (hitReacting && meleeHit==null) || lifted || IsFrozen || Time.time<reactionUntil || Time.time<pushUntil)return;
         if(animator==null || animator.runtimeAnimatorController==null || !animator.HasState(0,ShotHitState))return;
         CancelMelee();
+        if(meleeHit!=null)
+        {
+            float meleeTime=meleeBlow==2?1.05f:.65f;
+            hitReacting=true;shotReactionUntil=Time.time+meleeTime;nextAttack=Mathf.Max(nextAttack,shotReactionUntil+.1f);
+            if(agent!=null && agent.enabled && agent.isOnNavMesh){agent.isStopped=true;agent.ResetPath();agent.velocity=Vector3.zero;}
+            WakeAnimation(meleeTime+.12f);animator.speed=1.2f;animator.CrossFadeInFixedTime(meleeHit,.05f,0,0f);
+            return;
+        }
         hitReacting=true;shotReactionUntil=Time.time+shotReactionDuration;
         nextAttack=Mathf.Max(nextAttack,shotReactionUntil+.1f);
         if(agent!=null && agent.enabled && agent.isOnNavMesh)
@@ -426,12 +461,59 @@ public sealed partial class ElderboomZombie : MonoBehaviour
         ClearShotReaction();CancelMelee();
         Vector3 away=transform.position-origin;away.y=0f;
         if(away.sqrMagnitude<0.001f)away=Vector3.forward;
-        pushVelocity=away.normalized*force*pushResist;
-        pushUntil=Mathf.Max(pushUntil,Time.time+Mathf.Max(stun,force/28f));
+        // The throw is driven directly (not through the push velocity, which agent.Move could swallow):
+        // 2.5-7 m along the blast, less for heavy builds, stopped by walls and the NavMesh edge.
+        float resist=Mathf.Clamp(pushResist,.45f,1.2f);
+        float throwDistance=Mathf.Lerp(2.5f,7f,Mathf.InverseLerp(8f,28f,force))*resist;
+        float flight=Mathf.Lerp(.35f,.6f,Mathf.InverseLerp(8f,28f,force));
+        pushVelocity=Vector3.zero;
+        pushUntil=Mathf.Max(pushUntil,Time.time+Mathf.Max(stun,flight));
         if(agent!=null && agent.isOnNavMesh){agent.ResetPath();agent.velocity=Vector3.zero;agent.isStopped=true;}
         reactionUntil=Mathf.Max(reactionUntil,Time.time+1.2f);
         SetMotion("ShockwaveHit");
+        int token=++knockToken;
+        StartCoroutine(ShockThrowRoutine(token,away.normalized,throwDistance,flight));
         if(amount>0f)TakeDamage(amount,origin);
+        if(!dead && force>=6f)StartCoroutine(KnockdownRoutine(token,flight));
+    }
+    IEnumerator ShockThrowRoutine(int token,Vector3 dir,float distance,float flight)
+    {
+        if(agent==null || !agent.isOnNavMesh)yield break;
+        Vector3 start=agent.nextPosition,end=start+dir*distance;
+        // Walls and gates (thin colliders the NavMesh may not cut) stop the flight short.
+        if(Physics.SphereCast(start+Vector3.up*1f,.3f,dir,out var wall,distance,ElderboomCombat.WorldMask,QueryTriggerInteraction.Ignore)
+           && wall.collider.GetComponentInParent<ElderboomZombie>()==null && wall.collider.GetComponentInParent<HDRPSlicePlayer>()==null)
+            end=start+dir*Mathf.Max(0f,wall.distance-.35f);
+        if(NavMesh.Raycast(start,end,out var edge,NavMesh.AllAreas))end=edge.position-dir*.2f;
+        float t=0f;
+        while(t<flight)
+        {
+            if(dead||lifted||token!=knockToken||agent==null||!agent.isOnNavMesh)yield break;
+            t+=Time.deltaTime;
+            float k=1f-Mathf.Pow(1f-Mathf.Clamp01(t/flight),2.2f); // fast out, eases at the landing
+            var target=Vector3.Lerp(start,end,k);
+            if(NavMesh.SamplePosition(target,out var nav,1.5f,NavMesh.AllAreas))agent.Warp(nav.position);
+            agent.isStopped=true;
+            yield return null;
+        }
+    }
+    // Shockwave: after being thrown back the zombie drops to the ground, then gets up.
+    int knockToken;
+    IEnumerator KnockdownRoutine(int token,float flight)
+    {
+        const float fall=0.35f,getUp=1.8f;
+        flight=Mathf.Clamp(flight,0.2f,1f);
+        pushUntil=Mathf.Max(pushUntil,Time.time+flight+fall+getUp);
+        reactionUntil=Mathf.Max(reactionUntil,Time.time+flight+fall+getUp);
+        yield return new WaitForSeconds(flight*0.6f);
+        if(dead||lifted||token!=knockToken)yield break;
+        SetMotion("LiftSlam");
+        yield return new WaitForSeconds(flight*0.4f+fall);
+        if(dead||lifted||token!=knockToken)yield break;
+        SetMotion("GetUp");
+        yield return new WaitForSeconds(getUp);
+        if(dead||lifted||token!=knockToken)yield break;
+        SetMotion(Locomotion());
     }
     public void EnforceKeepAway(Vector3 center,float radius)
     {
@@ -444,6 +526,7 @@ public sealed partial class ElderboomZombie : MonoBehaviour
     {
         if(Forward(8,height,rise,hang,slam,impactDamage,recovery,pushDirection.x,pushDirection.y,pushDirection.z))return;
         if(dead||lifted)return;
+        if(IsBoss){TakeDamage(impactDamage,transform.position-pushDirection);return;} // too heavy to lift
         ClearShotReaction();CancelMelee();
         StartCoroutine(LiftRoutine(height,rise,hang,slam,impactDamage,recovery,pushDirection));
     }

@@ -8,11 +8,11 @@ using UnityEngine.Video;
 using UnityEngine.UIElements;
 using Cursor = UnityEngine.Cursor;
 
-public sealed class ElderboomMenu : MonoBehaviour
+public sealed partial class ElderboomMenu : MonoBehaviour
 {
     public static string Operator = ElderboomIds.Soph, Difficulty = "NORMAL";
     public static bool LaunchRequested;
-    enum Page { Home, Operators, Difficulty, Settings, Loading, Lan }
+    enum Page { Home, Operators, Difficulty, Settings, Loading, Lan, Lobby, Loadout }
     Page page;
     float loadedAt, spinnerAngle;
     string tip, message = "SURVIVE THE NIGHT  /  ELDERBOOM VILLAGE";
@@ -184,6 +184,8 @@ public sealed class ElderboomMenu : MonoBehaviour
         BuildDifficulty();
         BuildSettings();
         BuildLan();
+        BuildLobby();
+        BuildLoadout();
         BuildLoading();
         RefreshSelection();
         ShowPage();
@@ -284,6 +286,7 @@ public sealed class ElderboomMenu : MonoBehaviour
         var entries = new (string label, string tag, string description, Action action)[]
         {
             ("PLAY", null, "Choose an operator and hold the village against the waves.", () => { LeaveLan(); GoTo(Page.Operators); }),
+            ("LOADOUT", null, "Customize your weapons: optics, muzzles, rail accessories and charms.", () => OpenLoadout(Page.Home)),
             ("MULTIPLAYER", "CO-OP", "Play with friends: online with a code, or on the same Wi-Fi.", () => GoTo(Page.Lan)),
             ("SETTINGS", null, "Controls, sensitivity, display and audio.", () => GoTo(Page.Settings)),
             ("QUIT", null, "Close Elderboom.", () => Application.Quit())
@@ -398,13 +401,14 @@ public sealed class ElderboomMenu : MonoBehaviour
         {
             ("EASY", "Slower, weaker zombies. Reduced damage and smaller waves.", 1),
             ("NORMAL", "Aggressive pursuits and balanced waves. The standard survival experience.", 2),
-            ("HARD", "Faster, tougher zombies. More frequent attacks and larger hordes.", 3)
+            ("HARD", "Faster, tougher zombies. More frequent attacks and larger hordes.", 3),
+            ("INFERNO", "Relentless hordes from the first wave. Runners and brutes early, brutal damage, short breaks.", 4)
         })
         {
             string value = id;
             var card = Enter(new VisualElement { focusable = true }, true);
             card.AddToClassList("eb-card");
-            card.style.width = 400; card.style.height = 330; card.style.marginRight = 24;
+            card.style.width = 330; card.style.height = 330; card.style.marginRight = 20;
             ElderboomUi.Interactive(card, () => { Difficulty = value; RefreshSelection(); });
             ElderboomUi.Text(card, "SURVIVAL", "eb-caption");
             ElderboomUi.Text(card, id, "eb-h2");
@@ -413,12 +417,12 @@ public sealed class ElderboomMenu : MonoBehaviour
             foreach (var stat in new[] { "ZOMBIE SPEED", "DAMAGE TAKEN", "HORDE SIZE" })
             {
                 var s = ElderboomUi.Text(card, stat, "eb-caption"); s.style.marginTop = 14;
-                ElderboomUi.Meter(card, level, 3);
+                ElderboomUi.Meter(card, level, 4);
             }
             row.Add(card);
             difficultyCards.Add((card, id));
         }
-        Footer(difficultyPage, ("BACK", () => GoTo(Page.Operators), false), ("DEPLOY", () => { if (!deploying) StartCoroutine(Deploy()); }, true));
+        Footer(difficultyPage, ("BACK", () => GoTo(Page.Operators), false), ("LOADOUT", () => OpenLoadout(Page.Difficulty), false), ("DEPLOY", () => { if (!deploying) StartCoroutine(Deploy()); }, true));
     }
 
     // ---- Settings ----
@@ -464,8 +468,8 @@ public sealed class ElderboomMenu : MonoBehaviour
             c = ElderboomUi.Setting(settingsBody, "Resolution", "Window size when not in fullscreen.", describe);
             ElderboomUi.SelectorControl(c, resolutions, () => ElderboomDisplaySettings.Resolution, v => SaveDisplay(ElderboomDisplaySettings.Fullscreen, v, QualityLevel()));
             c = ElderboomUi.Setting(settingsBody, "Graphics quality", "Low favours frame rate, high favours image quality.", describe);
-            ElderboomUi.SelectorControl(c, new[] { "PERFORMANCE", "LOW", "MEDIUM", "HIGH" }, () => QualityLevel() == ElderboomDisplaySettings.Performance ? 0 : QualityLevel() + 1,
-                v => SaveDisplay(ElderboomDisplaySettings.Fullscreen, ElderboomDisplaySettings.Resolution, v == 0 ? ElderboomDisplaySettings.Performance : v - 1));
+            ElderboomUi.SelectorControl(c, ElderboomDisplaySettings.QualityLabels, () => ElderboomDisplaySettings.LabelIndex(QualityLevel()),
+                v => SaveDisplay(ElderboomDisplaySettings.Fullscreen, ElderboomDisplaySettings.Resolution, ElderboomDisplaySettings.FromLabel(v)));
             PrefSlider("Brightness", "Overall exposure of the night scenes.", "hdrp.settings.brightness", 1f, .5f, 1.5f, v => Mathf.RoundToInt(v * 100f) + "%", describe);
             PrefSlider("HUD size", "Scale of the in-game HUD.", "hdrp.settings.hud_scale", 1f, .75f, 1.25f, v => Mathf.RoundToInt(v * 100f) + "%", describe);
             c = ElderboomUi.Setting(settingsBody, "Performance overlay", "Shows frame rate, frame time, memory and zombie count in game.", describe);
@@ -551,11 +555,13 @@ public sealed class ElderboomMenu : MonoBehaviour
             }
             return;
         }
-        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+        if (!Input.GetKeyDown(KeyCode.Escape) && !ElderboomGamepad.BackDown) return;
         if (page == Page.Lan) { ElderboomUi.Back(); LeaveLan(); GoTo(Page.Home); }
+        else if (page == Page.Lobby) { ElderboomUi.Back(); LeaveLobby(); }
         else if (page == Page.Operators && LanFlow) { ElderboomUi.Back(); GoTo(Page.Lan); }
         else if (page == Page.Operators || page == Page.Settings) { if (page == Page.Settings) PlayerPrefs.Save(); ElderboomUi.Back(); GoTo(Page.Home); }
         else if (page == Page.Difficulty) { ElderboomUi.Back(); GoTo(Page.Operators); }
+        else if (page == Page.Loadout) CloseLoadout();
     }
 
     // ---- Loading ----
@@ -601,11 +607,15 @@ public sealed class ElderboomMenu : MonoBehaviour
         ElderboomUi.Show(settingsPage, page == Page.Settings);
         ElderboomUi.Show(loadingPage, page == Page.Loading);
         ElderboomUi.Show(lanPage, page == Page.Lan);
-        VisualElement current = page == Page.Home ? homePage : page == Page.Operators ? operatorsPage : page == Page.Difficulty ? difficultyPage : page == Page.Settings ? settingsPage : page == Page.Lan ? lanPage : null;
+        ElderboomUi.Show(lobbyPage, page == Page.Lobby);
+        ElderboomUi.Show(loadoutPage, page == Page.Loadout);
+        VisualElement current = page == Page.Home ? homePage : page == Page.Operators ? operatorsPage : page == Page.Difficulty ? difficultyPage : page == Page.Settings ? settingsPage : page == Page.Lan ? lanPage : page == Page.Lobby ? lobbyPage : page == Page.Loadout ? loadoutPage : null;
         if (page == Page.Lan) { ElderboomLan.StartDiscovery(); lanSignature = null; RefreshLan(); }
+        if (page == Page.Lobby) { lobbySignature = null; RefreshLobby(); }
         if (page == Page.Operators) FillOperatorDetails();
         else if (page == Page.Difficulty) ShowOperatorPreview(Operator);
         else if (!deploying) SetPreviewActive(false);
+        ShowLoadoutPage(page == Page.Loadout);
         if (page == Page.Settings) FillSettings();
         if (page == Page.Loading)
         {
@@ -637,6 +647,8 @@ public sealed class ElderboomMenu : MonoBehaviour
             frameLayer.style.backgroundImage = new StyleBackground(frames[frameIndex]);
         }
         if (page == Page.Lan && Time.unscaledTime >= lanRefreshAt) { lanRefreshAt = Time.unscaledTime + .5f; RefreshLan(); }
+        if (page == Page.Lobby) UpdateLobby();
+        UpdateLoadout();
         if (page == Page.Loading) spinner.style.rotate = new StyleRotate(new Rotate(new Angle(spinnerAngle, AngleUnit.Degree)));
     }
 
@@ -645,6 +657,7 @@ public sealed class ElderboomMenu : MonoBehaviour
         if (panelSettings != null) Destroy(panelSettings);
         if (menuVideoTexture != null) { menuVideoTexture.Release(); Destroy(menuVideoTexture); }
         DestroyPreviewStage();
+        if (loadoutStage != null) Destroy(loadoutStage.gameObject);
     }
 
     // ---- Operator 3D set ----------------------------------------------------------------------
@@ -691,9 +704,18 @@ public sealed class ElderboomMenu : MonoBehaviour
             if (lan == null || !lan.HostReady) { deploying = false; string why = lan != null ? lan.Status : ""; GoTo(Page.Lan); lanStatus.text = why; yield break; }
         }
         else if (lanHosting && !ElderboomLan.StartHost(Difficulty)) { deploying = false; string why = ElderboomLan.Instance != null ? ElderboomLan.Instance.Status : ""; GoTo(Page.Lan); lanStatus.text = why; yield break; }
+        // Co-op: wait in the lobby until every player is ready (UpdateLobby then calls Launch).
+        if (lanHosting) { deploying = false; ElderboomLan.StopDiscovery(); GoTo(Page.Lobby); yield break; }
+        yield return Launch();
+    }
+
+    IEnumerator Launch()
+    {
+        deploying = true;
         if (ElderboomCharacterBody.Has(Operator) && ShowOperatorPreview(Operator))
         {
             ElderboomUi.Show(difficultyPage, false);
+            ElderboomUi.Show(lobbyPage, false);
             yield return new WaitForSecondsRealtime(.5f); // a beat of the hang before letting go
             float length = stage.Drop();
             if (length > 0f) yield return new WaitForSecondsRealtime(length + .25f);
@@ -705,7 +727,7 @@ public sealed class ElderboomMenu : MonoBehaviour
     // ---- Multiplayer (ElderboomLan) ---------------------------------------------------------
     // ONLINE: the host gets a code (Unity Relay), friends type it from any network. No account needed for them.
     // WI-FI:  games hosted on the same network are listed (or type the host's IP).
-    // Either way: pick an operator; the host also picks the difficulty, a joining player deploys at once.
+    // Either way: pick an operator (the host also picks the difficulty), then wait in the lobby until everyone is READY.
     VisualElement lanPage, lanList;
     Label lanStatus;
     TextField lanAddress, lanCode;
@@ -725,13 +747,14 @@ public sealed class ElderboomMenu : MonoBehaviour
         Enter(ElderboomUi.MenuItem(column, "01", "HOST ONLINE", () => { lanHosting = true; hostOnline = true; lanJoin = null; lanJoinCode = null; GoTo(Page.Operators); }, "CODE", false,
             () => lanStatus.text = "Start a game and get a code: friends type it to join from anywhere."));
         Enter(ElderboomUi.MenuItem(column, "02", "HOST ON THIS WI-FI", () => { lanHosting = true; hostOnline = false; lanJoin = null; lanJoinCode = null; GoTo(Page.Operators); }, "LAN", false,
-            () => lanStatus.text = "Start a game others on this network can join, also once it is under way."));
+            () => lanStatus.text = "Start a game others on this network can join from the lobby."));
 
         var codeRow = new VisualElement();
         codeRow.AddToClassList("eb-row");
         codeRow.style.marginTop = 30; codeRow.style.alignItems = Align.Center;
         lanCode = new TextField { value = "", maxLength = 12 };
         lanCode.style.width = 300; lanCode.style.height = 44; lanCode.style.fontSize = 22; lanCode.style.marginRight = 16;
+        StyleField(lanCode);
         codeRow.Add(lanCode);
         ElderboomUi.Button(codeRow, "JOIN WITH CODE", () =>
         {
@@ -751,6 +774,7 @@ public sealed class ElderboomMenu : MonoBehaviour
         manual.style.marginTop = 20; manual.style.alignItems = Align.Center;
         lanAddress = new TextField { value = PlayerPrefs.GetString("elderboom.lan.last_ip", "") };
         lanAddress.style.width = 300; lanAddress.style.height = 44; lanAddress.style.fontSize = 22; lanAddress.style.marginRight = 16;
+        StyleField(lanAddress);
         manual.Add(lanAddress);
         ElderboomUi.Button(manual, "JOIN BY IP", () =>
         {
@@ -762,6 +786,18 @@ public sealed class ElderboomMenu : MonoBehaviour
         lanStatus = ElderboomUi.Text(column, "", "eb-body", "eb-muted");
         lanStatus.style.marginTop = 24;
         Footer(lanPage, ("BACK", () => { LeaveLan(); GoTo(Page.Home); }, false));
+    }
+
+    // Dark field with light text: the default theme drew white text on a white field.
+    static void StyleField(TextField field)
+    {
+        field.AddToClassList("eb-field");
+        var input = field.Q(className: TextField.inputUssClassName);
+        if (input == null) return;
+        input.style.backgroundColor = new Color(.04f, .035f, .04f, .92f);
+        input.style.color = new Color(.93f, .94f, .95f);
+        input.style.unityTextAlign = TextAnchor.MiddleLeft;
+        foreach (var text in input.Query<TextElement>().ToList()) text.style.color = new Color(.93f, .94f, .95f);
     }
 
     void RefreshLan()
@@ -820,7 +856,105 @@ public sealed class ElderboomMenu : MonoBehaviour
         }
         ElderboomLan.StopDiscovery();
         Difficulty = lan.HostDifficulty;
-        yield return Deploy();
+        deploying = false;
+        GoTo(Page.Lobby);
+    }
+
+    // ---- Lobby: every co-op match starts here, once all the players are READY ----------------------
+    VisualElement lobbyPage, lobbyList;
+    Label lobbyInfo, lobbyStatus;
+    Button readyButton;
+    string lobbySignature;
+
+    void BuildLobby()
+    {
+        lobbyPage = MakePage(uiRoot);
+        ElderboomUi.Gradient(lobbyPage, new Color(0, 0, 0, .9f), new Color(0, 0, 0, 0), true, .55f);
+        Header(lobbyPage, 0, "LOBBY", "THE MATCH STARTS WHEN EVERY PLAYER IS READY");
+        var column = Absolute(lobbyPage, Margin, 250, width: 980);
+        lobbyInfo = Enter(ElderboomUi.Text(column, "", "eb-h3"));
+        lobbyInfo.style.marginBottom = 26;
+        var caption = Enter(ElderboomUi.Text(column, "PLAYERS", "eb-caption"));
+        caption.style.marginBottom = 8;
+        lobbyList = new VisualElement();
+        column.Add(lobbyList);
+        lobbyStatus = Enter(ElderboomUi.Text(column, "", "eb-h2"));
+        lobbyStatus.style.marginTop = 34;
+        var bar = Footer(lobbyPage, ("LEAVE", () => LeaveLobby(), false), ("READY", () => ToggleReady(), true));
+        readyButton = bar.Query<Button>().Last();
+    }
+
+    void ToggleReady()
+    {
+        var lan = ElderboomLan.Instance;
+        if (lan == null || lan.MatchStarted) return;
+        if (lanHosting && lan.HostAlone) ElderboomLan.ToggleSolo();
+        else ElderboomLan.SetReady(!lan.LocalReady);
+        ElderboomUi.Confirm();
+        RefreshLobby();
+    }
+
+    void LeaveLobby()
+    {
+        bool hosting = lanHosting;
+        LeaveLan();
+        GoTo(Page.Lan);
+        lanStatus.text = hosting ? "Lobby closed." : "You left the lobby.";
+    }
+
+    void UpdateLobby()
+    {
+        var lan = ElderboomLan.Instance;
+        if (lan == null || lan.Failed)
+        {
+            string why = lan != null ? lan.Status : "Connection lost.";
+            LeaveLan(); GoTo(Page.Lan); lanStatus.text = why;
+            return;
+        }
+        if (lan.MatchStarted) { if (!deploying) StartCoroutine(Launch()); return; }
+        if (Time.unscaledTime >= lanRefreshAt) { lanRefreshAt = Time.unscaledTime + .15f; RefreshLobby(); }
+    }
+
+    void RefreshLobby()
+    {
+        var lan = ElderboomLan.Instance;
+        if (lan == null || lobbyPage == null) return;
+        if (lanHosting)
+            lobbyInfo.text = lan.Online ? "CODE  " + lan.JoinCode + "   ·   share it with your friends   ·   " + Difficulty
+                                        : "WI-FI  " + ElderboomLan.LocalAddress + "   ·   friends on this network see the game   ·   " + Difficulty;
+        else lobbyInfo.text = "CONNECTED AS PLAYER " + (lan.LocalId + 1) + "   ·   " + Difficulty;
+        var entries = lan.Lobby;
+        string signature = "";
+        foreach (var e in entries) signature += e.id + e.op + e.ready + ";";
+        if (signature != lobbySignature)
+        {
+            lobbySignature = signature;
+            lobbyList.Clear();
+            if (entries.Count == 0) ElderboomUi.Text(lobbyList, "Connecting to the lobby...", "eb-body", "eb-muted");
+            foreach (var e in entries)
+            {
+                var row = new VisualElement { pickingMode = PickingMode.Ignore };
+                row.AddToClassList("eb-row");
+                row.style.alignItems = Align.Center; row.style.marginBottom = 10;
+                row.style.paddingLeft = 18; row.style.paddingRight = 18; row.style.height = 58;
+                row.style.backgroundColor = Panel;
+                row.style.borderLeftWidth = 4; row.style.borderLeftColor = e.ready ? new Color(.3f, .85f, .45f) : BloodBorder;
+                var slot = ElderboomUi.Text(row, "P" + (e.id + 1), "eb-h3"); slot.style.width = 70;
+                var op = ElderboomOperators.Find(e.op);
+                string who = (op != null ? op.displayName : e.op).ToUpperInvariant();
+                if (e.id == 0) who += "   ·   HOST";
+                if (e.id == lan.LocalId) who += "   ·   YOU";
+                var name = ElderboomUi.Text(row, who, "eb-body"); name.style.flexGrow = 1;
+                var state = ElderboomUi.Text(row, e.ready ? "READY" : "NOT READY", "eb-h3");
+                state.style.color = e.ready ? new Color(.45f, .95f, .55f) : Muted;
+                lobbyList.Add(row);
+            }
+        }
+        int ready = 0; foreach (var e in entries) if (e.ready) ready++;
+        lobbyStatus.text = lan.Countdown >= 0f ? "MATCH STARTS IN " + Mathf.CeilToInt(lan.Countdown)
+                         : lanHosting && lan.HostAlone ? "WAITING FOR FRIENDS"
+                         : entries.Count == 0 ? "" : "WAITING FOR PLAYERS   " + ready + " / " + entries.Count + " READY";
+        if (readyButton != null) readyButton.text = lanHosting && lan.HostAlone ? (lan.LocalReady ? "CANCEL" : "START SOLO") : lan.LocalReady ? "NOT READY" : "READY";
     }
 
     void DestroyPreviewStage()

@@ -5,10 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Elderboom/Abilities/Shockwave", fileName = "ElderboomShockwaveAbility")]
 public sealed class ElderboomShockwaveAbility : ElderboomAbilityDefinition
 {
-    public float range = 5f;
+    public float range = 8f;
     [Tooltip("Minimum dot product with the view direction (0.15 ≈ 81° half-angle).")]
     public float coneDot = .15f;
-    public float minForce = 10f, maxForce = 28f;
+    public float minForce = 18f, maxForce = 28f;
     public float stun = .75f;
     public float closeDistance = 3f;
     public float closeDamage = 3f, farDamage = 2f;
@@ -33,7 +33,8 @@ public sealed class ElderboomShockwaveAbility : ElderboomAbilityDefinition
         if (camera == null || source == null) yield break;
         Transform view = camera.transform;
         Vector3 origin = view.position + view.forward * 0.55f - view.right * 0.24f - view.up * 0.12f;
-        foreach (var zombie in game.FindAbilityTargets(range, coneDot, origin))
+        // Targets are picked from the eyes, so zombies right next to the player are not missed.
+        foreach (var zombie in game.FindAbilityTargets(range, coneDot, view.position))
         {
             float distance = Vector3.Distance(source.transform.position, zombie.transform.position);
             float proximity = 1f - Mathf.Clamp01(distance / range);
